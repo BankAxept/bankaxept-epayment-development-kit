@@ -1,0 +1,216 @@
+openapi: 3.0.0
+info:
+  title: Merchant and Token Requestor APIs Components
+  version: 0.3.0
+paths:
+components:
+  schemas:
+    Amount:
+      type: object
+      description: >-
+        The amount information for the transaction (in minor units).
+      properties:
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: >-
+            The three-character ISO 4217 code. The only supported currency is 'NOK'.
+          example: NOK
+          pattern: 'NOK'
+        value:
+          type: integer
+          format: int64
+          description: >-
+            The payable amount that can be charged for the transaction. The transaction amount needs to be presented in minor units. For example, 100 NOK is submitted as 10000
+          example: 10000
+
+    AmountBreakdown:
+      type: object
+      required:
+        - purchase
+      description: AmountBreakdown specifies the different amount components. The cashback amount can only be included if the purchase amount is not zero.
+      properties:
+        purchase:
+          $ref: '#/components/schemas/Amount'
+        cashback:
+          $ref: '#/components/schemas/Amount'
+
+    MostRecentTrustAnchorAuthentication:
+      type: object
+      required:
+        - authenticationDateTime
+        - authenticationReference
+        - authenticationCredentialsSet
+      properties:
+        authenticationDateTime:
+          $ref: '#/components/schemas/authenticationDateTime'
+        authenticationReference:
+          $ref: '#/components/schemas/authenticationReference'
+        authenticationCredentialsSet:
+          $ref: '#/components/schemas/AuthenticationCredentialsSet'
+
+    AuthenticationCredentialsSet:
+      type: object
+      properties:
+        authenticationProviderId:
+          type: string
+          pattern: '^[0-9]{4}$'
+        trustedAnchorName:
+          type: string
+
+    TokenPaymentData:
+      type: object
+      required:
+        - tokenPan
+        - tokenPsn
+        - tokenExpiryDate
+      properties:
+        tokenPan:
+          $ref: '#/components/schemas/tokenPan'
+        tokenPsn:
+          $ref: '#/components/schemas/tokenPsn'
+        tokenExpiryDate:
+          $ref: '#/components/schemas/tokenExpiryDate'
+
+    paymentId:
+      type: string
+      format: uuid
+      example: "7f60d761-f27d-43d3-8ee9-53881b3c868d"
+      description: >-
+        The identifier for a specific payment.
+    batchNumber:
+      type: integer
+      format: int64
+      example: 1032
+      description: >-
+        The batch number identifying a specific settlement batch for a merchant.
+    correlationId:
+      type: string
+      maxLength: 36
+      example: "74313af1-e2cc-403f-85f1-6050725b01b6"
+    messageId:
+      description: >-
+        A unique identifier that guarantees message idempotency.
+      type: string
+      example: "74313af1-e2cc-403f-85f1-6050725b01b6"
+    tokenPan:
+      type: string
+      pattern: '^[0-9]{19}$'
+      example: '9578540012345678901'
+      description: >-
+        The tokenized PAN of the payment card.
+    tokenPsn:
+      type: string
+      pattern: '^[0-9]{1,3}$'
+      example: '0'
+      description: >-
+        The tokenized PAN Sequence Number of the payment card.
+    tokenExpiryDate:
+      type: string
+      pattern: '^[0-9]{2}(0[1-9]|1[0-2])$'
+      example: '2108'
+      description: >-
+        The expiration date of the token (YYMM).
+    tokenRequestorId:
+      type: string
+      pattern: "^[0-9]{1,11}$"
+      example: "19474920408"
+      description: >-
+        The globally unique id for the token requestor.
+    tokenId:
+      type: string
+      format: uuid
+      example: "8140d6ef-be34-4cd4-9f67-c2c41d8a5573"
+      description: >-
+        The globally unique id for the token.
+    verifiedCardholderAuthenticationSignedData:
+      type: string
+      example: "eyJhbGciOiJSUzI1NiIsIng1dCNTMjU2IjoiZGlnZXN0KGNlcnQpIn0.eyJhdXRoZW50aWNhdGVkRGF0YSI6eyJhY2NvdW50TnVtYmVyIjoiOTk5Nzc1MTIzNDUiLCJ0b2tlblJlcXVlc3Rvck5hbWUiOiJ0b2tlblJlcXVlc3Rvck5hbWUifSwibmluIjoiMTMwODc1MTIzNDUiLCJhdXRoZW50aWNhdGlvblNkbyI6Ijg0MzEzYWYxLWUyY2MtNDAzZi04NWYxLTYwNTA3MjViMDFiNiIsImF1dGhlbnRpY2F0aW9uQ3JlZGVudGlhbHNTZXQiOiJCQU5LSUQiLCJhdXRoZW50aWNhdGlvbkRhdGVUaW1lIjoiMjAxNy0wNy0yMVQxNzozMjoyOFoiLCJ2ZXJpZmljYXRpb25EYXRlVGltZSI6IjIwMTctMDctMjFUMTc6MzI6NDJaIn0.UoRYvKtrZrojIaq4P_iHjfA5Hx9SkEL-v_U0WMv78urpMbqsH2EpBdMuervwNWJKhc5vSp7ugO9LFYgE1PzSDUOYrMa6HfCJeRjlcgRODPC_exrX5lflUr7c-B8MJwSidCkOaKekrYexskYFpk4sdRTizbFdERzr3ZkgvBs_oa22KTYMwpipFO8i-Yf5XEE4zHGvh8abOsIY1yQQGhMwgr9RjNh_bi1wqL_FTJRPggsPjBMxrneWgy2veUbhHUq_JYqvSQxvhhJ_1RdE4gHXz0xaptmmbdZ5mtI1DyCRJEn6Io4x-0VIssApvljPjsMylcG2moeIDqUbjUAfxGrZcA"
+      description: >-
+        The Verified Cardholder Authentication Data is signed in JWS Compact Serialisation format according to the Java Web Signature specification defined in RFC-7515.
+        See schema VerifiedCardholderEnrolmentAuthenticationData and VerifiedCardholderPaymentAuthenticationData for payload format.
+    nin:
+      type: string
+      pattern: '^[0-9]{11}$'
+      example: "13087512345"
+      description: >-
+        Norwegian national identity number for the cardholder.
+    accountNumber:
+      type: string
+      pattern: '^[0-9]{11}$'
+      example: "99977512345"
+      description: >-
+        The payment card's bank account number.
+    paymentAccountReference:
+      description: |
+        The payment account reference (PAR). Unique reference linked to a card PAN and all its associated tokens
+      type: string
+      minLength: 29
+      maxLength: 29
+      example: "583B0123456789ABCDE0123456789"
+    authenticationDateTime:
+      type: string
+      format: date-time
+    authenticationReference:
+      type: string
+
+  parameters:
+    paymentId:
+      name: paymentId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/paymentId'
+    batchNumber:
+      name: batchNumber
+      in: path
+      description: 'The unique identifier of the settlement batch'
+      required: true
+      schema:
+        $ref: '#/components/schemas/batchNumber'
+    correlationId:
+      name: X-Correlation-Id
+      in: header
+      description: 'A unique identifier to correlate HTTP requests between client and server.'
+      required: false
+      schema:
+        $ref: '#/components/schemas/correlationId'
+    messageId:
+      name: messageId
+      in: path
+      description: 'The identifier of a request message'
+      required: true
+      schema:
+        $ref: '#/components/schemas/messageId'
+    tokenId:
+      name: tokenId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/tokenId'
+
+  responses:
+    200Ok:
+      description: Request already received successfully.
+    201Ok:
+      description: Request received successfully.
+    409Error:
+      description: The request conflicts with a previously received request using the same message identifier.
+    422Error:
+      description: The request is not allowed for the current state.
+    400Error:
+      description: Client Error
+    503Error:
+      description: A temporary issue caused the request to not be processed. Retry is possible.
+    500Error:
+      description: Server Error
+
+  securitySchemes:
+    ocpApimSubscriptionKey:
+      type: apiKey
+      in: header
+      name: Ocp-Apim-Subscription-Key
+    bearerAuth:
+      type: http
+      scheme: bearer

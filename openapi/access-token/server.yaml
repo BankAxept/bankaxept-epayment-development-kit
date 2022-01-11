@@ -1,0 +1,89 @@
+openapi: 3.0.0
+info:
+  version: 0.2.0
+  title: BankAxept ePayment Access Token API
+  description: BankAxept ePayment Access Token APIs
+
+servers:
+  - url: /bankaxept-epayment/access-token-api/v1
+
+security:
+  - ocpApimSubscriptionKey: []
+
+paths:
+  /accesstoken:
+    post:
+      tags:
+        - Client Authorization Service
+      summary: Authenticate with the BankAxept ePayment system and receive an Authorization token.
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                grant_type:
+                  description: The authorization grant type. Only 'client_credentials' is supported.
+                  type: string
+                  pattern: '^client_credentials$'
+      security:
+        - basicAuth: []
+      description: >-
+        The Access Token API endpoint is called to get the JWT Bearer token that
+        needs to be passed in every API request in the Authorization header. JWT access
+        token must be acquired before making any API calls to BankAxept ePayment.
+      operationId: issueAccessToken
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/AccessTokenResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Something went wrong from BankAxept ePayment side
+components:
+  schemas:
+    AccessTokenResponse:
+      type: object
+      required:
+        - token_type
+        - expires_in
+        - expires_on
+        - not_before
+        - access_token
+      properties:
+        token_type:
+          type: string
+          description: String containing the type for the Access Token.
+          example: Bearer
+        expires_in:
+          type: integer
+          description: Token expiry time in seconds.
+          example: 3600
+        expires_on:
+          type: integer
+          format: int64
+          description: Token expiry time in epoch time format.
+          example: 1547823408
+        not_before:
+          type: integer
+          format: int64
+          description: Token creation time in epoch time format.
+          example: 1547819508
+        access_token:
+          type: string
+          example: eyJ0eXAiOiJKV1QiL.CJhbGciOiJSUzI1NiDU34hd.23jtiFJjeXdq
+  securitySchemes:
+    ocpApimSubscriptionKey:
+      type: apiKey
+      in: header
+      name: Ocp-Apim-Subscription-Key
+    basicAuth:
+      type: http
+      scheme: basic

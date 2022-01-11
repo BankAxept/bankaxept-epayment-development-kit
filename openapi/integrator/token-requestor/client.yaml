@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+  version: 0.4.0
+  title: BankAxept ePayment Token Requestor API - Token Requestor
+  description: BankAxept ePayment Token Requestor APIs - Token Requestor side
+
+paths:
+  /payment-tokens/{tokenId}:
+    description: EnrolCard callback
+    post:
+      operationId: enrolCardCallback
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/tokenId'
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/EnrolCardCallbackData'
+      responses:
+        '200':
+          description: Your server returns this code if it accepts the callback
+  /payment-tokens/{tokenId}/updates:
+    description: Payment token status update notification
+    post:
+      operationId: tokenUpdateNotification
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/tokenId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/TokenUpdateData'
+      responses:
+        '200':
+          description: Your server returns this code if it accepts the callback
+  /payment-tokens/{tokenId}/expiry-extensions:
+    description: Payment token expiry date extension notification
+    post:
+      operationId: tokenExpiryNotification
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/tokenId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/TokenExpiryExtensionData'
+      responses:
+        '200':
+          description: Your server returns this code if it accepts the callback
+
+components:
+  schemas:
+    EnrolCardCallbackData:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          $ref: '#/components/schemas/EnrolCardCode'
+        result:
+          $ref: '#/components/schemas/EnrolCardCallbackResult'
+        errorMessage:
+          type: string
+
+    EnrolCardCallbackResult:
+      type: object
+      required:
+        - tokenRequestorId
+        - paymentToken
+        - paymentAccountReference
+        - accountNumberLastFourDigits
+        - issuerId
+      properties:
+        tokenRequestorId:
+          $ref: '../components.yaml#/components/schemas/tokenRequestorId'
+        paymentToken:
+          $ref: '../components.yaml#/components/schemas/TokenPaymentData'
+        paymentAccountReference:
+          $ref: '../components.yaml#/components/schemas/paymentAccountReference'
+        accountNumberLastFourDigits:
+          type: string
+          pattern: '^[0-9]{4}$'
+        issuerId:
+          description: |
+            An identifier for the issuer of the payment card. "Company Bankreg number" (konsern bankreg.nummer) of issuer.
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: "7001"
+
+    EnrolCardCode:
+      type: string
+      example: Accepted
+      description: |
+        Code specifying the result of the operation:
+        * Accepted - Enrolment was accepted.
+        * Rejected - Enrolment was rejected.
+        * Failed - Enrolment failed.
+      enum:
+        - Accepted
+        - Rejected
+        - Failed
+
+    TokenUpdateData:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/TokenUpdateStatus'
+
+    TokenUpdateStatus:
+      type: string
+      example: Active
+      description: |
+        Updated status of the token:
+        * Active - Token is active
+        * Suspended - Token is suspended
+        * Deleted - Token is deleted
+      enum:
+        - Active
+        - Suspended
+        - Deleted
+
+    TokenExpiryExtensionData:
+      type: object
+      required:
+        - messageId
+        - tokenExpiryDate
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        tokenExpiryDate:
+          $ref: '../components.yaml#/components/schemas/tokenExpiryDate'

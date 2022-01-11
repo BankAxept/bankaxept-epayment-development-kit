@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  version: 0.3.0
+  title: BankAxept ePayment Token Requestor API - ePayment Platform
+  description: BankAxept ePayment Token Requestor APIs - ePayment Platform side
+  
+servers:
+  - url: /bankaxept-epayment/token-requestor-api/v1
+
+security:
+  - ocpApimSubscriptionKey: [ ]
+  - bearerAuth: [ ]
+
+paths:
+
+  /payment-tokens:
+    post:
+      summary: Request a card enrolment
+      operationId: enrolCard
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/EnrolCardRequest'
+      responses:
+        '200':
+          description: The enrolment request was already accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrolCardResponse'
+        '201':
+          description: The enrolment request was accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrolCardResponse'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payment-tokens/{tokenId}/deletion:
+    post:
+      summary: Delete a token
+      operationId: deleteToken
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/tokenId'
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+components:
+  schemas:
+    EnrolCardRequest:
+      type: object
+      required:
+        - tokenRequestorId
+        - messageId
+        - encryptedCardholderAuthenticationData
+      properties:
+        tokenRequestorId:
+          $ref: '../components.yaml#/components/schemas/tokenRequestorId'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        encryptedCardholderAuthenticationData:
+          $ref: '#/components/schemas/encryptedEnrolmentCardholderAuthenticationData'
+
+    EnrolCardResponse:
+      type: object
+      required:
+        - tokenId
+      properties:
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
+
+    EnrolmentCardholderAuthenticationData:
+      type: object
+      required:
+        - enrolmentData
+      properties:
+        enrolmentData:
+          $ref: '#/components/schemas/EnrolmentData'
+        verifiedCardholderAuthenticationSignedData:
+          $ref: '../components.yaml#/components/schemas/verifiedCardholderAuthenticationSignedData'
+        cardholderAuthenticationData:
+          $ref: '#/components/schemas/CardholderAuthenticationData'
+
+    VerifiedCardholderEnrolmentAuthenticationData:
+      type: object
+      required:
+        - authenticatedData
+        - nin
+        - authenticationReference
+        - authenticationCredentialsSet
+        - verificationDateTime
+      properties:
+        authenticatedData:
+          $ref: '#/components/schemas/EnrolmentAuthenticatedData'
+        nin:
+          $ref: '../components.yaml#/components/schemas/nin'
+        authenticationReference:
+          $ref: '../components.yaml#/components/schemas/authenticationReference'
+        authenticationCredentialsSet:
+          $ref: '../components.yaml#/components/schemas/AuthenticationCredentialsSet'
+        authenticationDateTime:
+          $ref: '../components.yaml#/components/schemas/authenticationDateTime'
+        verificationDateTime:
+          type: string
+          format: date-time
+        mostRecentTrustAnchorAuthentication:
+          $ref: '../components.yaml#/components/schemas/MostRecentTrustAnchorAuthentication'
+
+    EnrolmentData:
+      type: object
+      required:
+        - nin
+        - accountNumber
+      properties:
+        nin:
+          $ref: '../components.yaml#/components/schemas/nin'
+        accountNumber:
+          $ref: '../components.yaml#/components/schemas/accountNumber'
+
+    CardholderAuthenticationData:
+      type: object
+      required:
+        - nin
+        - mostRecentTrustAnchorAuthentication
+      properties:
+        nin:
+          $ref: '../components.yaml#/components/schemas/nin'
+        mostRecentTrustAnchorAuthentication:
+          $ref: '../components.yaml#/components/schemas/MostRecentTrustAnchorAuthentication'
+
+    EnrolmentAuthenticatedData:
+      type: object
+      required:
+        - accountNumber
+        - tokenRequestorName
+      properties:
+        accountNumber:
+          $ref: '../components.yaml#/components/schemas/accountNumber'
+        tokenRequestorName:
+          type: string
+
+    encryptedEnrolmentCardholderAuthenticationData:
+      type: string
+      example: "eyJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiYWxnIjoiUlNBLU9BRVAtMjU2In0.f5nkE6FuGYkoa4usRQ1MhUJY34pYi31xgSiApiR1uP4tSXV3DNnY3N5Zq9Bnt1OucN2nJxAqCcND4G8TpGw9kofFcLcs5kXHg7nmIgjI8ZXTYx7GuZ_w6YxVTzCmjT5dpSlOQFkuCfJn2VdKnF4PjaqiKW9fWluOKorUZdsjsDl5PjIjf3ndqCtGEma6TBpKxLX0FnCZzvsVATCBcxqwKLvkAYFdFFtLfxe5OvW0PFsy4OjasODW3Kk55e58v5xXB8bP9hzr5S7sXFlzX2TG583MLLXG3K1E3XG0R262vs2cGgSA1B6zmujvmkpR4lLofwgahpO-ZrhGZtXE0-wFJw.NDB8Ln7XCf1q1p6ddRvnSw.PTBsKUkN5stmSQwrQ-jQLA.ece3W1q3AiMdg5QQbAd1tq_nQWLRkyNnk2mL1TP8fpQ"
+      description: >-
+        The Enrolment and Cardholder Authentication Data is encrypted according to the Java Web Encryption specification defined in RFC-7516.
+        See schema EnrolmentCardholderAuthenticationData for decrypted data format.

@@ -1,0 +1,195 @@
+openapi: 3.0.0
+info:
+  version: 0.3.0
+  title: BankAxept ePayment Merchant API - Merchant Server
+  description: BankAxept ePayment Merchant API - Merchant Server side
+
+paths:
+  /payments/{paymentId}:
+    description: Payment request callback
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/paymentId'
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      operationId: paymentRequestCallback
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/PaymentRequestCallbackData'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payments/{paymentId}/captures:
+    description: Payment capture callback
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/paymentId'
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      operationId: captureCallback
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CaptureCallbackData'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payments/{paymentId}/refunds:
+    description: Payment refund callback
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/paymentId'
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      operationId: refundCallback
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/RefundCallbackData'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+components:
+  schemas:
+    PaymentRequestCallbackData:
+      type: object
+      required:
+        - messageId
+        - code
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        code:
+          $ref: '#/components/schemas/PaymentRequestCode'
+        authorisationCode:
+          type: string
+          description: >-
+            Authorisation code: When the payment is authorised successfully, this field holds the authorisation code for the payment. When the payment is not authorised, this field is empty.
+        batchNumber:
+          $ref: '../components.yaml#/components/schemas/batchNumber'
+
+    PaymentRequestCode:
+      type: string
+      example: Accepted
+      description: |
+        Code specifying the result of the operation:
+        * AuthorisationApproved - Payment was authorised.
+        * Rejected - Payment request was rejected.
+        * RolledBack - Payment request was rolled back.
+        * Cancelled - Payment request was cancelled.
+        * AuthenticationFailed - Authentication validation failed.
+        * AuthorisationFailed - Payment authorisation failed.
+        * AuthorisationDeclined - Payment authorisation was declined.
+      enum:
+        - AuthorisationApproved
+        - Rejected
+        - RolledBack
+        - Cancelled
+        - AuthenticationFailed
+        - AuthorisationFailed
+        - AuthorisationDeclined
+
+    CaptureCallbackData:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          $ref: '#/components/schemas/CaptureCode'
+        timeCreated:
+          type: string
+          format: date-time
+          description: >-
+            The time and date the request was created. The date fields use the YYYY-MM-DDThh:mm:ss.sssZ date ISO 8601 format. Times are returned in the UTC time zone.
+        captureId:
+          type: string
+          description: >-
+            The /capture request id. This is ePayment platform's reference associated with this /capture request.
+        batchNumber:
+          $ref: '../components.yaml#/components/schemas/batchNumber'
+
+    RefundCallbackData:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          $ref: '#/components/schemas/RefundCode'
+        timeCreated:
+          type: string
+          format: date-time
+          description: >-
+            The time and date the request was created. The date fields use the YYYY-MM-DDThh:mm:ss.sssZ date ISO 8601 format. Times are returned in the UTC time zone.
+        refundId:
+          type: string
+          description: >-
+            The /refund request id. This is ePayment platform's reference associated with this /refund request.
+        batchNumber:
+          $ref: '../components.yaml#/components/schemas/batchNumber'
+
+    CaptureCode:
+      type: string
+      example: Approved
+      description: |
+        Code specifying the result of the operation:
+        * Approved - Capture request was approved.
+        * Declined - Capture request was declined.
+      enum:
+        - Approved
+        - Declined
+
+    RefundCode:
+      type: string
+      example: Approved
+      description: |
+        Code specifying the result of the operation:
+        * Approved - Refund request was approved.
+        * Declined - Refund request was declined.
+        * Failed - Refund request failed.
+      enum:
+        - Approved
+        - Declined
+        - Failed
