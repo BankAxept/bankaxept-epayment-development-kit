@@ -1,0 +1,518 @@
+openapi: 3.0.0
+info:
+  version: 0.3.0
+  title: BankAxept ePayment Merchant API - ePayment Platform
+  description: BankAxept ePayment Merchant API - ePayment Platform side
+  
+servers:
+  - url: /bankaxept-epayment/merchant-api/v1
+
+security:
+  - ocpApimSubscriptionKey: [ ]
+  - bearerAuth: [ ]
+
+paths:
+  /payments:
+    post:
+      summary: Request a new payment
+      description: >-
+        Payments creates a payment with a unique reference (id). It is always the consumer (cardholder) that initiates a
+        payment. When the payment is initiated, a payment request will appear in the Wallet app the cardholder has
+        selected to pay with. The cardholder can choose to accept or deny the request. After the cardholder has accepted
+        the payment request in the wallet app, he is requested to perform an authentication with the authentication
+        method the cardholder's issuer requires. The BankAxept ePayment Payment API supports two types of payment requests,
+        m-commerce payment requests (MCOM) and e-commerce payments requests (ECOM). The main difference is that in the
+        ECOM case the consumer is prompted for his mobile phone number and the consumer must manually open the Wallet
+        App. In the MCOM case, the consumer's mobile phone number is initially not known to the merchant. So instead, in
+        this case, the API returns a Payment request token. This token is used to build an URL, which the merchant can
+        use to call the Wallet App from their App. The Payment request token is then a parameter to the BankAxept URL.
+        Once the payment request has reached a final state, the merchant-provided Callback URL will be called by
+        BankAxept. Even though this callback contains the payment status information, the merchant server should
+        retrieve the result of the payment request directly from the BankAxept.
+      operationId: requestPayment
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        description: Data to register for a payment.
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '200':
+          description: >-
+            Request already received successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '201':
+          description: >-
+            Request received successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payments/messages/{messageId}:
+    delete:
+      summary: Rollback a payment request
+      operationId: rollbackPaymentRequest
+      description: >-
+        Rollback an ongoing payment request.
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - $ref: '../components.yaml#/components/parameters/messageId'
+      responses:
+        '200':
+          description: >-
+            Request already received successfully.
+        '201':
+          description: >-
+            Request received successfully.
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payments/{paymentId}/captures:
+    post:
+      summary: Capture a payment
+      description: |
+        Captures the authorisation hold on a payment, returning a unique reference for this request.
+
+        The amount that can be captured *(Amount capturable)* is calculated as:
+        > *Amount<sub>capturable</sub> = Amount + Amount<sub>adjusted</sub> - Amount<sub>expired</sub>  - Amount<sub>captured</sub>*
+
+      operationId: capturePayment
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - $ref: '../components.yaml#/components/parameters/paymentId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CaptureRequest'
+      responses:
+        '200':
+          description: Request already received successfully.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/CaptureResponse'
+        '201':
+          description: Request received successfully.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/CaptureResponse'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payments/{paymentId}/captures/messages/{messageId}:
+    delete:
+      summary: Rollback a capture request
+      operationId: rollbackCaptureRequest
+      description: >-
+        Rollback an ongoing capture request.
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - $ref: '../components.yaml#/components/parameters/paymentId'
+        - $ref: '../components.yaml#/components/parameters/messageId'
+      responses:
+        '200':
+          description: >-
+            Request already received successfully.
+        '201':
+          description: >-
+            Request received successfully.
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payments/{paymentId}/cancellation:
+    post:
+      summary: Cancel a payment
+      description: |
+        A cancellation blocks funds transfer for an authorised payment.
+        It is possible to cancel a payment only if it has not yet reached the sentForSettlement state.
+
+        The amount that can be cancelled *(Amount cancelable)* is calculated as:
+        > *Amount<sub>cancelable</sub> = Amount + Amount<sub>adjusted</sub> - Amount<sub>captured</sub>*
+
+      operationId: cancelPayment
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - $ref: '../components.yaml#/components/parameters/paymentId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CancellationRequest'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payments/{paymentId}/refunds:
+    post:
+      summary: Refund a payment
+      description: |
+        Creates a refund request. Refunds a payment that has previously been captured, returning a unique reference for this request.
+        Refunding can be done on the full captured amount or a partial amount.
+        Multiple partial refunds will be accepted as long as their sum does not exceed the captured amount.
+        Payments which have been authorised, but not captured, cannot be refunded, use the cancel method instead.
+
+        The amount that can be refunded *(Amount refundable)* is calculated as:
+        > *Amount<sub>refundable</sub> = Amount<sub>captured</sub> - Amount<sub>refunded</sub>*
+
+      operationId: refundPayment
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - $ref: '../components.yaml#/components/parameters/paymentId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      responses:
+        '200':
+          description: Request already received successfully.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/RefundResponse'
+        '201':
+          description: Request received successfully.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/RefundResponse'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payments/{paymentId}/refunds/messages/{messageId}:
+    delete:
+      summary: Rollback a refund request
+      operationId: rollbackRefundRequest
+      description: >-
+        Rollback an ongoing refund request.
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - $ref: '../components.yaml#/components/parameters/paymentId'
+        - $ref: '../components.yaml#/components/parameters/messageId'
+      responses:
+        '200':
+          description: >-
+            Request already received successfully.
+        '201':
+          description: >-
+            Request received successfully.
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /settlements/{merchantId}/{batchNumber}:
+    put:
+      summary: Cut off a settlement batch
+      operationId: cutOffSettlementBatch
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - $ref: '#/components/parameters/merchantId'
+        - $ref: '../components.yaml#/components/parameters/batchNumber'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+components: 
+  schemas:
+    PaymentRequest:
+      type: object
+      required:
+        - amount
+        - encryptedCardholderAuthenticationData
+        - merchantId
+        - merchantName
+        - merchantReference
+        - messageId
+        - paymentAccountReference
+        - inStore
+        - transactionTime
+      properties:
+        amount:
+          $ref: '../components.yaml#/components/schemas/Amount'
+        amountBreakdown:
+          $ref: '../components.yaml#/components/schemas/AmountBreakdown'
+        automaticCapture:
+          type: boolean
+          default: false
+          description: >-
+            If true, the merchant does not need to make a separate capture request. The authorised amount is automatically captured in full directly after the authorisation.
+          example: false
+        encryptedCardholderAuthenticationData:
+          $ref: '#/components/schemas/encryptedPaymentCardholderAuthenticationData'
+        merchantId:
+          $ref: '#/components/schemas/merchantId'
+        merchantName:
+          $ref: '#/components/schemas/merchantName'
+        merchantDisplayName:
+          $ref: '#/components/schemas/merchantDisplayName'
+        merchantOrderReference:
+          type: string
+          description: >-
+            The merchant's order reference. This reference could be order id or similar
+          example: "AAX9913435"
+        merchantOrderMessage:
+          type: string
+          description: >-
+            A merchant-supplied message about the payment/order. The maximum length is 50 characters. Allowed characters are the letters a-å, A-Å, the numbers 0-9 and the special characters :;.,?!()".
+          example: "Airline ticket 912-783248767327476"
+        merchantReference:
+          $ref: '#/components/schemas/merchantReference'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        paymentAccountReference:
+          $ref: '../components.yaml#/components/schemas/paymentAccountReference'
+        inStore:
+          $ref: '#/components/schemas/inStore'
+        transactionTime:
+          type: string
+          format: date-time
+          description: >-
+            The time of the transaction.
+
+    PaymentResponse:
+      type: object
+      required:
+        - paymentId
+      properties:
+        paymentId:
+          $ref: '../components.yaml#/components/schemas/paymentId'
+
+    PaymentCardholderAuthenticationData:
+      type: object
+      required:
+        - paymentToken
+        - verifiedCardholderAuthenticationSignedData
+      properties:
+        paymentToken:
+          $ref: '../components.yaml#/components/schemas/TokenPaymentData'
+        verifiedCardholderAuthenticationSignedData:
+          $ref: '../components.yaml#/components/schemas/verifiedCardholderAuthenticationSignedData'
+
+    VerifiedCardholderPaymentAuthenticationData:
+      type: object
+      required:
+        - authenticatedData
+        - nin
+        - authenticationReference
+        - authenticationCredentialsSet
+        - verificationDateTime
+      properties:
+        authenticatedData:
+          $ref: '#/components/schemas/PaymentAuthenticatedData'
+        nin:
+          $ref: '../components.yaml#/components/schemas/nin'
+        authenticationReference:
+          $ref: '../components.yaml#/components/schemas/authenticationReference'
+        authenticationCredentialsSet:
+          $ref: '../components.yaml#/components/schemas/AuthenticationCredentialsSet'
+        authenticationDateTime:
+          $ref: '../components.yaml#/components/schemas/authenticationDateTime'
+        verificationDateTime:
+          type: string
+          format: date-time
+        mostRecentTrustAnchorAuthentication:
+          $ref: '../components.yaml#/components/schemas/MostRecentTrustAnchorAuthentication'
+
+    PaymentAuthenticatedData:
+      type: object
+      required:
+        - accountNumberLastFourDigits
+        - amount
+        - merchantName
+      properties:
+        accountNumberLastFourDigits:
+          type: string
+          pattern: '^[0-9]{4}$'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        merchantName:
+          $ref: '#/components/schemas/merchantName'
+        merchantDisplayName:
+          $ref: '#/components/schemas/merchantDisplayName'
+        merchantReference:
+          $ref: '#/components/schemas/merchantReference'
+
+    CancellationRequest:
+      type: object
+      required:
+        - initiator
+      properties:
+        initiator:
+          $ref: '#/components/schemas/cancellationInitiator'
+
+    CaptureRequest:
+      type: object
+      required:
+        - amount
+        - messageId
+      properties:
+        amount:
+          $ref: '../components.yaml#/components/schemas/Amount'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+
+    CaptureResponse:
+      type: object
+      required:
+        - captureId
+      properties:
+        captureId:
+          type: string
+
+    RefundRequest:
+      type: object
+      required:
+        - amount
+        - messageId
+        - inStore
+      properties:
+        amount:
+          $ref: '../components.yaml#/components/schemas/Amount'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        inStore:
+          $ref: '#/components/schemas/inStore'
+
+    RefundResponse:
+      type: object
+      required:
+        - refundId
+      properties:
+        refundId:
+          type: string
+
+    cancellationInitiator:
+      type: string
+      enum:
+        - merchant
+        - cardholder
+    encryptedPaymentCardholderAuthenticationData:
+      type: string
+      example: "eyJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiYWxnIjoiUlNBLU9BRVAtMjU2In0.f5nkE6FuGYkoa4usRQ1MhUJY34pYi31xgSiApiR1uP4tSXV3DNnY3N5Zq9Bnt1OucN2nJxAqCcND4G8TpGw9kofFcLcs5kXHg7nmIgjI8ZXTYx7GuZ_w6YxVTzCmjT5dpSlOQFkuCfJn2VdKnF4PjaqiKW9fWluOKorUZdsjsDl5PjIjf3ndqCtGEma6TBpKxLX0FnCZzvsVATCBcxqwKLvkAYFdFFtLfxe5OvW0PFsy4OjasODW3Kk55e58v5xXB8bP9hzr5S7sXFlzX2TG583MLLXG3K1E3XG0R262vs2cGgSA1B6zmujvmkpR4lLofwgahpO-ZrhGZtXE0-wFJw.NDB8Ln7XCf1q1p6ddRvnSw.PTBsKUkN5stmSQwrQ-jQLA.ece3W1q3AiMdg5QQbAd1tq_nQWLRkyNnk2mL1TP8fpQ"
+      description: >-
+        The Payment and Cardholder Authentication Data is encrypted according to the Java Web Encryption specification defined in RFC-7516.
+        See schema PaymentCardholderAuthenticationData for decrypted data format
+    merchantId:
+      type: string
+      maxLength: 36
+      example: "10030005"
+      description: >-
+        The merchant's unique identifier.
+    merchantName:
+      type: string
+      maxLength: 100
+      description: >-
+        The merchant name as registered in the Central Coordinating Register for Legal Entities (Enhetsregisteret).
+    merchantDisplayName:
+      type: string
+      maxLength: 100
+      description: >-
+        The merchant's name, as shown to the cardholder, on receipts and on bank statements.
+        This must be the exact string that was entered with the merchant enrollment.
+    merchantReference:
+      type: string
+      maxLength: 80
+      description: >-
+        A reference set by the merchant to uniquely identify a request.
+        BankAxept uses this reference in all communication with the merchant about the payment status.
+        It is recommended that a unique value per payment is used.
+        However, it is not a requirement.
+    inStore:
+      description: |
+        True if the payment is performed in store. False if it is remote
+      type: boolean
+      default: false
+      example: true
+
+  parameters:
+    merchantId:
+      name: merchantId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/merchantId'
