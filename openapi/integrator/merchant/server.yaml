@@ -302,7 +302,6 @@ components:
         - merchantName
         - merchantReference
         - messageId
-        - paymentAccountReference
         - inStore
         - transactionTime
       properties:
@@ -338,8 +337,6 @@ components:
           $ref: '#/components/schemas/merchantReference'
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
-        paymentAccountReference:
-          $ref: '../components.yaml#/components/schemas/paymentAccountReference'
         inStore:
           $ref: '#/components/schemas/inStore'
         transactionTime:
