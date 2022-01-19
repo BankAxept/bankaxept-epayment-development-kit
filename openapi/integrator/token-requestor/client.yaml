@@ -20,7 +20,19 @@ paths:
               $ref: '#/components/schemas/EnrolCardCallbackData'
       responses:
         '200':
-          description: Your server returns this code if it accepts the callback
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
   /payment-tokens/{tokenId}/updates:
     description: Payment token status update notification
     post:
@@ -35,7 +47,19 @@ paths:
               $ref: '#/components/schemas/TokenUpdateData'
       responses:
         '200':
-          description: Your server returns this code if it accepts the callback
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
   /payment-tokens/{tokenId}/expiry-extensions:
     description: Payment token expiry date extension notification
     post:
@@ -50,7 +74,19 @@ paths:
               $ref: '#/components/schemas/TokenExpiryExtensionData'
       responses:
         '200':
-          description: Your server returns this code if it accepts the callback
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
 
 components:
   schemas:
@@ -107,8 +143,11 @@ components:
     TokenUpdateData:
       type: object
       required:
+        - messageId
         - status
       properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
         status:
           $ref: '#/components/schemas/TokenUpdateStatus'
 
