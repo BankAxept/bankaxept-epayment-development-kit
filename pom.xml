@@ -6,6 +6,49 @@
     <groupId>no.bankaxept.ebax</groupId>
     <artifactId>bankaxept-epayment-development-kit</artifactId>
     <version>0.1</version>
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>5.3.1</version>
+        </dependency>
+        <!-- <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.13.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.13.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>2.0.0-rc2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core</artifactId>
+            <version>2.1.12</version>
+        </dependency> -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.2</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -13,64 +56,85 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>5.3.1</version>
                 <executions>
-                    <execution>
+                    <!-- <execution>
                         <id>authentication-api</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>markdown</generatorName>
+                            <generatorName>java</generatorName>
                             <inputSpec>
                                 ${project.basedir}/openapi/access-token/server.yaml
                             </inputSpec>
+                            <generateModels>true</generateModels>
+                            <library>native</library>
                         </configuration>
-                    </execution>
-                    <execution>
+                    </execution> -->
+                    <!-- <execution>
                         <id>merchant-api-server</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>markdown</generatorName>
+                            <generatorName>java</generatorName>
                             <inputSpec>
                                 ${project.basedir}/openapi/integrator/merchant/server.yaml
                             </inputSpec>
+                            <generateModels>true</generateModels>
+                            <library>native</library>
                         </configuration>
-                    </execution>
+                    </execution> -->
                     <execution>
                         <id>merchant-api-client</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>markdown</generatorName>
+                            <generatorName>java</generatorName>
+                            <output>${project.build.directory}/generated-sources/merchant</output>
                             <inputSpec>
                                 ${project.basedir}/openapi/integrator/merchant/client.yaml
                             </inputSpec>
+                            <generateModels>true</generateModels>
+                            <generateApis>false</generateApis>
+                            <packageName>merchant</packageName>
+                            <modelPackage>merchant.model</modelPackage>
+                            <invokerPackage>merchant.invoker</invokerPackage>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <library>native</library>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!-- <execution>
                         <id>token-requestor-api-server</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>markdown</generatorName>
+                            <generatorName>java</generatorName>
                             <inputSpec>
                                 ${project.basedir}/openapi/integrator/token-requestor/server.yaml
                             </inputSpec>
+                            <generateModels>true</generateModels>
+                            <library>native</library>
                         </configuration>
-                    </execution>
+                    </execution> -->
                     <execution>
                         <id>token-requestor-api-client</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <generatorName>markdown</generatorName>
+                            <generatorName>java</generatorName>
+                            <output>${project.build.directory}/generated-sources/token-requestor</output>
                             <inputSpec>
                                 ${project.basedir}/openapi/integrator/token-requestor/client.yaml
                             </inputSpec>
+                            <generateModels>true</generateModels>
+                            <generateApis>false</generateApis>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <modelPackage>token-requestor.model</modelPackage>
+                            <invokerPackage>token-requestor.invoker</invokerPackage>
+                            <library>native</library>
                         </configuration>
                     </execution>
                 </executions>
