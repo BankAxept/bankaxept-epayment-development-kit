@@ -1,0 +1,38 @@
+package no.ebax.sdk;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.github.tomakehurst.wiremock.matching.ContainsPattern;
+import org.junit.jupiter.api.Test;
+import reactor.adapter.JdkFlowAdapter;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.util.Collections;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+
+@WireMockTest(httpPort = 8443)
+class WebFluxClientTest {
+
+    private ApiClient client = new WebFluxClient("http://localhost:8443");
+
+    @Test
+    public void simple_request_no_body_no_headers(){
+        stubFor(post("/test").willReturn(ok()));
+        var publisher = client.post("/test", null, Collections.emptyMap(), String.class);
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(publisher))
+                .verifyComplete();
+    }
+
+    @Test
+    public void simple_request_with_body_and_header(){
+        stubFor(post("/test")
+                .withHeader("test-header", new ContainsPattern("test-value"))
+                .willReturn(ok().withBody("response-body")));
+        var resultPublisher = client.post("/test", JdkFlowAdapter.publisherToFlowPublisher(Mono.just("request-body")), Collections.singletonMap("test-header", Collections.singletonList("test-value")), String.class);
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(resultPublisher))
+                .expectNext("response-body")
+                .verifyComplete();
+    }
+
+}
