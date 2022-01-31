@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>bankaxept-epayment-development-kit</artifactId>
+        <groupId>no.bankaxept.ebax</groupId>
+        <version>0.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>base-client</artifactId>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>5.3.1</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>5.3.1</version>
+                <executions>
+                    <execution>
+                        <id>authentication-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>java</generatorName>
+                            <output>${project.build.directory}/generated-sources/accesstoken</output>
+                            <inputSpec>
+                                ${project.basedir}/../openapi/access-token/server.yaml
+                            </inputSpec>
+                            <generateModels>true</generateModels>
+                            <generateApis>false</generateApis>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <modelPackage>accesstoken.model</modelPackage>
+                            <generateModelTests>false</generateModelTests>
+                            <library>native</library>
+                            <!-- <invokerPackage>token-requestor.invoker</invokerPackage>
+                            <environmentVariables>
+                                <supportingFiles>ApiClient.java,ApiResponse.java,ApiException.java,Pair.java</supportingFiles>
+                            </environmentVariables> -->
+                            <configOptions>
+                                <dataLibrary>java8</dataLibrary>
+                                <interfaceOnly>true</interfaceOnly>
+                                <openApiNullable>false</openApiNullable>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <!-- <execution>
+                        <id>merchant-api-server</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>java</generatorName>
+                            <inputSpec>
+                                ${project.basedir}/openapi/integrator/merchant/server.yaml
+                            </inputSpec>
+                            <generateModels>true</generateModels>
+                            <library>native</library>
+                        </configuration>
+                    </execution> -->
+                    <!-- <execution>
+                        <id>merchant-api-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>java</generatorName>
+                            <output>${project.build.directory}/generated-sources/merchant</output>
+                            <inputSpec>
+                                ${project.basedir}/openapi/integrator/merchant/client.yaml
+                            </inputSpec>
+                            <generateModels>true</generateModels>
+                            <generateApis>false</generateApis>
+                            <packageName>merchant</packageName>
+                            <modelPackage>merchant.model</modelPackage>
+                            <invokerPackage>merchant.invoker</invokerPackage>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <library>native</library>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>token-requestor-api-server</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>java</generatorName>
+                            <inputSpec>
+                                ${project.basedir}/openapi/integrator/token-requestor/server.yaml
+                            </inputSpec>
+                            <generateModels>true</generateModels>
+                            <library>native</library>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>token-requestor-api-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>java</generatorName>
+                            <output>${project.build.directory}/generated-sources/token-requestor</output>
+                            <inputSpec>
+                                ${project.basedir}/openapi/integrator/token-requestor/server.yaml
+                            </inputSpec>
+                            <generateModels>true</generateModels>
+                            <generateApis>false</generateApis>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <modelPackage>tokenrequestor.model</modelPackage>
+                            <generateModelTests>false</generateModelTests>
+                            <library>native</library>
+                            <invokerPackage>token-requestor.invoker</invokerPackage>
+                            <environmentVariables>
+                                <supportingFiles>ApiClient.java,ApiResponse.java,ApiException.java,Pair.java</supportingFiles>
+                            </environmentVariables>
+                            <configOptions>
+                                <dataLibrary>java8</dataLibrary>
+                                <interfaceOnly>true</interfaceOnly>
+                                <openApiNullable>false</openApiNullable>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                            </configOptions>
+                        </configuration>
+                    </execution> -->
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,6 +1,6 @@
-package no.ebax.sdk;
+package no.ebax.sdk.baseclient;
 
-import accesstoken.model.AccessTokenResponse;
+import no.ebax.sdk.baseclient.spi.ApiClientProvider;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -8,14 +8,19 @@ import java.util.*;
 import java.util.concurrent.Flow;
 import java.util.function.Supplier;
 
+import accesstoken.model.AccessTokenResponse;
+
 public class BaseClient {
 
     private Supplier<String> accessTokenSupplier;
     private ApiClient apiClient;
 
-    public BaseClient(ApiClient apiClient, String apimKey, String username, String password) {
+    public BaseClient(String baseurl, String apimKey, String username, String password) {
+        apiClient = ServiceLoader.load(ApiClientProvider.class)
+                .findFirst()
+                .map(apiClientProvider -> apiClientProvider.create(baseurl))
+                .orElseThrow();
         this.accessTokenSupplier = new AccessTokenSupplier("/token", apimKey, username, password);
-        this.apiClient = apiClient;
     }
 
     public Flow.Publisher<String> post(

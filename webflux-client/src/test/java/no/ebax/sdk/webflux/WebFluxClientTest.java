@@ -1,7 +1,8 @@
-package no.ebax.sdk;
+package no.ebax.sdk.webflux;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.ContainsPattern;
+import no.ebax.sdk.baseclient.ApiClient;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.core.publisher.Mono;
@@ -10,6 +11,8 @@ import reactor.test.StepVerifier;
 import java.util.Collections;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+
 
 @WireMockTest(httpPort = 8443)
 class WebFluxClientTest {

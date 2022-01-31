@@ -1,4 +1,4 @@
-package no.ebax.sdk;
+package no.ebax.sdk.baseclient;
 
 
 import java.util.List;

@@ -1,24 +1,24 @@
-package no.ebax.sdk;
+package no.ebax.sdk.webflux;
 
 import accesstoken.model.AccessTokenResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import no.ebax.sdk.baseclient.BaseClient;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
 
 import java.sql.Date;
 import java.time.Instant;
-import java.util.Collections;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @WireMockTest(httpPort = 8443)
 class BaseClientTest {
 
-    private BaseClient baseClient = new BaseClient(new WebFluxClient("http://localhost:8443"), "key", "username", "password");
+    private BaseClient baseClient = new BaseClient("http://localhost:8443", "key", "username", "password");
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
