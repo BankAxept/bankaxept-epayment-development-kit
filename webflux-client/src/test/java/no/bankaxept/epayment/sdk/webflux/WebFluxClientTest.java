@@ -1,4 +1,4 @@
-package no.ebax.sdk.webflux;
+package no.bankaxept.epayment.sdk.webflux;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.ContainsPattern;

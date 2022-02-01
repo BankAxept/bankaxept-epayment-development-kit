@@ -1,4 +1,4 @@
-package no.ebax.sdk.webflux;
+package no.bankaxept.epayment.sdk.webflux;
 
 import accesstoken.model.AccessTokenResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;

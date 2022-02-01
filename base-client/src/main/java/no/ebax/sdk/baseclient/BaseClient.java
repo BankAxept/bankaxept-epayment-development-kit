@@ -8,8 +8,6 @@ import java.util.*;
 import java.util.concurrent.Flow;
 import java.util.function.Supplier;
 
-import accesstoken.model.AccessTokenResponse;
-
 public class BaseClient {
 
     private Supplier<String> accessTokenSupplier;
