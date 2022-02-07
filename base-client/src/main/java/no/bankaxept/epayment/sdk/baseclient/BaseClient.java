@@ -1,6 +1,6 @@
 package no.bankaxept.epayment.sdk.baseclient;
 
-import no.bankaxept.epayment.sdk.baseclient.spi.ApiClientProvider;
+import no.bankaxept.epayment.sdk.baseclient.spi.HttpClientProvider;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -11,12 +11,12 @@ import java.util.function.Supplier;
 public class BaseClient {
 
     private Supplier<String> accessTokenSupplier;
-    private ApiClient apiClient;
+    private HttpClient httpClient;
 
     public BaseClient(String baseurl, String apimKey, String username, String password) {
-        apiClient = ServiceLoader.load(ApiClientProvider.class)
+        httpClient = ServiceLoader.load(HttpClientProvider.class)
                 .findFirst()
-                .map(apiClientProvider -> apiClientProvider.create(baseurl))
+                .map(httpClientProvider -> httpClientProvider.create(baseurl))
                 .orElseThrow();
         this.accessTokenSupplier = new AccessTokenSupplier("/token", apimKey, username, password);
     }
@@ -45,7 +45,7 @@ public class BaseClient {
         var allHeaders = new HashMap<>(headers);
         allHeaders.put("X-Correlation-Id", Collections.singletonList(correlationId));
         allHeaders.put("Authorization", Collections.singletonList("Bearer " + accessTokenSupplier.get()));
-        return apiClient.post(uri, body, allHeaders, String.class);
+        return httpClient.post(uri, body, allHeaders, String.class);
     }
 
     private class AccessTokenSupplier implements Supplier<String>, Flow.Subscriber<AccessTokenResponse> {
@@ -78,7 +78,7 @@ public class BaseClient {
         }
 
         private void fetchNewToken() {
-            apiClient.post(uri, null, createHeaders(), AccessTokenResponse.class).subscribe(this);
+            httpClient.post(uri, null, createHeaders(), AccessTokenResponse.class).subscribe(this);
         }
 
         private HashMap<String, List<String>> createHeaders() {

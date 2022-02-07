@@ -1,11 +1,11 @@
 package no.bankaxept.epayment.sdk.webflux;
 
-import no.bankaxept.epayment.sdk.baseclient.ApiClient;
-import no.bankaxept.epayment.sdk.baseclient.spi.ApiClientProvider;
+import no.bankaxept.epayment.sdk.baseclient.HttpClient;
+import no.bankaxept.epayment.sdk.baseclient.spi.HttpClientProvider;
 
-public class WebFluxApiClientProvider implements ApiClientProvider {
+public class WebFluxApiClientProvider implements HttpClientProvider {
     @Override
-    public ApiClient create(String baseurl) {
+    public HttpClient create(String baseurl) {
         return new WebFluxClient(baseurl);
     }
 }

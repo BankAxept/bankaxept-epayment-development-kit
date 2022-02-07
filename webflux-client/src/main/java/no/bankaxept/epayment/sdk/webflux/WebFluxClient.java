@@ -2,7 +2,7 @@ package no.bankaxept.epayment.sdk.webflux;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.bankaxept.epayment.sdk.baseclient.ApiClient;
+import no.bankaxept.epayment.sdk.baseclient.HttpClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.adapter.JdkFlowAdapter;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Flow.Publisher;
 
-public class WebFluxClient implements ApiClient {
+public class WebFluxClient implements HttpClient {
 
     private WebClient webClient;
     private ObjectMapper objectMapper = new ObjectMapper();
