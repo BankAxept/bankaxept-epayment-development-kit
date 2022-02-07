@@ -82,7 +82,7 @@ public class BaseClient {
         }
 
         private HashMap<String, List<String>> createHeaders() {
-            var headers = new HashMap<String, List<String>>();
+            var headers = new LinkedHashMap<String, List<String>>();
             headers.put("Ocp-Apim-Subscription-Key", Collections.singletonList(apimKey));
             headers.put("Authorization", Collections.singletonList(authenticationHeader()));
             return headers;
