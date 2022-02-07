@@ -1,4 +1,4 @@
-package no.ebax.sdk.baseclient;
+package no.bankaxept.epayment.sdk.baseclient;
 
 import java.util.Objects;
 

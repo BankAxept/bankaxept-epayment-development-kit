@@ -2,7 +2,7 @@ package no.bankaxept.epayment.sdk.webflux;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.ContainsPattern;
-import no.ebax.sdk.baseclient.ApiClient;
+import no.bankaxept.epayment.sdk.baseclient.ApiClient;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.core.publisher.Mono;

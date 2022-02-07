@@ -1,6 +1,6 @@
-package no.ebax.sdk.baseclient;
+package no.bankaxept.epayment.sdk.baseclient;
 
-import no.ebax.sdk.baseclient.spi.ApiClientProvider;
+import no.bankaxept.epayment.sdk.baseclient.spi.ApiClientProvider;
 
 import java.time.Duration;
 import java.time.Instant;

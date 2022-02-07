@@ -1,11 +1,11 @@
 package no.bankaxept.epayment.sdk.webflux;
 
-import accesstoken.model.AccessTokenResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import no.ebax.sdk.baseclient.BaseClient;
+import no.bankaxept.epayment.sdk.baseclient.AccessTokenResponse;
+import no.bankaxept.epayment.sdk.baseclient.BaseClient;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;

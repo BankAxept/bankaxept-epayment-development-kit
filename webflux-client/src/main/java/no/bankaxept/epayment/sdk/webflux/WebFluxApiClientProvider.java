@@ -1,8 +1,7 @@
 package no.bankaxept.epayment.sdk.webflux;
 
-
-import no.ebax.sdk.baseclient.ApiClient;
-import no.ebax.sdk.baseclient.spi.ApiClientProvider;
+import no.bankaxept.epayment.sdk.baseclient.ApiClient;
+import no.bankaxept.epayment.sdk.baseclient.spi.ApiClientProvider;
 
 public class WebFluxApiClientProvider implements ApiClientProvider {
     @Override

@@ -22,9 +22,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>no.bankaxept.ebax</groupId>
+            <groupId>no.bankaxept.epayment</groupId>
             <artifactId>base-client</artifactId>
-            <version>${revision}</version>
+            <version>0.1</version>
         </dependency>
         <!-- Test -->
         <dependency>
