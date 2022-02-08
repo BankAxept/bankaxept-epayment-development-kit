@@ -27,7 +27,7 @@ class BaseClientTest {
         stubFor(post("/token")
                 .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
                 .withBasicAuth("username", "password")
-                .willReturn(ok().withBody(objectMapper.writeValueAsString(new AccessTokenResponse().accessToken("a-token").expiresOn(Date.from(Instant.now()).getTime())))));
+                .willReturn(ok().withBody(objectMapper.writeValueAsString(new AccessTokenResponse(Date.from(Instant.now()).getTime(), "a-token")))));
         stubFor(post("/test")
                 .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
                 .withHeader("X-Correlation-Id", new EqualToPattern("1"))
