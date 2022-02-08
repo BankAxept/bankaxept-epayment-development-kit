@@ -25,13 +25,6 @@ public class BaseClient {
 
     public Flow.Publisher<String> post(
             String uri,
-            String correlationId
-    ) {
-        return post(uri, null, correlationId, Collections.emptyMap());
-    }
-
-    public Flow.Publisher<String> post(
-            String uri,
             Flow.Publisher<String> body,
             String correlationId
     ) {

@@ -30,7 +30,7 @@ class BaseClientTest {
                 .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
                 .withHeader("X-Correlation-Id", new EqualToPattern("1"))
                 .willReturn(ok()));
-        var publisher = baseClient.post("/test", "1");
+        var publisher = baseClient.post("/test", null, "1");
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(publisher))
                 .verifyComplete();
     }
