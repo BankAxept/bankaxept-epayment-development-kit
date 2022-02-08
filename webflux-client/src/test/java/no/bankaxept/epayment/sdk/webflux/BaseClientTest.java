@@ -8,6 +8,7 @@ import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
@@ -23,7 +24,7 @@ class BaseClientTest {
                 .withBasicAuth("username", "password")
                 .willReturn(ok().withBody(
                         "{\n" +
-                                "\"expiresOn\": " + Instant.now().toEpochMilli() + ",\n" +
+                                "\"expiresOn\": " + Instant.now().plus(20, ChronoUnit.MINUTES).toEpochMilli() + ",\n" +
                                 "\"accessToken\": \"a-token\"\n" +
                                 "}")));
         stubFor(post("/test")
