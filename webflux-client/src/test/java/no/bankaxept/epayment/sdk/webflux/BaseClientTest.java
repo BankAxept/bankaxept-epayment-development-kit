@@ -1,16 +1,12 @@
 package no.bankaxept.epayment.sdk.webflux;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import no.bankaxept.epayment.sdk.baseclient.AccessTokenResponse;
 import no.bankaxept.epayment.sdk.baseclient.BaseClient;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
 
-import java.sql.Date;
 import java.time.Instant;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -20,19 +16,21 @@ class BaseClientTest {
 
     private BaseClient baseClient = new BaseClient("http://localhost:8443", "key", "username", "password");
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     @Test
-    public void should_add_all_relevant_headers() throws JsonProcessingException {
+    public void should_add_all_relevant_headers() {
         stubFor(post("/token")
                 .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
                 .withBasicAuth("username", "password")
-                .willReturn(ok().withBody(objectMapper.writeValueAsString(new AccessTokenResponse(Date.from(Instant.now()).getTime(), "a-token")))));
+                .willReturn(ok().withBody(
+                        "{\n" +
+                                "\"expiresOn\": " + Instant.now().toEpochMilli() + ",\n" +
+                                "\"accessToken\": \"a-token\"\n" +
+                                "}")));
         stubFor(post("/test")
                 .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
                 .withHeader("X-Correlation-Id", new EqualToPattern("1"))
                 .willReturn(ok()));
-        var publisher = baseClient.post("/test",  "1");
+        var publisher = baseClient.post("/test", "1");
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(publisher))
                 .verifyComplete();
     }

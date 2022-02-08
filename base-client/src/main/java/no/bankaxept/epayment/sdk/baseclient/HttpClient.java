@@ -6,5 +6,5 @@ import java.util.Map;
 import java.util.concurrent.Flow;
 
 public interface HttpClient {
-    <T> Flow.Publisher<T> post(String uri, Flow.Publisher<String> bodyPublisher, Map<String, List<String>> headers, Class<T> tClass);
+    Flow.Publisher<String> post(String uri, Flow.Publisher<String> bodyPublisher, Map<String, List<String>> headers);
 }

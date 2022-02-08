@@ -7,6 +7,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.Flow;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BaseClient {
 
@@ -45,10 +47,13 @@ public class BaseClient {
         var allHeaders = new HashMap<>(headers);
         allHeaders.put("X-Correlation-Id", Collections.singletonList(correlationId));
         allHeaders.put("Authorization", Collections.singletonList("Bearer " + accessTokenSupplier.get()));
-        return httpClient.post(uri, body, allHeaders, String.class);
+        return httpClient.post(uri, body, allHeaders);
     }
 
-    private class AccessTokenSupplier implements Supplier<String>, Flow.Subscriber<AccessTokenResponse> {
+    private class AccessTokenSupplier implements Supplier<String>, Flow.Subscriber<String> {
+        private final Pattern tokenPattern = Pattern.compile("\"accessToken\"\\s*:\\s*\".*\"");
+        private final Pattern expiryPattern = Pattern.compile("\"expiresOn\"\\s*:\\s*\\d+");
+
         private final String uri;
         private final String apimKey;
         private String username;
@@ -78,7 +83,7 @@ public class BaseClient {
         }
 
         private void fetchNewToken() {
-            httpClient.post(uri, null, createHeaders(), AccessTokenResponse.class).subscribe(this);
+            httpClient.post(uri, null, createHeaders()).subscribe(this);
         }
 
         private HashMap<String, List<String>> createHeaders() {
@@ -107,9 +112,12 @@ public class BaseClient {
         }
 
         @Override
-        public void onNext(AccessTokenResponse item) {
-            this.token = item.getAccessToken();
-            this.expiry = new Date(item.getExpiresOn());
+        public void onNext(String item) {
+            Matcher tokenMatcher = tokenPattern.matcher(item);
+            Matcher expiryMatcher = expiryPattern.matcher(item);
+            if(!tokenMatcher.find() || !expiryMatcher.find()) throw new IllegalStateException();
+            this.token = tokenMatcher.group().split(":")[1].split("\"")[1];
+            this.expiry = new Date(Long.parseLong(expiryMatcher.group().split(":")[1].trim()));
         }
 
         @Override

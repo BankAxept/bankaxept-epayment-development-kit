@@ -1,7 +1,5 @@
 package no.bankaxept.epayment.sdk.webflux;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import no.bankaxept.epayment.sdk.baseclient.HttpClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,28 +12,20 @@ import java.util.concurrent.Flow.Publisher;
 public class WebFluxClient implements HttpClient {
 
     private WebClient webClient;
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     public WebFluxClient(String baseUrl) {
         webClient = WebClient.create(baseUrl);
     }
 
     @Override
-    public <T> Publisher<T> post(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers, Class<T> tClass) {
+    public Publisher<String> post(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
         return JdkFlowAdapter.publisherToFlowPublisher(
                 webClient
                         .post()
                         .uri(uri)
                         .body(bodyPublisher == null ? BodyInserters.empty() : BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
                         .headers(httpHeaders -> httpHeaders.putAll(headers))
-                        .exchangeToMono(clientResponse -> clientResponse.bodyToMono(String.class).mapNotNull(body -> {
-                            try {
-                                if(tClass.equals(String.class)) return (T) body; //TODO
-                                return objectMapper.readValue(body, tClass);
-                            } catch (JsonProcessingException e) {
-                                throw new IllegalStateException(e);
-                            }
-                        })));
+                        .exchangeToMono(clientResponse -> clientResponse.bodyToMono(String.class)));
     }
 
 }
