@@ -65,7 +65,7 @@
     </dependencies>
     <properties>
         <junit.version>5.8.2</junit.version>
-        <mockito.version>2.21.0</mockito.version>
+        <mockito.version>4.3.1</mockito.version>
         <wiremock.version>2.32.0</wiremock.version>
         <reactor-version>3.4.14</reactor-version>
         <spring.boot.version>2.6.3</spring.boot.version>
