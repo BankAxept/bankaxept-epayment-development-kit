@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @WireMockTest(httpPort = 8443)
-class BaseClientTest {
+public class BaseClientTest {
 
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private final ScheduledExecutorService schedulerSpy = Mockito.spy(new ScheduledThreadPoolExecutor(1));

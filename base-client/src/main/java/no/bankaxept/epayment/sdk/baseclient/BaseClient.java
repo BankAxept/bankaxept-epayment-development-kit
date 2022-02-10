@@ -27,7 +27,7 @@ public class BaseClient {
         this.tokenSupplier = new AccessTokenSupplier("/token", apimKey, username, password, clock, scheduler);
     }
 
-    public Flow.Publisher<String> post(
+    public Flow.Publisher<ClientResponse> post(
             String uri,
             Flow.Publisher<String> body,
             String correlationId
@@ -35,7 +35,7 @@ public class BaseClient {
         return post(uri, body, correlationId, Collections.emptyMap());
     }
 
-    public Flow.Publisher<String> post(
+    public Flow.Publisher<ClientResponse> post(
             String uri,
             Flow.Publisher<String> body,
             String correlationId,
@@ -47,7 +47,7 @@ public class BaseClient {
         return httpClient.post(uri, body, allHeaders);
     }
 
-    private class AccessTokenSupplier implements Flow.Subscriber<String>, Supplier<String> {
+    private class AccessTokenSupplier implements Flow.Subscriber<ClientResponse>, Supplier<String> {
         private final ScheduledExecutorService scheduler; //TODO error handling
 
         private final Pattern tokenPattern = Pattern.compile("\"accessToken\"\\s*:\\s*\"(.*)\"");
@@ -97,9 +97,9 @@ public class BaseClient {
         }
 
         @Override
-        public void onNext(String item) {
-            Matcher tokenMatcher = tokenPattern.matcher(item);
-            Matcher expiryMatcher = expiryPattern.matcher(item);
+        public void onNext(ClientResponse item) {
+            Matcher tokenMatcher = tokenPattern.matcher(item.getBody());
+            Matcher expiryMatcher = expiryPattern.matcher(item.getBody());
             if (!tokenMatcher.find() || !expiryMatcher.find())
                 throw new IllegalStateException("Could not parse token or expiry");
             this.expiry = Long.parseLong(expiryMatcher.group(1));

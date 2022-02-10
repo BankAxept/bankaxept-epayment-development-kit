@@ -1,5 +1,6 @@
 package no.bankaxept.epayment.sdk.webflux;
 
+import no.bankaxept.epayment.sdk.baseclient.ClientResponse;
 import no.bankaxept.epayment.sdk.baseclient.HttpClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,14 +19,15 @@ public class WebFluxClient implements HttpClient {
     }
 
     @Override
-    public Publisher<String> post(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
+    public Publisher<ClientResponse> post(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
         return JdkFlowAdapter.publisherToFlowPublisher(
                 webClient
                         .post()
                         .uri(uri)
                         .body(bodyPublisher == null ? BodyInserters.empty() : BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
                         .headers(httpHeaders -> httpHeaders.putAll(headers))
-                        .exchangeToMono(clientResponse -> clientResponse.bodyToMono(String.class)));
+                        .exchangeToMono(clientResponse ->
+                                clientResponse.bodyToMono(String.class).map(v -> new ClientResponse(clientResponse.statusCode().value(), v))));
     }
 
 }

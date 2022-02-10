@@ -2,6 +2,7 @@ package no.bankaxept.epayment.sdk.webflux;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.ContainsPattern;
+import no.bankaxept.epayment.sdk.baseclient.ClientResponse;
 import no.bankaxept.epayment.sdk.baseclient.HttpClient;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
@@ -15,7 +16,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 
 
 @WireMockTest(httpPort = 8443)
-class WebFluxClientTest {
+public class WebFluxClientTest {
 
     private HttpClient client = new WebFluxClient("http://localhost:8443");
 
@@ -34,7 +35,7 @@ class WebFluxClientTest {
                 .willReturn(ok().withBody("response-body")));
         var resultPublisher = client.post("/test", JdkFlowAdapter.publisherToFlowPublisher(Mono.just("request-body")), Collections.singletonMap("test-header", Collections.singletonList("test-value")));
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(resultPublisher))
-                .expectNext("response-body")
+                .expectNext(new ClientResponse(200, "response-body"))
                 .verifyComplete();
     }
 
