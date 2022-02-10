@@ -5,11 +5,7 @@ import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import no.bankaxept.epayment.sdk.baseclient.BaseClient;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.mockito.exceptions.base.MockitoException;
-import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
 
