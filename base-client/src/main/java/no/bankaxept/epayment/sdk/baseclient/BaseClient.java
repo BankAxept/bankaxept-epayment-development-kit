@@ -99,32 +99,39 @@ public class BaseClient {
 
         @Override
         public void onNext(HttpResponse item) {
-            if(!item.getStatus().is2xxOk()) throw new HttpStatusException(item.getStatus());
+            if (!item.getStatus().is2xxOk()) {
+                onError(new HttpStatusException(item.getStatus()));
+                return;
+            }
             var tokenMatcher = tokenPattern.matcher(item.getBody());
             var expiryMatcher = expiryPattern.matcher(item.getBody());
-            if (!tokenMatcher.find() || !expiryMatcher.find())
-                throw new IllegalStateException("Could not parse token or expiry");
+            if (!tokenMatcher.find() || !expiryMatcher.find()) {
+                onError(new IllegalStateException("Could not parse token or expiry"));
+                return;
+            }
             this.expiry = Long.parseLong(expiryMatcher.group(1));
             this.token = tokenMatcher.group(1);
             startUpLatch.countDown();
+            scheduler.schedule(this::fetchNewToken, tenMinutesBeforeExpiry(), TimeUnit.MILLISECONDS);
         }
 
         @Override
         public void onError(Throwable throwable) {
-            if(throwable instanceof HttpStatusException) {
+            startUpLatch.countDown();
+            if (throwable instanceof HttpStatusException) {
                 HttpStatus status = ((HttpStatusException) throwable).getHttpStatus();
-                if(status.is5xxServerError()) {
+                if (status.is5xxServerError()) {
                     scheduler.schedule(this::fetchNewToken, 30, TimeUnit.SECONDS);
                     return;
                 }
-                throw new IllegalStateException("HTTP status: " + status , throwable);
+                throw new IllegalStateException("HTTP status: " + status, throwable);
             }
             throw new IllegalStateException("Unknown error when fetching token", throwable);
         }
 
         @Override
         public void onComplete() {
-            scheduler.schedule(this::fetchNewToken, tenMinutesBeforeExpiry(), TimeUnit.MILLISECONDS);
+            var x = 3;
         }
 
         private long tenMinutesBeforeExpiry() {
@@ -138,7 +145,7 @@ public class BaseClient {
         }
 
         private void waitForFirstToken() {
-            if(token != null) return; //shortcut
+            if (token != null) return; //shortcut
             try {
                 startUpLatch.await();
             } catch (InterruptedException e) {

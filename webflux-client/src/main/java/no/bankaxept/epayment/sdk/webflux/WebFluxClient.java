@@ -2,9 +2,12 @@ package no.bankaxept.epayment.sdk.webflux;
 
 import no.bankaxept.epayment.sdk.baseclient.http.HttpResponse;
 import no.bankaxept.epayment.sdk.baseclient.HttpClient;
+import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.adapter.JdkFlowAdapter;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -26,8 +29,11 @@ public class WebFluxClient implements HttpClient {
                         .uri(uri)
                         .body(bodyPublisher == null ? BodyInserters.empty() : BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
                         .headers(httpHeaders -> httpHeaders.putAll(headers))
-                        .exchangeToMono(clientResponse ->
-                                clientResponse.bodyToMono(String.class).map(v -> new HttpResponse(clientResponse.statusCode().value(), v))));
+                        .exchangeToMono(clientResponse -> {
+                            if (clientResponse.statusCode().is2xxSuccessful())
+                                return clientResponse.bodyToMono(String.class).map(v -> new HttpResponse(clientResponse.statusCode().value(), v));
+                            return Mono.just(new HttpResponse(clientResponse.statusCode().value(), null));
+                        }));
     }
 
 }
