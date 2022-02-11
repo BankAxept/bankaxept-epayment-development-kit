@@ -1,5 +1,7 @@
 package no.bankaxept.epayment.sdk.baseclient;
 
+import no.bankaxept.epayment.sdk.baseclient.http.HttpResponse;
+import no.bankaxept.epayment.sdk.baseclient.http.HttpStatus;
 import no.bankaxept.epayment.sdk.baseclient.spi.HttpClientProvider;
 
 import java.time.Clock;
@@ -7,7 +9,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BaseClient {
@@ -27,7 +28,7 @@ public class BaseClient {
         this.tokenSupplier = new AccessTokenSupplier("/token", apimKey, username, password, clock, scheduler);
     }
 
-    public Flow.Publisher<ClientResponse> post(
+    public Flow.Publisher<HttpResponse> post(
             String uri,
             Flow.Publisher<String> body,
             String correlationId
@@ -35,7 +36,7 @@ public class BaseClient {
         return post(uri, body, correlationId, Collections.emptyMap());
     }
 
-    public Flow.Publisher<ClientResponse> post(
+    public Flow.Publisher<HttpResponse> post(
             String uri,
             Flow.Publisher<String> body,
             String correlationId,
@@ -47,7 +48,7 @@ public class BaseClient {
         return httpClient.post(uri, body, allHeaders);
     }
 
-    private class AccessTokenSupplier implements Flow.Subscriber<ClientResponse>, Supplier<String> {
+    private class AccessTokenSupplier implements Flow.Subscriber<HttpResponse>, Supplier<String> {
         private final ScheduledExecutorService scheduler; //TODO error handling
 
         private final Pattern tokenPattern = Pattern.compile("\"accessToken\"\\s*:\\s*\"(.*)\"");
@@ -97,9 +98,10 @@ public class BaseClient {
         }
 
         @Override
-        public void onNext(ClientResponse item) {
-            Matcher tokenMatcher = tokenPattern.matcher(item.getBody());
-            Matcher expiryMatcher = expiryPattern.matcher(item.getBody());
+        public void onNext(HttpResponse item) {
+            if(!item.getStatus().is2xxOk()) throw new HttpStatusException(item.getStatus());
+            var tokenMatcher = tokenPattern.matcher(item.getBody());
+            var expiryMatcher = expiryPattern.matcher(item.getBody());
             if (!tokenMatcher.find() || !expiryMatcher.find())
                 throw new IllegalStateException("Could not parse token or expiry");
             this.expiry = Long.parseLong(expiryMatcher.group(1));
@@ -109,7 +111,15 @@ public class BaseClient {
 
         @Override
         public void onError(Throwable throwable) {
-            throw new IllegalStateException("Error when fetching token", throwable);
+            if(throwable instanceof HttpStatusException) {
+                HttpStatus status = ((HttpStatusException) throwable).getHttpStatus();
+                if(status.is5xxServerError()) {
+                    scheduler.schedule(this::fetchNewToken, 30, TimeUnit.SECONDS);
+                    return;
+                }
+                throw new IllegalStateException("HTTP status: " + status , throwable);
+            }
+            throw new IllegalStateException("Unknown error when fetching token", throwable);
         }
 
         @Override
@@ -123,7 +133,7 @@ public class BaseClient {
 
         @Override
         public String get() {
-            waitForFirstToken();
+            waitForFirstToken(); //Needed for initial startup
             return token;
         }
 
@@ -133,6 +143,18 @@ public class BaseClient {
                 startUpLatch.await();
             } catch (InterruptedException e) {
                 throw new IllegalStateException("Could not get initial token");
+            }
+        }
+
+        private class HttpStatusException extends RuntimeException {
+            private final HttpStatus httpStatus;
+
+            public HttpStatusException(HttpStatus httpStatus) {
+                this.httpStatus = httpStatus;
+            }
+
+            public HttpStatus getHttpStatus() {
+                return httpStatus;
             }
         }
     }
