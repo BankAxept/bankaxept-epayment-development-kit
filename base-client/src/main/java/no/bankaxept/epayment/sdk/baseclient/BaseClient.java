@@ -141,14 +141,10 @@ public class BaseClient {
         @Override
         public String get() {
             if (token == null) waitForFirstToken(); //Needed for initial startup
-            if (tokenExpired()) throw new IllegalStateException("Token is expired");
+            if(token == null ) throw new IllegalStateException("Initial token could not be retrieved.");
+            if (expiry == null || expiry.isBefore(clock.instant())) throw new IllegalStateException("Token is expired (or expiration is missing).");
             return token;
         }
-
-        private boolean tokenExpired() {
-            return expiry == null || expiry.isBefore(clock.instant());
-        }
-
 
         private void waitForFirstToken() {
             try {
