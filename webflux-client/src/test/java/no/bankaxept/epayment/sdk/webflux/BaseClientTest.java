@@ -20,6 +20,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @WireMockTest(httpPort = 8443)
 public class BaseClientTest {
@@ -49,7 +50,7 @@ public class BaseClientTest {
         stubTokenEndpoint(serverError());
         stubTestEndpoint();
         baseClient = new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
-        baseClient.post("/test", null, "1");
+        assertThatThrownBy(() -> baseClient.post("/test", null, "1")).isInstanceOf(IllegalStateException.class);
         Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(30L), Mockito.eq(TimeUnit.SECONDS));
     }
 
@@ -58,7 +59,7 @@ public class BaseClientTest {
         stubTokenEndpoint(forbidden());
         stubTestEndpoint();
         baseClient = new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
-        baseClient.post("/test", null, "1");
+        assertThatThrownBy(() -> baseClient.post("/test", null, "1")).isInstanceOf(IllegalStateException.class);
         Mockito.verify(schedulerSpy, Mockito.never()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 

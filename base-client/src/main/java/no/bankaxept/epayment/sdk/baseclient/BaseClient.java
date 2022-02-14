@@ -5,6 +5,7 @@ import no.bankaxept.epayment.sdk.baseclient.http.HttpStatus;
 import no.bankaxept.epayment.sdk.baseclient.spi.HttpClientProvider;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
@@ -59,7 +60,7 @@ public class BaseClient {
         private String username;
         private String password;
 
-        private long expiry;
+        private Instant expiry;
         private String token;
 
         private final Clock clock;
@@ -109,7 +110,7 @@ public class BaseClient {
                 onError(new IllegalStateException("Could not parse token or expiry"));
                 return;
             }
-            this.expiry = Long.parseLong(expiryMatcher.group(1));
+            this.expiry = Instant.ofEpochMilli(Long.parseLong(expiryMatcher.group(1)));
             this.token = tokenMatcher.group(1);
             startUpLatch.countDown();
             scheduler.schedule(this::fetchNewToken, tenMinutesBeforeExpiry(), TimeUnit.MILLISECONDS);
@@ -131,18 +132,23 @@ public class BaseClient {
 
         @Override
         public void onComplete() {
-            var x = 3;
         }
 
         private long tenMinutesBeforeExpiry() {
-            return expiry - clock.instant().plus(10, ChronoUnit.MINUTES).toEpochMilli();
+            return expiry.toEpochMilli() - clock.instant().plus(10, ChronoUnit.MINUTES).toEpochMilli();
         }
 
         @Override
         public String get() {
             waitForFirstToken(); //Needed for initial startup
+            if (tokenExpired()) throw new IllegalStateException("Token is expired");
             return token;
         }
+
+        private boolean tokenExpired() {
+            return expiry == null || expiry.isBefore(clock.instant());
+        }
+
 
         private void waitForFirstToken() {
             if (token != null) return; //shortcut
