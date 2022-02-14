@@ -1,6 +1,7 @@
 package no.bankaxept.epayment.sdk.webflux;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
@@ -63,6 +64,24 @@ public class BaseClientTest {
         Mockito.verify(schedulerSpy, Mockito.never()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
+    @Test
+    public void should_handle_connection_reset() {
+        stubTokenEndpoint(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER));
+        stubTestEndpoint();
+        baseClient = new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
+        assertThatThrownBy(() -> baseClient.post("/test", null, "1")).isInstanceOf(IllegalStateException.class);
+        Mockito.verify(schedulerSpy, Mockito.never()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
+    }
+
+    @Test
+    public void should_handle_delay() {
+        stubTokenEndpoint(validTokenResponse().withFixedDelay(2000));
+        stubTestEndpoint();
+        baseClient = new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
+        baseClient.post("/test", null, "1");
+        Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(600000L), Mockito.eq(TimeUnit.MILLISECONDS));
+    }
+
     private StubMapping stubTestEndpoint() {
         return stubFor(post("/test")
                 .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
@@ -74,11 +93,15 @@ public class BaseClientTest {
         return stubFor(post("/token")
                 .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
                 .withBasicAuth("username", "password")
-                .willReturn(ok().withBody(
-                        "{\n" +
-                                "\"expiresOn\": " + clock.instant().plus(20, ChronoUnit.MINUTES).toEpochMilli() + ",\n" +
-                                "\"accessToken\": \"a-token\"\n" +
-                                "}")));
+                .willReturn(validTokenResponse()));
+    }
+
+    private ResponseDefinitionBuilder validTokenResponse() {
+        return ok().withBody(
+                "{\n" +
+                        "\"expiresOn\": " + clock.instant().plus(20, ChronoUnit.MINUTES).toEpochMilli() + ",\n" +
+                        "\"accessToken\": \"a-token\"\n" +
+                        "}");
     }
 
     private StubMapping stubTokenEndpoint(ResponseDefinitionBuilder responseBuilder) {

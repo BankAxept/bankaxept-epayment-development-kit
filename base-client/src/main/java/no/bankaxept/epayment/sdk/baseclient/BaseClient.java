@@ -50,7 +50,7 @@ public class BaseClient {
     }
 
     private class AccessTokenSupplier implements Flow.Subscriber<HttpResponse>, Supplier<String> {
-        private final ScheduledExecutorService scheduler; //TODO error handling
+        private final ScheduledExecutorService scheduler;
 
         private final Pattern tokenPattern = Pattern.compile("\"accessToken\"\\s*:\\s*\"(.*)\"");
         private final Pattern expiryPattern = Pattern.compile("\"expiresOn\"\\s*:\\s*(\\d+)");
@@ -122,7 +122,7 @@ public class BaseClient {
             if (throwable instanceof HttpStatusException) {
                 HttpStatus status = ((HttpStatusException) throwable).getHttpStatus();
                 if (status.is5xxServerError()) {
-                    scheduler.schedule(this::fetchNewToken, 30, TimeUnit.SECONDS);
+                    scheduler.schedule(this::fetchNewToken, 30L, TimeUnit.SECONDS);
                     return;
                 }
                 throw new IllegalStateException("HTTP status: " + status, throwable);
