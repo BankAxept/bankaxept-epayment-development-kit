@@ -140,7 +140,7 @@ public class BaseClient {
 
         @Override
         public String get() {
-            waitForFirstToken(); //Needed for initial startup
+            if (token == null) waitForFirstToken(); //Needed for initial startup
             if (tokenExpired()) throw new IllegalStateException("Token is expired");
             return token;
         }
@@ -151,7 +151,6 @@ public class BaseClient {
 
 
         private void waitForFirstToken() {
-            if (token != null) return; //shortcut
             try {
                 startUpLatch.await();
             } catch (InterruptedException e) {
