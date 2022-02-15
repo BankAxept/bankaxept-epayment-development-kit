@@ -1,7 +1,7 @@
-package no.bankaxept.epayment.sdk.baseclient;
+package no.bankaxept.epayment.client.base;
 
 
-import no.bankaxept.epayment.sdk.baseclient.http.HttpResponse;
+import no.bankaxept.epayment.client.base.http.HttpResponse;
 
 import java.util.List;
 import java.util.Map;

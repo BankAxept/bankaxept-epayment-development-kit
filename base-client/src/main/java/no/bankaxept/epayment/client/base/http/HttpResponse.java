@@ -1,4 +1,4 @@
-package no.bankaxept.epayment.sdk.baseclient.http;
+package no.bankaxept.epayment.client.base.http;
 
 import java.util.Objects;
 

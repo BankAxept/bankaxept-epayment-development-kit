@@ -1,6 +1,6 @@
 module no.bankaxept.epayment.sdk.baseclient {
-    uses no.bankaxept.epayment.sdk.baseclient.spi.HttpClientProvider;
-    exports no.bankaxept.epayment.sdk.baseclient;
-    exports no.bankaxept.epayment.sdk.baseclient.spi;
-    exports no.bankaxept.epayment.sdk.baseclient.http;
+    uses no.bankaxept.epayment.client.base.spi.HttpClientProvider;
+    exports no.bankaxept.epayment.client.base;
+    exports no.bankaxept.epayment.client.base.spi;
+    exports no.bankaxept.epayment.client.base.http;
 }

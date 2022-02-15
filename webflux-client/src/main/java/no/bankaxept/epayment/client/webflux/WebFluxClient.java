@@ -1,7 +1,7 @@
-package no.bankaxept.epayment.sdk.webflux;
+package no.bankaxept.epayment.client.webflux;
 
-import no.bankaxept.epayment.sdk.baseclient.http.HttpResponse;
-import no.bankaxept.epayment.sdk.baseclient.HttpClient;
+import no.bankaxept.epayment.client.base.http.HttpResponse;
+import no.bankaxept.epayment.client.base.HttpClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.adapter.JdkFlowAdapter;

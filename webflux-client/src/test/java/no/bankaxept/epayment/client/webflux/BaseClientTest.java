@@ -1,11 +1,11 @@
-package no.bankaxept.epayment.sdk.webflux;
+package no.bankaxept.epayment.client.webflux;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-import no.bankaxept.epayment.sdk.baseclient.BaseClient;
+import no.bankaxept.epayment.client.base.BaseClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -1,8 +1,8 @@
-package no.bankaxept.epayment.sdk.baseclient;
+package no.bankaxept.epayment.client.base;
 
-import no.bankaxept.epayment.sdk.baseclient.http.HttpResponse;
-import no.bankaxept.epayment.sdk.baseclient.http.HttpStatus;
-import no.bankaxept.epayment.sdk.baseclient.spi.HttpClientProvider;
+import no.bankaxept.epayment.client.base.http.HttpResponse;
+import no.bankaxept.epayment.client.base.http.HttpStatus;
+import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
 
 import java.time.Clock;
 import java.time.Instant;

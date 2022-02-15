@@ -1,7 +1,7 @@
-package no.bankaxept.epayment.sdk.webflux;
+package no.bankaxept.epayment.client.webflux;
 
-import no.bankaxept.epayment.sdk.baseclient.HttpClient;
-import no.bankaxept.epayment.sdk.baseclient.spi.HttpClientProvider;
+import no.bankaxept.epayment.client.base.HttpClient;
+import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
 
 public class WebFluxHttpClientProvider implements HttpClientProvider {
     @Override
