@@ -29,6 +29,14 @@ public class WebFluxClientTest {
     }
 
     @Test
+    public void simple_request_empty_body_no_headers(){
+        stubFor(post("/test").willReturn(ok()));
+        var publisher = client.post("/test", JdkFlowAdapter.publisherToFlowPublisher(Mono.empty()), Collections.emptyMap());
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(publisher))
+                .verifyComplete();
+    }
+
+    @Test
     public void simple_request_with_body_and_header(){
         stubFor(post("/test")
                 .withHeader("test-header", new ContainsPattern("test-value"))
