@@ -2,9 +2,7 @@ package no.bankaxept.epayment.sdk.webflux;
 
 import no.bankaxept.epayment.sdk.baseclient.http.HttpResponse;
 import no.bankaxept.epayment.sdk.baseclient.HttpClient;
-import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.core.publisher.Mono;

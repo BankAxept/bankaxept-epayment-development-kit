@@ -12,6 +12,9 @@ import org.mockito.Mockito;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -28,8 +31,15 @@ public class BaseClientTest {
 
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private ScheduledExecutorService schedulerSpy;
-    private BaseClient baseClient;
+    private BaseClient baseClient; //Because it fetches token on start, it needs to be started after setting up wiremock
+    private String tokenResponseFromFile = readJsonFromFile("token-response.json").replace("123", Long.toString(clock.instant().plus(20, ChronoUnit.MINUTES).toEpochMilli()));
 
+    private String readJsonFromFile(String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(filename).getPath())));
+    }
+
+    public BaseClientTest() throws IOException {
+    }
 
     @BeforeEach
     public void setup() {
@@ -40,7 +50,7 @@ public class BaseClientTest {
     public void should_add_all_relevant_headers_and_schedule_refresh() {
         stubTokenEndpoint();
         stubTestEndpoint();
-        baseClient = new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
+        baseClient = createBaseClient();
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", null, "1")))
                 .verifyComplete();
         Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(600000L), Mockito.eq(TimeUnit.MILLISECONDS));
@@ -50,16 +60,17 @@ public class BaseClientTest {
     public void should_retry_if_server_error() {
         stubTokenEndpoint(serverError());
         stubTestEndpoint();
-        baseClient = new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
+        baseClient = createBaseClient();
         assertThatThrownBy(() -> baseClient.post("/test", null, "1")).isInstanceOf(IllegalStateException.class);
-        Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(30L), Mockito.eq(TimeUnit.SECONDS));
+        //Added delay because it fails sometimes
+        Mockito.verify(schedulerSpy, Mockito.after(1000)).schedule(Mockito.any(Runnable.class), Mockito.eq(30L), Mockito.eq(TimeUnit.SECONDS));
     }
 
     @Test
     public void should_not_retry_if_client_error() {
         stubTokenEndpoint(forbidden());
         stubTestEndpoint();
-        baseClient = new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
+        baseClient = createBaseClient();
         assertThatThrownBy(() -> baseClient.post("/test", null, "1")).isInstanceOf(IllegalStateException.class);
         Mockito.verify(schedulerSpy, Mockito.never()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
@@ -68,7 +79,7 @@ public class BaseClientTest {
     public void should_handle_connection_reset() {
         stubTokenEndpoint(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER));
         stubTestEndpoint();
-        baseClient = new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
+        baseClient = createBaseClient();
         assertThatThrownBy(() -> baseClient.post("/test", null, "1")).isInstanceOf(IllegalStateException.class);
         Mockito.verify(schedulerSpy, Mockito.never()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
@@ -77,9 +88,15 @@ public class BaseClientTest {
     public void should_handle_delay() {
         stubTokenEndpoint(validTokenResponse().withFixedDelay(2000));
         stubTestEndpoint();
-        baseClient = new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
+        baseClient = createBaseClient();
         baseClient.post("/test", null, "1");
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", null, "1")))
+                .verifyComplete();
         Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(600000L), Mockito.eq(TimeUnit.MILLISECONDS));
+    }
+
+    private BaseClient createBaseClient() {
+        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
     }
 
     private StubMapping stubTestEndpoint() {
@@ -97,11 +114,7 @@ public class BaseClientTest {
     }
 
     private ResponseDefinitionBuilder validTokenResponse() {
-        return ok().withBody(
-                "{\n" +
-                        "\"expiresOn\": " + clock.instant().plus(20, ChronoUnit.MINUTES).toEpochMilli() + ",\n" +
-                        "\"accessToken\": \"a-token\"\n" +
-                        "}");
+        return ok().withBody(tokenResponseFromFile);
     }
 
     private StubMapping stubTokenEndpoint(ResponseDefinitionBuilder responseBuilder) {
