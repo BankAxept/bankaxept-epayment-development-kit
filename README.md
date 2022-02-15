@@ -1,4 +1,4 @@
-# Development kit for Epayment integration
+# Development kit for ePayment integration
 
 This sdk provides a spi.
 
