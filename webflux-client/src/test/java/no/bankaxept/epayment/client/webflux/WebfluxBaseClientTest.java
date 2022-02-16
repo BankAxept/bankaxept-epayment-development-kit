@@ -55,7 +55,7 @@ public class WebfluxBaseClientTest {
         baseClient = createBaseClient();
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
                 .verifyComplete();
-        Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(600000L), Mockito.eq(TimeUnit.MILLISECONDS));
+        Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(599999L), Mockito.eq(TimeUnit.MILLISECONDS));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class WebfluxBaseClientTest {
         baseClient.post("/test", null, "1");
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
                 .verifyComplete();
-        Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(600000L), Mockito.eq(TimeUnit.MILLISECONDS));
+        Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(599999L), Mockito.eq(TimeUnit.MILLISECONDS));
     }
 
     private BaseClient createBaseClient() {

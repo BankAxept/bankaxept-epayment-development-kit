@@ -6,8 +6,8 @@ import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -139,7 +139,7 @@ public class BaseClient {
         }
 
         private long tenMinutesBeforeExpiry() {
-            return expiry.toEpochMilli() - clock.instant().plus(10, ChronoUnit.MINUTES).toEpochMilli();
+            return Duration.between(clock.instant().plusSeconds(600), expiry).toMillis();
         }
 
         @Override
