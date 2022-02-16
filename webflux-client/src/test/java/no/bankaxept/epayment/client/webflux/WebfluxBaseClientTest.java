@@ -29,7 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @WireMockTest(httpPort = 8443)
-public class BaseClientTest {
+public class WebfluxBaseClientTest {
 
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private ScheduledExecutorService schedulerSpy;
@@ -40,7 +40,7 @@ public class BaseClientTest {
         return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(filename).getPath())));
     }
 
-    public BaseClientTest() throws IOException {
+    public WebfluxBaseClientTest() throws IOException {
     }
 
     @BeforeEach
