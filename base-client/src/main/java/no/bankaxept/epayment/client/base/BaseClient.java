@@ -35,7 +35,7 @@ public class BaseClient {
             Flow.Publisher<String> body,
             String correlationId
     ) {
-        return post(uri, body, correlationId, Collections.emptyMap());
+        return post(uri, body, correlationId, Map.of());
     }
 
     public Flow.Publisher<HttpResponse> post(
@@ -45,8 +45,8 @@ public class BaseClient {
             Map<String, List<String>> headers
     ) {
         var allHeaders = new HashMap<>(headers);
-        allHeaders.put("X-Correlation-Id", Collections.singletonList(correlationId));
-        allHeaders.put("Authorization", Collections.singletonList("Bearer " + tokenSupplier.get()));
+        allHeaders.put("X-Correlation-Id", List.of(correlationId));
+        allHeaders.put("Authorization", List.of("Bearer " + tokenSupplier.get()));
         return httpClient.post(uri, body, allHeaders);
     }
 
@@ -87,8 +87,8 @@ public class BaseClient {
 
         private HashMap<String, List<String>> createHeaders() {
             var headers = new LinkedHashMap<String, List<String>>();
-            headers.put("Ocp-Apim-Subscription-Key", Collections.singletonList(apimKey));
-            headers.put("Authorization", Collections.singletonList(authenticationHeader()));
+            headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
+            headers.put("Authorization", List.of(authenticationHeader()));
             return headers;
         }
 
