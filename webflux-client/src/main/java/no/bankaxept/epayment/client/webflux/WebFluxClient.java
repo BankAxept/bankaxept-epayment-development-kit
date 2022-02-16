@@ -25,7 +25,7 @@ public class WebFluxClient implements HttpClient {
                 webClient
                         .post()
                         .uri(uri)
-                        .body(bodyPublisher == null ? BodyInserters.empty() : BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
+                        .body(BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
                         .headers(httpHeaders -> httpHeaders.putAll(headers))
                         .exchangeToMono(clientResponse -> {
                             if (clientResponse.statusCode().is2xxSuccessful())

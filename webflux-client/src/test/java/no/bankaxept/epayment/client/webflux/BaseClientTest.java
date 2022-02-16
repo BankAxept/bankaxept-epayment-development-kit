@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import reactor.adapter.JdkFlowAdapter;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.Flow;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +53,7 @@ public class BaseClientTest {
         stubTokenEndpoint();
         stubTestEndpoint();
         baseClient = createBaseClient();
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", null, "1")))
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
                 .verifyComplete();
         Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(600000L), Mockito.eq(TimeUnit.MILLISECONDS));
     }
@@ -61,9 +63,13 @@ public class BaseClientTest {
         stubTokenEndpoint(serverError());
         stubTestEndpoint();
         baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", null, "1")).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(IllegalStateException.class);
         //Added delay because it fails sometimes
         Mockito.verify(schedulerSpy, Mockito.after(1000)).schedule(Mockito.any(Runnable.class), Mockito.eq(30L), Mockito.eq(TimeUnit.SECONDS));
+    }
+
+    private Flow.Publisher<String> emptyPublisher() {
+        return JdkFlowAdapter.publisherToFlowPublisher(Mono.just(""));
     }
 
     @Test
@@ -71,7 +77,7 @@ public class BaseClientTest {
         stubTokenEndpoint(forbidden());
         stubTestEndpoint();
         baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", null, "1")).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(IllegalStateException.class);
         Mockito.verify(schedulerSpy, Mockito.never()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
@@ -80,7 +86,7 @@ public class BaseClientTest {
         stubTokenEndpoint(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER));
         stubTestEndpoint();
         baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", null, "1")).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(IllegalStateException.class);
         Mockito.verify(schedulerSpy, Mockito.never()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
@@ -90,7 +96,7 @@ public class BaseClientTest {
         stubTestEndpoint();
         baseClient = createBaseClient();
         baseClient.post("/test", null, "1");
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", null, "1")))
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
                 .verifyComplete();
         Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(600000L), Mockito.eq(TimeUnit.MILLISECONDS));
     }

@@ -78,7 +78,10 @@ public class BaseClient {
         }
 
         private void fetchNewToken() {
-            httpClient.post(uri, null, createHeaders()).subscribe(this);
+            var emptyPublisher = new SubmissionPublisher<String>();
+            httpClient.post(uri, emptyPublisher, createHeaders()).subscribe(this);
+            emptyPublisher.submit("");
+            emptyPublisher.close();
         }
 
         private HashMap<String, List<String>> createHeaders() {
@@ -166,5 +169,4 @@ public class BaseClient {
             }
         }
     }
-
 }

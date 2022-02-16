@@ -31,7 +31,7 @@ public class WebFluxClientTest {
     @Test
     public void simple_request_no_body_no_headers(){
         stubFor(post("/test").willReturn(ok()));
-        Flux<HttpResponse> fluxPublisher = JdkFlowAdapter.flowPublisherToFlux(client.post("/test", null, Collections.emptyMap()));
+        Flux<HttpResponse> fluxPublisher = JdkFlowAdapter.flowPublisherToFlux(client.post("/test", JdkFlowAdapter.publisherToFlowPublisher(Mono.just("")), Collections.emptyMap()));
         //No mono will be emitted if the response body is empty
         StepVerifier.create(fluxPublisher)
                 .verifyComplete();
