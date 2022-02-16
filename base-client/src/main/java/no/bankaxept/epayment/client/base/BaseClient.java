@@ -4,6 +4,7 @@ import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.http.HttpStatus;
 import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -92,7 +93,7 @@ public class BaseClient {
         }
 
         private String authenticationHeader() {
-            return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
+            return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8));
         }
 
 
