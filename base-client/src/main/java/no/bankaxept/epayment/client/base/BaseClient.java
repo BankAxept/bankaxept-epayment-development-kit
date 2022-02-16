@@ -75,7 +75,7 @@ public class BaseClient {
             this.password = password;
             this.clock = clock;
             this.scheduler = scheduler;
-            fetchNewToken();
+            scheduler.schedule(this::fetchNewToken, 0, TimeUnit.MILLISECONDS);
         }
 
         private void fetchNewToken() {

@@ -78,7 +78,7 @@ public class WebfluxBaseClientTest {
         stubTestEndpoint();
         baseClient = createBaseClient();
         assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(IllegalStateException.class);
-        Mockito.verify(schedulerSpy, Mockito.never()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
+        Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class WebfluxBaseClientTest {
         stubTestEndpoint();
         baseClient = createBaseClient();
         assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(IllegalStateException.class);
-        Mockito.verify(schedulerSpy, Mockito.never()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
+        Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
     @Test
