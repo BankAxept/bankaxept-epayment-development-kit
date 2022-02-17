@@ -36,6 +36,10 @@ public class WebfluxBaseClientTest {
     private BaseClient baseClient; //Because it fetches token on start, it needs to be started after setting up wiremock
     private String tokenResponseFromFile = readJsonFromFile("token-response.json").replace("123", Long.toString(clock.instant().plus(20, ChronoUnit.MINUTES).toEpochMilli()));
 
+    private Flow.Publisher<String> emptyPublisher() {
+        return JdkFlowAdapter.publisherToFlowPublisher(Mono.just(""));
+    }
+
     private String readJsonFromFile(String filename) throws IOException {
         return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(filename).getPath())));
     }
@@ -66,10 +70,6 @@ public class WebfluxBaseClientTest {
         assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(IllegalStateException.class);
         //Added delay because it fails sometimes
         Mockito.verify(schedulerSpy, Mockito.after(1000)).schedule(Mockito.any(Runnable.class), Mockito.eq(30L), Mockito.eq(TimeUnit.SECONDS));
-    }
-
-    private Flow.Publisher<String> emptyPublisher() {
-        return JdkFlowAdapter.publisherToFlowPublisher(Mono.just(""));
     }
 
     @Test

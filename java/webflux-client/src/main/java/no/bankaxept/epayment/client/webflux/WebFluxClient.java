@@ -1,6 +1,6 @@
 package no.bankaxept.epayment.client.webflux;
 
-import no.bankaxept.epayment.client.base.HttpClient;
+import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
