@@ -9,14 +9,15 @@ import java.time.Clock;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Flow;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.SubmissionPublisher;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
-public class AccessTokenSupplier implements Flow.Subscriber<HttpResponse>, Supplier<String> {
+public class AccessTokenPublisher extends SubmissionPublisher<String> implements Flow.Processor<HttpResponse, String> {
     private final ScheduledExecutorService scheduler;
     private final Clock clock;
-    private CountDownLatch startUpLatch = new CountDownLatch(1);
 
     private HttpClient httpClient;
     private final String uri;
@@ -24,7 +25,7 @@ public class AccessTokenSupplier implements Flow.Subscriber<HttpResponse>, Suppl
 
     private AtomicReference<AccessToken> atomicToken = new AtomicReference<>();
 
-    public AccessTokenSupplier(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
+    public AccessTokenPublisher(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
         this.headers = createHeaders(apimKey, username, password);
         this.clock = clock;
@@ -63,11 +64,10 @@ public class AccessTokenSupplier implements Flow.Subscriber<HttpResponse>, Suppl
                 throw new HttpStatusException(item.getStatus());
             }
             atomicToken.set(AccessToken.parse(item.getBody()));
+            submit(atomicToken.get().getToken());
             scheduleFetchInMillis(atomicToken.get().millisUntilTenMinutesBeforeExpiry(clock));
         } catch (Exception e) {
             onError(e);
-        } finally {
-            startUpLatch.countDown();
         }
     }
 
@@ -89,20 +89,12 @@ public class AccessTokenSupplier implements Flow.Subscriber<HttpResponse>, Suppl
     }
 
     @Override
-    public String get() {
-        if (atomicToken.get() == null) waitForFirstToken(); //Needed for initial startup
-        if (atomicToken.get() == null) throw new IllegalStateException("Initial token could not be retrieved.");
-        if (atomicToken.get().getExpiry() == null || atomicToken.get().getExpiry().isBefore(clock.instant()))
-            throw new IllegalStateException("Token is expired (or expiration is missing).");
-        return atomicToken.get().getToken();
+    public void subscribe(Flow.Subscriber<? super String> subscriber) {
+        if (haveValidToken())
+            submit(atomicToken.get().getToken());
     }
 
-    private void waitForFirstToken() {
-        try {
-            startUpLatch.await();
-        } catch (InterruptedException e) {
-            throw new IllegalStateException("Could not get initial token");
-        }
+    private boolean haveValidToken() {
+        return atomicToken.get() != null && atomicToken.get().getExpiry() == null || atomicToken.get().getExpiry().isBefore(clock.instant());
     }
-
 }

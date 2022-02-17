@@ -20,10 +20,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.Flow;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -53,7 +50,7 @@ public class WebfluxBaseClientTest {
     }
 
     @Test
-    public void should_add_all_relevant_headers_and_schedule_refresh() {
+    public void should_add_all_relevant_headers_and_schedule_refresh() throws ExecutionException, InterruptedException, TimeoutException {
         stubTokenEndpoint();
         stubTestEndpoint();
         baseClient = createBaseClient();
@@ -91,7 +88,7 @@ public class WebfluxBaseClientTest {
     }
 
     @Test
-    public void should_handle_delay() {
+    public void should_handle_delay() throws ExecutionException, InterruptedException, TimeoutException {
         stubTokenEndpoint(validTokenResponse().withFixedDelay(2000));
         stubTestEndpoint();
         baseClient = createBaseClient();
