@@ -44,7 +44,7 @@ public class BaseClient {
             String correlationId,
             Map<String, List<String>> headers
     ) {
-        var allHeaders = new HashMap<>(headers);
+        var allHeaders = new LinkedHashMap<>(headers);
         allHeaders.put("X-Correlation-Id", List.of(correlationId));
         allHeaders.put("Authorization", List.of("Bearer " + tokenSupplier.get()));
         return httpClient.post(uri, body, allHeaders);
@@ -85,7 +85,7 @@ public class BaseClient {
             emptyPublisher.close();
         }
 
-        private HashMap<String, List<String>> createHeaders() {
+        private LinkedHashMap<String, List<String>> createHeaders() {
             var headers = new LinkedHashMap<String, List<String>>();
             headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
             headers.put("Authorization", List.of(authenticationHeader()));
