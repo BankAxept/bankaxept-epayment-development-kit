@@ -46,10 +46,7 @@ public class AccessTokenPublisher extends SubmissionPublisher<String> implements
     }
 
     private void fetchNewToken() {
-        var emptyPublisher = new SubmissionPublisher<String>();
-        httpClient.post(uri, emptyPublisher, headers).subscribe(this);
-        emptyPublisher.submit("");
-        emptyPublisher.close();
+        httpClient.post(uri, subscriber -> subscriber.onNext(""), headers).subscribe(this);
     }
 
     @Override
@@ -90,11 +87,12 @@ public class AccessTokenPublisher extends SubmissionPublisher<String> implements
 
     @Override
     public void subscribe(Flow.Subscriber<? super String> subscriber) {
-        if (haveValidToken())
-            submit(atomicToken.get().getToken());
-    }
-
-    private boolean haveValidToken() {
-        return atomicToken.get() != null && atomicToken.get().getExpiry() == null || atomicToken.get().getExpiry().isBefore(clock.instant());
+        var token = atomicToken.get();
+        if (token != null && token.getExpiry().isBefore(clock.instant())) {
+            // Provide existing valid token immediately
+            subscriber.onNext(token.getToken());
+        } else {
+            super.subscribe(subscriber);
+        }
     }
 }
