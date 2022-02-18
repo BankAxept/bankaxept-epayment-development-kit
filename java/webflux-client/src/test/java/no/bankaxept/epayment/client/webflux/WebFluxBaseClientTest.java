@@ -26,7 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @WireMockTest(httpPort = 8443)
-public class WebfluxBaseClientTest {
+public class WebFluxBaseClientTest {
 
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private ScheduledExecutorService schedulerSpy;
@@ -41,7 +41,7 @@ public class WebfluxBaseClientTest {
         return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(filename).getPath())));
     }
 
-    public WebfluxBaseClientTest() throws IOException {
+    public WebFluxBaseClientTest() throws IOException {
     }
 
     @BeforeEach
