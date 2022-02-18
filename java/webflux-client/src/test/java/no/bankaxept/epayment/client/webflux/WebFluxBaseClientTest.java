@@ -17,12 +17,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @WireMockTest(httpPort = 8443)
@@ -87,8 +89,23 @@ public class WebFluxBaseClientTest {
         Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
+    @Test
+    public void should_retry_if_server_error_and_work() throws ExecutionException, InterruptedException, TimeoutException {
+        stubTokenEndpoint(serverError());
+        stubTokenEndpointSecond();
+        stubTestEndpoint();
+        baseClient = createBaseClientWithTimeout(Duration.ofSeconds(10));
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
+                .verifyComplete();        //Added delay for consistency
+        Mockito.verify(schedulerSpy, Mockito.after(1000)).schedule(Mockito.any(Runnable.class), Mockito.eq(5000L), Mockito.eq(TimeUnit.MILLISECONDS));
+    }
+
     private BaseClient createBaseClient() {
-        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy);
+        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy, Duration.ofSeconds(2));
+    }
+
+    private BaseClient createBaseClientWithTimeout(Duration timeout) {
+        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy, timeout);
     }
 
     private StubMapping stubTestEndpoint() {
@@ -105,12 +122,25 @@ public class WebFluxBaseClientTest {
                 .willReturn(validTokenResponse()));
     }
 
+    private StubMapping stubTokenEndpointSecond() {
+        return stubFor(post("/token")
+                .inScenario("Token")
+                .whenScenarioStateIs("Second token")
+                .willSetStateTo("Second token")
+                .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
+                .withBasicAuth("username", "password")
+                .willReturn(validTokenResponse()));
+    }
+
     private ResponseDefinitionBuilder validTokenResponse() {
         return ok().withBody(tokenResponseFromFile);
     }
 
     private StubMapping stubTokenEndpoint(ResponseDefinitionBuilder responseBuilder) {
         return stubFor(post("/token")
+                .inScenario("Token")
+                .whenScenarioStateIs(STARTED)
+                .willSetStateTo("Second token")
                 .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
                 .withBasicAuth("username", "password")
                 .willReturn(responseBuilder));

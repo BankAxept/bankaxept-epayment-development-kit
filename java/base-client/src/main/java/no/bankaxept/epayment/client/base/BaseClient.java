@@ -17,17 +17,19 @@ import java.util.concurrent.*;
 public class BaseClient {
     private final AccessTokenPublisher tokenPublisher;
     private final HttpClient httpClient;
+    private final Duration tokenTimeout;
 
     public BaseClient(String baseurl, String apimKey, String username, String password) {
-        this(baseurl, apimKey, username, password, Clock.systemDefaultZone(), Executors.newScheduledThreadPool(1));
+        this(baseurl, apimKey, username, password, Clock.systemDefaultZone(), Executors.newScheduledThreadPool(1), Duration.ofSeconds(2));
     }
 
-    public BaseClient(String baseurl, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler) {
+    public BaseClient(String baseurl, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, Duration tokenTimeout) {
         httpClient = ServiceLoader.load(HttpClientProvider.class)
                 .findFirst()
                 .map(httpClientProvider -> httpClientProvider.create(baseurl))
                 .orElseThrow();
         this.tokenPublisher = new AccessTokenPublisher("/token", apimKey, username, password, clock, scheduler, httpClient);
+        this.tokenTimeout = tokenTimeout;
     }
 
     public Flow.Publisher<HttpResponse> post(
@@ -46,7 +48,7 @@ public class BaseClient {
     ) throws ExecutionException, InterruptedException, TimeoutException {
         var allHeaders = new LinkedHashMap<>(headers);
         allHeaders.put("X-Correlation-Id", List.of(correlationId));
-        allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(Duration.ofSeconds(2))));
+        allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
         return httpClient.post(uri, body, allHeaders);
     }
 }
