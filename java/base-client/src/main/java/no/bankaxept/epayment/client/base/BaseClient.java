@@ -46,7 +46,7 @@ public class BaseClient {
     ) throws ExecutionException, InterruptedException, TimeoutException {
         var allHeaders = new LinkedHashMap<>(headers);
         allHeaders.put("X-Correlation-Id", List.of(correlationId));
-        allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(Duration.ofMillis(1000))));
+        allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(Duration.ofSeconds(2))));
         return httpClient.post(uri, body, allHeaders);
     }
 }

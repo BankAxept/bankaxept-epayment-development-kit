@@ -46,7 +46,10 @@ public class AccessTokenPublisher extends SubmissionPublisher<String> implements
     }
 
     private void fetchNewToken() {
-        httpClient.post(uri, subscriber -> subscriber.onNext(""), headers).subscribe(this);
+        SubmissionPublisher<String> emptyPublisher = new SubmissionPublisher<>();
+        httpClient.post(uri, emptyPublisher, headers).subscribe(this);
+        emptyPublisher.submit("");
+        emptyPublisher.close();
     }
 
     @Override

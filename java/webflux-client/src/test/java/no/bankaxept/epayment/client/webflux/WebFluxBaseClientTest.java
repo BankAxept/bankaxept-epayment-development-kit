@@ -64,9 +64,9 @@ public class WebFluxBaseClientTest {
         stubTokenEndpoint(serverError());
         stubTestEndpoint();
         baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
         //Added delay because it fails sometimes
-        Mockito.verify(schedulerSpy, Mockito.after(1000)).schedule(Mockito.any(Runnable.class), Mockito.eq(30L), Mockito.eq(TimeUnit.SECONDS));
+        Mockito.verify(schedulerSpy, Mockito.after(1000)).schedule(Mockito.any(Runnable.class), Mockito.eq(5000L), Mockito.eq(TimeUnit.MILLISECONDS));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class WebFluxBaseClientTest {
         stubTokenEndpoint(forbidden());
         stubTestEndpoint();
         baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
         Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
@@ -83,19 +83,8 @@ public class WebFluxBaseClientTest {
         stubTokenEndpoint(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER));
         stubTestEndpoint();
         baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
         Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
-    }
-
-    @Test
-    public void should_handle_delay() throws ExecutionException, InterruptedException, TimeoutException {
-        stubTokenEndpoint(validTokenResponse().withFixedDelay(2000));
-        stubTestEndpoint();
-        baseClient = createBaseClient();
-        baseClient.post("/test", null, "1");
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
-                .verifyComplete();
-        Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(599999L), Mockito.eq(TimeUnit.MILLISECONDS));
     }
 
     private BaseClient createBaseClient() {
