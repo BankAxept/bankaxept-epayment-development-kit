@@ -39,7 +39,7 @@ class AccessToken {
             var tokenMatcher = tokenPattern.matcher(input);
             var expiryMatcher = expiryPattern.matcher(input);
             if (!tokenMatcher.find() || !expiryMatcher.find()) {
-                throw new IllegalStateException("Could not parse token or expiry"); //onError
+                throw new IllegalArgumentException("Could not parse token or expiry"); //onError
             }
             return new AccessToken(tokenMatcher.group(1), Instant.ofEpochMilli(Long.parseLong(expiryMatcher.group(1))));
         }
