@@ -37,11 +37,19 @@ public class AccessTokenProcessorTest {
     public Clock clock  = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
     @Test
-    public void should_schedule_on_startup() throws IOException {
-        doReturn(new SimplePublisher<>(new HttpResponse(200, tokenResponseIn20Minutes()))).when(httpClientMock).post(eq("uri"), any(), any());
+    public void should_schedule_on_startup_then_new_on_success() throws IOException {
+        doReturn(new SinglePublisher<>(new HttpResponse(200, tokenResponseIn20Minutes()))).when(httpClientMock).post(eq("uri"), any(), any());
         accessTokenProcessor = new AccessTokenProcessor("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
         verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
         verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(599999L), eq(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void should_schedule_on_startup_then_error() {
+        doReturn(new SinglePublisher<>(new HttpResponse(500, "error"))).when(httpClientMock).post(eq("uri"), any(), any());
+        accessTokenProcessor = new AccessTokenProcessor("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
+        verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
+        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(5000L), eq(TimeUnit.MILLISECONDS));
     }
 
     private String tokenResponseIn20Minutes() throws IOException {
