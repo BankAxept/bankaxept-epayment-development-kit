@@ -25,7 +25,6 @@ public class AccessTokenProcessor extends SubmissionPublisher<String> implements
     private final LinkedHashMap<String, List<String>> headers;
 
     private AtomicReference<AccessToken> atomicToken = new AtomicReference<>();
-    private AtomicReference<Throwable> atomicFinalThrowable = new AtomicReference<>();
 
     public AccessTokenProcessor(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
@@ -66,8 +65,9 @@ public class AccessTokenProcessor extends SubmissionPublisher<String> implements
                 throw new HttpStatusException(item.getStatus(), "Error when fetching token");
             }
             atomicToken.set(AccessToken.parse(item.getBody()));
-            submit(atomicToken.get().getToken());
-            scheduleFetchInMillis(atomicToken.get().millisUntilTenMinutesBeforeExpiry(clock));
+            AccessToken token = atomicToken.get();
+            submit(token.getToken());
+            scheduleFetchInMillis(token.millisUntilTenMinutesBeforeExpiry(clock));
         } catch (Exception e) {
             onError(e);
         }
@@ -75,16 +75,7 @@ public class AccessTokenProcessor extends SubmissionPublisher<String> implements
 
     @Override
     public void onError(Throwable throwable) {
-        if (throwable instanceof HttpStatusException) {
-            HttpStatus status = ((HttpStatusException) throwable).getHttpStatus();
-            if (status.is5xxServerError()) {
-                scheduleFetchInMillis(5 * 1000);
-                return;
-            }
-        }
-        atomicFinalThrowable.set(throwable);
-        getSubscribers().forEach(subscriber ->
-                subscriber.onError(throwable));
+        scheduleFetchInMillis(5 * 1000);
     }
 
     @Override
@@ -94,11 +85,8 @@ public class AccessTokenProcessor extends SubmissionPublisher<String> implements
     @Override
     public void subscribe(Flow.Subscriber<? super String> subscriber) {
         var token = atomicToken.get();
-        var exception = atomicFinalThrowable.get();
         if (token != null && token.getExpiry().isBefore(clock.instant()))
             subscriber.onNext(token.getToken());
-        else if (exception != null)
-            subscriber.onError(exception);
         else
             super.subscribe(subscriber);
     }

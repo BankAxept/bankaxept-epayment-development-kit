@@ -62,14 +62,14 @@ public class WebFluxBaseClientTest {
     public void should_fail_if_client_error() {
         stubFor(tokenEndpointMapping(forbidden()));
         baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(ExecutionException.class);
+        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
     }
 
     @Test
     public void should_fail_if() {
         stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
         baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(ExecutionException.class);
+        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
     }
 
     @Test
