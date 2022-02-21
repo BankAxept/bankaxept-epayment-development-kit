@@ -6,7 +6,6 @@ import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import no.bankaxept.epayment.client.base.BaseClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,7 +74,7 @@ public class WebFluxBaseClientTest {
     public void should_not_retry_if_client_error() {
         stubFor(tokenEndpointMapping(forbidden()));
         baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
+        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(ExecutionException.class);
         Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
@@ -83,7 +82,7 @@ public class WebFluxBaseClientTest {
     public void should_handle_connection_reset() {
         stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
         baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
+        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(ExecutionException.class);
         Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
@@ -103,7 +102,7 @@ public class WebFluxBaseClientTest {
     }
 
     private BaseClient createBaseClient() {
-        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy, Duration.ofSeconds(2));
+        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy, Duration.ofSeconds(1));
     }
 
     private BaseClient createBaseClientWithTimeout(Duration timeout) {

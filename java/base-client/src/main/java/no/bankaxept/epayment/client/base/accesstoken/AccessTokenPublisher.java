@@ -3,6 +3,7 @@ package no.bankaxept.epayment.client.base.accesstoken;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.http.HttpStatus;
+import no.bankaxept.epayment.client.base.http.HttpStatusException;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -24,6 +25,7 @@ public class AccessTokenPublisher extends SubmissionPublisher<String> implements
     private final LinkedHashMap<String, List<String>> headers;
 
     private AtomicReference<AccessToken> atomicToken = new AtomicReference<>();
+    private AtomicReference<Throwable> atomicFinalThrowable = new AtomicReference<>();
 
     public AccessTokenPublisher(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
@@ -61,7 +63,7 @@ public class AccessTokenPublisher extends SubmissionPublisher<String> implements
     public void onNext(HttpResponse item) {
         try {
             if (!item.getStatus().is2xxOk()) {
-                throw new HttpStatusException(item.getStatus());
+                throw new HttpStatusException(item.getStatus(), "Error when fetching token");
             }
             atomicToken.set(AccessToken.parse(item.getBody()));
             submit(atomicToken.get().getToken());
@@ -77,8 +79,12 @@ public class AccessTokenPublisher extends SubmissionPublisher<String> implements
             HttpStatus status = ((HttpStatusException) throwable).getHttpStatus();
             if (status.is5xxServerError()) {
                 scheduleFetchInMillis(5 * 1000);
+                return;
             }
         }
+        atomicFinalThrowable.set(throwable);
+        getSubscribers().forEach(subscriber ->
+                subscriber.onError(throwable));
     }
 
     @Override
@@ -88,11 +94,12 @@ public class AccessTokenPublisher extends SubmissionPublisher<String> implements
     @Override
     public void subscribe(Flow.Subscriber<? super String> subscriber) {
         var token = atomicToken.get();
-        if (token != null && token.getExpiry().isBefore(clock.instant())) {
-            // Provide existing valid token immediately
+        var exception = atomicFinalThrowable.get();
+        if (token != null && token.getExpiry().isBefore(clock.instant()))
             subscriber.onNext(token.getToken());
-        } else {
+        else if (exception != null)
+            subscriber.onError(exception);
+        else
             super.subscribe(subscriber);
-        }
     }
 }

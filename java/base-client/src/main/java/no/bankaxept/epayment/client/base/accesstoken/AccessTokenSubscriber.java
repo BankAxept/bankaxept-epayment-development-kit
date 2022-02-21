@@ -36,7 +36,8 @@ public class AccessTokenSubscriber implements Flow.Subscriber<String> {
         try {
             return token.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
         } finally {
-            subscription.cancel();
+            if (subscription != null)
+                subscription.cancel();
         }
     }
 }
