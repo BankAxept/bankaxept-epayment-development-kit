@@ -77,11 +77,8 @@ public class AccessTokenPublisher extends SubmissionPublisher<String> implements
             HttpStatus status = ((HttpStatusException) throwable).getHttpStatus();
             if (status.is5xxServerError()) {
                 scheduleFetchInMillis(5 * 1000);
-                return;
             }
-            throw new IllegalStateException("HTTP status: " + status, throwable);
         }
-        throw new IllegalStateException("Unknown error when fetching token", throwable);
     }
 
     @Override
