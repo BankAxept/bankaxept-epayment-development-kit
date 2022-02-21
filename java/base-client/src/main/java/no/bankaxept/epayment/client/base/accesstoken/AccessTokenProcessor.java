@@ -64,8 +64,8 @@ public class AccessTokenProcessor extends SubmissionPublisher<String> implements
             if (!item.getStatus().is2xxOk()) {
                 throw new HttpStatusException(item.getStatus(), "Error when fetching token");
             }
-            atomicToken.set(AccessToken.parse(item.getBody()));
-            AccessToken token = atomicToken.get();
+            AccessToken token = AccessToken.parse(item.getBody());
+            atomicToken.set(token);
             submit(token.getToken());
             scheduleFetchInMillis(token.millisUntilTenMinutesBeforeExpiry(clock));
         } catch (Exception e) {
