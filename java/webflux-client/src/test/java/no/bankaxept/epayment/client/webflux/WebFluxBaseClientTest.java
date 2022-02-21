@@ -1,9 +1,11 @@
 package no.bankaxept.epayment.client.webflux;
 
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import no.bankaxept.epayment.client.base.BaseClient;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +26,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @WireMockTest(httpPort = 8443)
@@ -49,12 +50,12 @@ public class WebFluxBaseClientTest {
     @BeforeEach
     public void setup() {
         schedulerSpy = Mockito.spy(new ScheduledThreadPoolExecutor(1));
+        stubFor(testEndpointMapping());
     }
 
     @Test
     public void should_add_all_relevant_headers_and_schedule_refresh() throws ExecutionException, InterruptedException, TimeoutException {
-        stubTokenEndpoint();
-        stubTestEndpoint();
+        stubFor(tokenEndpointMapping(validTokenResponse()));
         baseClient = createBaseClient();
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
                 .verifyComplete();
@@ -63,18 +64,16 @@ public class WebFluxBaseClientTest {
 
     @Test
     public void should_retry_if_server_error() {
-        stubTokenEndpoint(serverError());
-        stubTestEndpoint();
+        stubFor(tokenEndpointMapping(serverError()));
         baseClient = createBaseClient();
         assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
-        //Added delay because it fails sometimes
+        //Added delay to make sure it gets scheduled
         Mockito.verify(schedulerSpy, Mockito.after(1000)).schedule(Mockito.any(Runnable.class), Mockito.eq(5000L), Mockito.eq(TimeUnit.MILLISECONDS));
     }
 
     @Test
     public void should_not_retry_if_client_error() {
-        stubTokenEndpoint(forbidden());
-        stubTestEndpoint();
+        stubFor(tokenEndpointMapping(forbidden()));
         baseClient = createBaseClient();
         assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
         Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
@@ -82,8 +81,7 @@ public class WebFluxBaseClientTest {
 
     @Test
     public void should_handle_connection_reset() {
-        stubTokenEndpoint(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER));
-        stubTestEndpoint();
+        stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
         baseClient = createBaseClient();
         assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
         Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
@@ -91,9 +89,13 @@ public class WebFluxBaseClientTest {
 
     @Test
     public void should_retry_if_server_error_and_work() throws ExecutionException, InterruptedException, TimeoutException {
-        stubTokenEndpoint(serverError());
-        stubTokenEndpointSecond();
-        stubTestEndpoint();
+        stubFor(tokenEndpointMapping(serverError())
+                .inScenario("Token")
+                .whenScenarioStateIs(Scenario.STARTED)
+                .willSetStateTo("Second token"));
+        stubFor(tokenEndpointMapping(validTokenResponse())
+                .inScenario("Token")
+                .whenScenarioStateIs("Second token"));
         baseClient = createBaseClientWithTimeout(Duration.ofSeconds(10));
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
                 .verifyComplete();        //Added delay for consistency
@@ -108,42 +110,22 @@ public class WebFluxBaseClientTest {
         return new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy, timeout);
     }
 
-    private StubMapping stubTestEndpoint() {
-        return stubFor(post("/test")
+    private MappingBuilder testEndpointMapping() {
+        return post("/test")
                 .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
                 .withHeader("X-Correlation-Id", new EqualToPattern("1"))
-                .willReturn(ok()));
+                .willReturn(ok());
     }
 
-    private StubMapping stubTokenEndpoint() {
-        return stubFor(post("/token")
+    private MappingBuilder tokenEndpointMapping(ResponseDefinitionBuilder responseBuilder) {
+        return post("/token")
                 .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
                 .withBasicAuth("username", "password")
-                .willReturn(validTokenResponse()));
-    }
-
-    private StubMapping stubTokenEndpointSecond() {
-        return stubFor(post("/token")
-                .inScenario("Token")
-                .whenScenarioStateIs("Second token")
-                .willSetStateTo("Second token")
-                .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
-                .withBasicAuth("username", "password")
-                .willReturn(validTokenResponse()));
+                .willReturn(responseBuilder);
     }
 
     private ResponseDefinitionBuilder validTokenResponse() {
         return ok().withBody(tokenResponseFromFile);
-    }
-
-    private StubMapping stubTokenEndpoint(ResponseDefinitionBuilder responseBuilder) {
-        return stubFor(post("/token")
-                .inScenario("Token")
-                .whenScenarioStateIs(STARTED)
-                .willSetStateTo("Second token")
-                .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
-                .withBasicAuth("username", "password")
-                .willReturn(responseBuilder));
     }
 
 }
