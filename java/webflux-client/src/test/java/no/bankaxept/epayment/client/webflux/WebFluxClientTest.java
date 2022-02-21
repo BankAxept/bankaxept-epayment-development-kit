@@ -32,15 +32,13 @@ public class WebFluxClientTest {
     public void simple_request_no_body_no_headers(){
         stubFor(post("/test").willReturn(ok()));
         Flux<HttpResponse> fluxPublisher = JdkFlowAdapter.flowPublisherToFlux(client.post("/test", JdkFlowAdapter.publisherToFlowPublisher(Mono.just("")), Map.of()));
-        //No mono will be emitted if the response body is empty
         StepVerifier.create(fluxPublisher)
-                .verifyComplete();
+                .verifyComplete(); //Nothing is emitted if response is empty
     }
 
     @Test
     public void simple_request_empty_body_no_headers(){
         stubFor(post("/test").willReturn(ok().withBody("response")));
-        //No mono will be emitted if the response body is empty
         var publisher = client.post("/test", JdkFlowAdapter.publisherToFlowPublisher(Mono.empty()), Map.of());
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(publisher))
                 .expectNext(new HttpResponse(200, "response"))

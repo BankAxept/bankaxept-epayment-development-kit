@@ -31,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class WebFluxBaseClientTest {
 
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-    private ScheduledExecutorService schedulerSpy;
     private BaseClient baseClient; //Because it fetches token on start, it needs to be started after setting up wiremock
     private String tokenResponseFromFile = readJsonFromFile("token-response.json").replace("123", Long.toString(clock.instant().plus(20, ChronoUnit.MINUTES).toEpochMilli()));
 
@@ -48,42 +47,29 @@ public class WebFluxBaseClientTest {
 
     @BeforeEach
     public void setup() {
-        schedulerSpy = Mockito.spy(new ScheduledThreadPoolExecutor(1));
         stubFor(testEndpointMapping());
     }
 
     @Test
-    public void should_add_all_relevant_headers_and_schedule_refresh() throws ExecutionException, InterruptedException, TimeoutException {
+    public void should_add_all_relevant_headers() throws ExecutionException, InterruptedException, TimeoutException {
         stubFor(tokenEndpointMapping(validTokenResponse()));
         baseClient = createBaseClient();
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
                 .verifyComplete();
-        Mockito.verify(schedulerSpy).schedule(Mockito.any(Runnable.class), Mockito.eq(599999L), Mockito.eq(TimeUnit.MILLISECONDS));
     }
 
     @Test
-    public void should_retry_if_server_error() {
-        stubFor(tokenEndpointMapping(serverError()));
-        baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
-        //Added delay to make sure it gets scheduled
-        Mockito.verify(schedulerSpy, Mockito.after(1000)).schedule(Mockito.any(Runnable.class), Mockito.eq(5000L), Mockito.eq(TimeUnit.MILLISECONDS));
-    }
-
-    @Test
-    public void should_not_retry_if_client_error() {
+    public void should_fail_if_client_error() {
         stubFor(tokenEndpointMapping(forbidden()));
         baseClient = createBaseClient();
         assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(ExecutionException.class);
-        Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
     @Test
-    public void should_handle_connection_reset() {
+    public void should_fail_if() {
         stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
         baseClient = createBaseClient();
         assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(ExecutionException.class);
-        Mockito.verify(schedulerSpy, Mockito.atMostOnce()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any());
     }
 
     @Test
@@ -98,15 +84,14 @@ public class WebFluxBaseClientTest {
         baseClient = createBaseClientWithTimeout(Duration.ofSeconds(10));
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
                 .verifyComplete();        //Added delay for consistency
-        Mockito.verify(schedulerSpy, Mockito.after(1000)).schedule(Mockito.any(Runnable.class), Mockito.eq(5000L), Mockito.eq(TimeUnit.MILLISECONDS));
     }
 
     private BaseClient createBaseClient() {
-        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy, Duration.ofSeconds(1));
+        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, Duration.ofSeconds(1));
     }
 
     private BaseClient createBaseClientWithTimeout(Duration timeout) {
-        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, schedulerSpy, timeout);
+        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, timeout);
     }
 
     private MappingBuilder testEndpointMapping() {

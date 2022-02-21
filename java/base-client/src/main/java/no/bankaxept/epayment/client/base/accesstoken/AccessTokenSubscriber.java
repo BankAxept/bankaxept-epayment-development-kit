@@ -8,7 +8,7 @@ public class AccessTokenSubscriber implements Flow.Subscriber<String> {
     private final CompletableFuture<String> token = new CompletableFuture<>();
     private Flow.Subscription subscription;
 
-    public AccessTokenSubscriber(AccessTokenPublisher supplier) {
+    public AccessTokenSubscriber(AccessTokenProcessor supplier) {
         supplier.subscribe(this);
     }
 

@@ -16,7 +16,7 @@ import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AccessTokenPublisher extends SubmissionPublisher<String> implements Flow.Processor<HttpResponse, String> {
+public class AccessTokenProcessor extends SubmissionPublisher<String> implements Flow.Processor<HttpResponse, String> {
     private final ScheduledExecutorService scheduler;
     private final Clock clock;
 
@@ -27,7 +27,7 @@ public class AccessTokenPublisher extends SubmissionPublisher<String> implements
     private AtomicReference<AccessToken> atomicToken = new AtomicReference<>();
     private AtomicReference<Throwable> atomicFinalThrowable = new AtomicReference<>();
 
-    public AccessTokenPublisher(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
+    public AccessTokenProcessor(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
         this.headers = createHeaders(apimKey, username, password);
         this.clock = clock;

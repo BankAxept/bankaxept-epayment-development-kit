@@ -1,6 +1,6 @@
 package no.bankaxept.epayment.client.base;
 
-import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.AccessTokenProcessor;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
@@ -15,20 +15,20 @@ import java.util.ServiceLoader;
 import java.util.concurrent.*;
 
 public class BaseClient {
-    private final AccessTokenPublisher tokenPublisher;
+    private final AccessTokenProcessor tokenPublisher;
     private final HttpClient httpClient;
     private final Duration tokenTimeout;
 
     public BaseClient(String baseurl, String apimKey, String username, String password) {
-        this(baseurl, apimKey, username, password, Clock.systemDefaultZone(), Executors.newScheduledThreadPool(1), Duration.ofSeconds(2));
+        this(baseurl, apimKey, username, password, Clock.systemDefaultZone(), Duration.ofSeconds(2));
     }
 
-    public BaseClient(String baseurl, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, Duration tokenTimeout) {
+    public BaseClient(String baseurl, String apimKey, String username, String password, Clock clock, Duration tokenTimeout) {
         httpClient = ServiceLoader.load(HttpClientProvider.class)
                 .findFirst()
                 .map(httpClientProvider -> httpClientProvider.create(baseurl))
                 .orElseThrow();
-        this.tokenPublisher = new AccessTokenPublisher("/token", apimKey, username, password, clock, scheduler, httpClient);
+        this.tokenPublisher = new AccessTokenProcessor("/token", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
         this.tokenTimeout = tokenTimeout;
     }
 
