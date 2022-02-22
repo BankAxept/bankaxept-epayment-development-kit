@@ -6,8 +6,8 @@ import java.time.Instant;
 import java.util.regex.Pattern;
 
 class AccessToken {
-    private String token;
-    private Instant expiry;
+    private final String token;
+    private final Instant expiry;
 
     public AccessToken(String token, Instant expiry) {
         this.token = token;

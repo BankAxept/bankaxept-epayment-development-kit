@@ -1,17 +1,16 @@
 package no.bankaxept.epayment.client.base.accesstoken;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
 
-class SinglePublisher<T> implements Flow.Publisher<T> {
+public class SinglePublisher<T> implements Flow.Publisher<T> {
 
     private final Executor executor;
     private final T item;
 
-    public SinglePublisher(T item) {
+    public SinglePublisher(T item, Executor executor) {
         this.item = item;
-        this.executor = Executors.newSingleThreadExecutor();
+        this.executor = executor;
     }
 
     @Override

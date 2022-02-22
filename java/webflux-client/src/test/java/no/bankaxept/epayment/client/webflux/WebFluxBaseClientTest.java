@@ -5,11 +5,9 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import com.github.tomakehurst.wiremock.stubbing.Scenario;
+import no.bankaxept.epayment.client.base.AccessFailed;
 import no.bankaxept.epayment.client.base.BaseClient;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.*;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -18,10 +16,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Clock;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.concurrent.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -32,14 +30,14 @@ public class WebFluxBaseClientTest {
 
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private BaseClient baseClient; //Because it fetches token on start, it needs to be started after setting up wiremock
-    private String tokenResponseFromFile = readJsonFromFile("token-response.json").replace("123", Long.toString(clock.instant().plus(20, ChronoUnit.MINUTES).toEpochMilli()));
+    private final String tokenResponseFromFile = readJsonFromFile("token-response.json").replace("123", Long.toString(clock.instant().plus(20, ChronoUnit.MINUTES).toEpochMilli()));
 
     private Flow.Publisher<String> emptyPublisher() {
         return JdkFlowAdapter.publisherToFlowPublisher(Mono.just(""));
     }
 
-    private String readJsonFromFile(String filename) throws IOException {
-        return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(filename).getPath())));
+    private String readJsonFromFile(@SuppressWarnings("SameParameterValue") String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(filename)).getPath())));
     }
 
     public WebFluxBaseClientTest() throws IOException {
@@ -51,47 +49,44 @@ public class WebFluxBaseClientTest {
     }
 
     @Test
-    public void should_add_all_relevant_headers() throws ExecutionException, InterruptedException, TimeoutException {
+    public void should_add_all_relevant_headers() {
         stubFor(tokenEndpointMapping(validTokenResponse()));
         baseClient = createBaseClient();
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
                 .verifyComplete();
     }
 
-    @Test
-    public void should_fail_if_client_error() {
-        stubFor(tokenEndpointMapping(forbidden()));
-        baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
-    }
+    @Nested
+    @DisplayName("Access token")
+    class WebfluxAccessTokenTests {
 
-    @Test
-    public void should_fail_if() {
-        stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
-        baseClient = createBaseClient();
-        assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(TimeoutException.class);
-    }
+        @Test
+        public void should_fail_if_client_error_when_fetching_token() {
+            stubFor(tokenEndpointMapping(forbidden()));
+            baseClient = createBaseClient();
+            assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class);
+        }
 
-    @Test
-    public void should_retry_if_server_error_and_work() throws ExecutionException, InterruptedException, TimeoutException {
-        stubFor(tokenEndpointMapping(serverError())
-                .inScenario("Token")
-                .whenScenarioStateIs(Scenario.STARTED)
-                .willSetStateTo("Second token"));
-        stubFor(tokenEndpointMapping(validTokenResponse())
-                .inScenario("Token")
-                .whenScenarioStateIs("Second token"));
-        baseClient = createBaseClientWithTimeout(Duration.ofSeconds(10));
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
-                .verifyComplete();        //Added delay for consistency
+        @Test
+        public void should_fail_if_connection_reset_when_fetching_token() {
+            stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
+            baseClient = createBaseClient();
+            assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class);
+        }
+
+        @Test
+        public void new_token_is_fetched_after_error() {
+            stubFor(tokenEndpointMapping(serverError()));
+            baseClient = createBaseClient();
+            assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class);
+            stubFor(tokenEndpointMapping(validTokenResponse()));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
+                    .verifyComplete();        //Added delay for consistency
+        }
     }
 
     private BaseClient createBaseClient() {
-        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, Duration.ofSeconds(1));
-    }
-
-    private BaseClient createBaseClientWithTimeout(Duration timeout) {
-        return new BaseClient("http://localhost:8443", "key", "username", "password", clock, timeout);
+        return new BaseClient("http://localhost:8443", "key", "username", "password", clock);
     }
 
     private MappingBuilder testEndpointMapping() {

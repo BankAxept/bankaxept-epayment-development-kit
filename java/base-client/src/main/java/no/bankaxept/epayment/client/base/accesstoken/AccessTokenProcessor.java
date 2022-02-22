@@ -2,7 +2,6 @@ package no.bankaxept.epayment.client.base.accesstoken;
 
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
-import no.bankaxept.epayment.client.base.http.HttpStatus;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
 
 import java.nio.charset.StandardCharsets;
@@ -10,21 +9,22 @@ import java.time.Clock;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.Flow;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.SubmissionPublisher;
-import java.util.concurrent.TimeUnit;
+import java.util.Queue;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AccessTokenProcessor extends SubmissionPublisher<String> implements Flow.Processor<HttpResponse, String> {
+public class AccessTokenProcessor implements Flow.Processor<HttpResponse, String> {
     private final ScheduledExecutorService scheduler;
+    private final Executor fetchExecutor = Executors.newSingleThreadExecutor();
     private final Clock clock;
 
-    private HttpClient httpClient;
+    private final HttpClient httpClient;
     private final String uri;
     private final LinkedHashMap<String, List<String>> headers;
 
-    private AtomicReference<AccessToken> atomicToken = new AtomicReference<>();
+    private final AtomicReference<AccessToken> atomicToken = new AtomicReference<>();
+
+    private final Queue<Flow.Subscriber<? super String>> subscribers = new LinkedBlockingQueue<>();
 
     public AccessTokenProcessor(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
@@ -32,7 +32,7 @@ public class AccessTokenProcessor extends SubmissionPublisher<String> implements
         this.clock = clock;
         this.scheduler = scheduler;
         this.httpClient = httpClient;
-        scheduleFetchInMillis(0);
+        scheduleFetch(0);
     }
 
     private static LinkedHashMap<String, List<String>> createHeaders(String apimKey, String username, String password) {
@@ -42,40 +42,47 @@ public class AccessTokenProcessor extends SubmissionPublisher<String> implements
         return headers;
     }
 
-    private void scheduleFetchInMillis(long millis) {
+    private void scheduleFetch(long millis) {
         scheduler.schedule(this::fetchNewToken, millis, TimeUnit.MILLISECONDS);
     }
 
     private void fetchNewToken() {
-        SubmissionPublisher<String> emptyPublisher = new SubmissionPublisher<>();
-        httpClient.post(uri, emptyPublisher, headers).subscribe(this);
-        emptyPublisher.submit("");
-        emptyPublisher.close();
+        httpClient.post(uri, new SinglePublisher<>("", fetchExecutor), headers).subscribe(this);
     }
 
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
-        subscription.request(Long.MAX_VALUE);
+        subscription.request(1);
     }
 
     @Override
     public void onNext(HttpResponse item) {
+        if (!item.getStatus().is2xxOk()) {
+            onError(new HttpStatusException(item.getStatus(), "Error when fetching token"));
+            return;
+        }
+        AccessToken token;
         try {
-            if (!item.getStatus().is2xxOk()) {
-                throw new HttpStatusException(item.getStatus(), "Error when fetching token");
-            }
-            AccessToken token = AccessToken.parse(item.getBody());
-            atomicToken.set(token);
-            submit(token.getToken());
-            scheduleFetchInMillis(token.millisUntilTenMinutesBeforeExpiry(clock));
+            token = AccessToken.parse(item.getBody());
         } catch (Exception e) {
             onError(e);
+            return;
         }
+        atomicToken.set(token);
+        synchronized (subscribers) {
+            subscribers.forEach(subscriber -> subscriber.onNext(token.getToken()));
+            subscribers.clear();
+        }
+        scheduleFetch(token.millisUntilTenMinutesBeforeExpiry(clock));
     }
 
     @Override
     public void onError(Throwable throwable) {
-        scheduleFetchInMillis(5 * 1000);
+        scheduleFetch(5 * 1000);
+        synchronized (subscribers) {
+            subscribers.forEach(subscriber -> subscriber.onError(throwable));
+            subscribers.clear();
+        }
     }
 
     @Override
@@ -87,7 +94,10 @@ public class AccessTokenProcessor extends SubmissionPublisher<String> implements
         var token = atomicToken.get();
         if (token != null && token.getExpiry().isBefore(clock.instant()))
             subscriber.onNext(token.getToken());
-        else
-            super.subscribe(subscriber);
+        else {
+            synchronized (subscribers) {
+                subscribers.add(subscriber);
+            }
+        }
     }
 }

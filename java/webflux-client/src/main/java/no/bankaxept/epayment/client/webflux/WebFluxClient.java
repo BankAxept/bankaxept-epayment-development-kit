@@ -13,7 +13,7 @@ import java.util.concurrent.Flow.Publisher;
 
 public class WebFluxClient implements HttpClient {
 
-    private WebClient webClient;
+    private final WebClient webClient;
 
     public WebFluxClient(String baseUrl) {
         webClient = WebClient.create(baseUrl);

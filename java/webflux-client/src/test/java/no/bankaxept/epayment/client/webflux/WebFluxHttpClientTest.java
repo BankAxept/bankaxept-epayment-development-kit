@@ -19,9 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @WireMockTest(httpPort = 8443)
-public class WebFluxClientTest {
+public class WebFluxHttpClientTest {
 
-    private HttpClient client = new WebFluxClient("http://localhost:8443");
+    private final HttpClient client = new WebFluxClient("http://localhost:8443");
 
     @AfterEach
     public void cleanUp() {

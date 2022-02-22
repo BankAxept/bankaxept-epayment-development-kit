@@ -1,12 +1,13 @@
 package no.bankaxept.epayment.client.base.accesstoken;
 
+import no.bankaxept.epayment.client.base.AccessFailed;
+
 import java.time.Duration;
 import java.util.concurrent.*;
 
 public class AccessTokenSubscriber implements Flow.Subscriber<String> {
 
     private final CompletableFuture<String> token = new CompletableFuture<>();
-    private Flow.Subscription subscription;
 
     public AccessTokenSubscriber(AccessTokenProcessor supplier) {
         supplier.subscribe(this);
@@ -14,8 +15,6 @@ public class AccessTokenSubscriber implements Flow.Subscriber<String> {
 
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
-        this.subscription = subscription;
-        subscription.request(1);
     }
 
     @Override
@@ -32,12 +31,14 @@ public class AccessTokenSubscriber implements Flow.Subscriber<String> {
     public void onComplete() {
     }
 
-    public String get(Duration timeout) throws ExecutionException, InterruptedException, TimeoutException {
+    public String get(Duration timeout) {
         try {
             return token.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
-        } finally {
-            if (subscription != null)
-                subscription.cancel();
+        } catch (ExecutionException e) {
+            throw new AccessFailed(e.getCause());
+        }
+        catch (Exception e) {
+            throw new AccessFailed(e);
         }
     }
 }
