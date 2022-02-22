@@ -58,7 +58,7 @@ public class WebFluxBaseClientTest {
 
     @Nested
     @DisplayName("Access token")
-    class WebfluxAccessTokenTests {
+    public class WebfluxAccessTokenTests {
 
         @Test
         public void should_fail_if_client_error_when_fetching_token() {

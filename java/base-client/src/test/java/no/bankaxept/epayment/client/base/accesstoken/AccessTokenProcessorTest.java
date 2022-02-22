@@ -34,7 +34,7 @@ public class AccessTokenProcessorTest {
     public HttpClient httpClientMock;
 
     @Mock
-    Flow.Subscriber<String> subscriberMock;
+    public Flow.Subscriber<String> subscriberMock;
 
     public AccessTokenProcessor accessTokenProcessor;
     public final Clock clock  = Clock.fixed(Instant.now(), ZoneId.systemDefault());
