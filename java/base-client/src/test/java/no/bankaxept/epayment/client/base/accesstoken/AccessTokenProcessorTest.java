@@ -27,7 +27,6 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 public class AccessTokenProcessorTest {
 
-    //Everything needs to be public because this package isn't exported
     @Spy
     public ScheduledExecutorService schedulerMock = Executors.newScheduledThreadPool(1);
 

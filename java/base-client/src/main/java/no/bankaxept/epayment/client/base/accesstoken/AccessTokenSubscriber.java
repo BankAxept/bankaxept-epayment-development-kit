@@ -9,8 +9,8 @@ public class AccessTokenSubscriber implements Flow.Subscriber<String> {
 
     private final CompletableFuture<String> token = new CompletableFuture<>();
 
-    public AccessTokenSubscriber(AccessTokenProcessor supplier) {
-        supplier.subscribe(this);
+    public AccessTokenSubscriber(AccessTokenProcessor tokenProcessor) {
+        tokenProcessor.subscribe(this);
     }
 
     @Override
