@@ -5,10 +5,9 @@ info:
   description: BankAxept ePayment Merchant API - Merchant Server side
 
 paths:
-  /payments/{paymentId}:
+  /payments:
     description: Payment request callback
     parameters:
-      - $ref: '../components.yaml#/components/parameters/paymentId'
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
       operationId: paymentRequestCallback
@@ -97,9 +96,12 @@ components:
     PaymentRequestCallbackData:
       type: object
       required:
+        - paymentId
         - messageId
         - code
       properties:
+        paymentId:
+          $ref: '../components.yaml#/components/schemas/paymentId'
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
         code:

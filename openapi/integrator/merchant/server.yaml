@@ -43,17 +43,9 @@ paths:
         '200':
           description: >-
             Request already received successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentResponse'
         '201':
           description: >-
             Request received successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentResponse'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -344,14 +336,6 @@ components:
           format: date-time
           description: >-
             The time of the transaction.
-
-    PaymentResponse:
-      type: object
-      required:
-        - paymentId
-      properties:
-        paymentId:
-          $ref: '../components.yaml#/components/schemas/paymentId'
 
     PaymentCardholderAuthenticationData:
       type: object
