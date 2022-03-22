@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-4relative %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.github.tomakehurst.wiremock" level="off"/> <!-- Because tokens are fetches asynchronously, wiremock might do some confusing logging -->
+    <logger name="reactor.netty.http" level="error"/>
+    <root level="warn">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
