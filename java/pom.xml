@@ -12,22 +12,42 @@
     <packaging>pom</packaging>
     <version>${revision}</version>
     <modules>
-        <module>webflux-client</module>
         <module>base-client</module>
+        <module>webflux-client</module>
+        <module>client-test</module>
     </modules>
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.9.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <!-- This is the current stable version -->
+                <version>3.0.0-M5</version>
+            </plugin>
+        </plugins>
     </build>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>no.bankaxept.epayment</groupId>
+                <artifactId>base-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.bankaxept.epayment</groupId>
+                <artifactId>webflux-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.bankaxept.epayment</groupId>
+                <artifactId>client-test</artifactId>
+                <version>${revision}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -35,11 +55,29 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <!-- Inline is needed to remove a warning -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-inline</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock-jre8</artifactId>
+                <version>${wiremock.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <spring.boot.version>2.6.3</spring.boot.version>
+        <spring.boot.version>2.6.4</spring.boot.version>
+        <wiremock.version>2.32.0</wiremock.version>
+        <mockito.version>4.4.0</mockito.version>
     </properties>
 </project>
