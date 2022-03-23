@@ -1,5 +1,6 @@
 package no.bankaxept.epayment.client.base.accesstoken;
 
+import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
