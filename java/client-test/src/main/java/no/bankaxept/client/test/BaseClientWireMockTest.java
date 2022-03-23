@@ -7,6 +7,6 @@ import java.lang.annotation.*;
 @Inherited
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@WireMockTest(httpPort = 8443)
+@WireMockTest
 public @interface BaseClientWireMockTest {
 }

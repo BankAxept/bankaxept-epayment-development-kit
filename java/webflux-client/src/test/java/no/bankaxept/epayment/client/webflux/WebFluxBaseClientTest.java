@@ -3,6 +3,7 @@ package no.bankaxept.epayment.client.webflux;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Fault;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.client.test.AbstractBaseClientWireMockTest;
 import no.bankaxept.epayment.client.base.AccessFailed;
@@ -18,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
 
     @BeforeEach
-    public void setup() {
-        super.setup();
+    public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+        super.setup(wmRuntimeInfo);
         stubFor(testEndpointMapping());
     }
 

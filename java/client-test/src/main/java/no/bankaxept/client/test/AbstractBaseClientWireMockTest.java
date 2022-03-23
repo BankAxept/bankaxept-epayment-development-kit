@@ -3,6 +3,7 @@ package no.bankaxept.client.test;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.epayment.client.base.BaseClient;
 import no.bankaxept.epayment.client.base.SinglePublisher;
@@ -21,6 +22,7 @@ public abstract class AbstractBaseClientWireMockTest {
 
     protected BaseClient baseClient; //Because it fetches token on start, it needs to be started after setting up wiremock
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+    private int port;
     private final String validTokenResponse = "{\n" +
             "\"expiresOn\": " + clock.instant().plus(2, ChronoUnit.HOURS) + ",\n" +
             "\"accessToken\": \"a-token\"\n" +
@@ -28,7 +30,8 @@ public abstract class AbstractBaseClientWireMockTest {
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     @BeforeEach
-    public void setup() {
+    public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+        this.port = wmRuntimeInfo.getHttpPort();
         WireMock.stubFor(tokenEndpointMapping(validTokenResponse()));
         baseClient = createBaseClient();
     }
@@ -45,7 +48,7 @@ public abstract class AbstractBaseClientWireMockTest {
     }
 
     protected BaseClient createBaseClient() {
-        return new BaseClient("http://localhost:8443", "key", "username", "password", clock);
+        return new BaseClient("http://localhost:" + port, "key", "username", "password", clock);
     }
 
     protected Flow.Publisher<String> emptyPublisher() {
