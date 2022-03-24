@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.bankaxept.epayment.client.base.BaseClient;
+import no.bankaxept.epayment.client.base.EmptyResponseProcessor;
 import no.bankaxept.epayment.client.base.SinglePublisher;
-import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.swagger.merchant.PaymentRequest;
 
 import java.util.concurrent.Executor;
@@ -34,8 +34,10 @@ public class MerchantClient {
         this.baseClient = new BaseClient(baseurl, apimKey, username, password);
     }
 
-    public Flow.Publisher<HttpResponse> payment(PaymentRequest request, String correlationId) throws JsonProcessingException {
-        return baseClient.post(PAYMENTS_URL, new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId);
+    public Flow.Publisher<Void> payment(PaymentRequest request, String correlationId) throws JsonProcessingException {
+        var responseProcessor = new EmptyResponseProcessor();
+        baseClient.post(PAYMENTS_URL, new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId).subscribe(responseProcessor);
+        return responseProcessor;
     }
 
 }

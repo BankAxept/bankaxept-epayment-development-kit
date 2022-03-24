@@ -3,6 +3,7 @@ package no.bankaxept.epayment.client.merchant;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.client.test.AbstractBaseClientWireMockTest;
 import no.bankaxept.epayment.swagger.merchant.Amount;
@@ -22,7 +23,17 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void simple_payment_request() throws JsonProcessingException {
         var transactionTime = OffsetDateTime.now();
-        stubFor(PaymentEndpointMapping(transactionTime));
+        stubFor(PaymentEndpointMapping(transactionTime, ok()));
+        client = new MerchantClient(baseClient);
+        var paymentRequest = createPaymentRequest(transactionTime);
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
+                .verifyComplete();
+    }
+
+    @Test
+    public void simple_payment_with_error() throws JsonProcessingException {
+        var transactionTime = OffsetDateTime.now();
+        stubFor(PaymentEndpointMapping(transactionTime, serverError()));
         client = new MerchantClient(baseClient);
         var paymentRequest = createPaymentRequest(transactionTime);
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
@@ -40,7 +51,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                 .transactionTime(transactionTime);
     }
 
-    private MappingBuilder PaymentEndpointMapping(OffsetDateTime transactionTime) {
+    private MappingBuilder PaymentEndpointMapping(OffsetDateTime transactionTime, ResponseDefinitionBuilder responseBuilder) {
         return post("/payments")
                 .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
                 .withHeader("X-Correlation-Id", new EqualToPattern("1"))
@@ -51,7 +62,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                 .withRequestBody(matchingJsonPath("inStore", equalTo("true")))
                 .withRequestBody(matchingJsonPath("amount", containing("10000").and(containing("NOK"))))
                 .withRequestBody(matchingJsonPath("transactionTime", equalTo(transactionTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))))
-                .willReturn(ok());
+                .willReturn(responseBuilder);
     }
 
 }
