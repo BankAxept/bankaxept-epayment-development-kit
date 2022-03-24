@@ -3,21 +3,15 @@ package no.bankaxept.epayment.client.merchant;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.bankaxept.epayment.client.base.BaseClient;
 import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
-import no.bankaxept.epayment.swagger.merchant.api.PaymentRequest;
+import no.bankaxept.epayment.swagger.merchant.PaymentRequest;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
-
-import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
 public class MerchantClient {
 

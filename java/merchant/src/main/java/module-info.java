@@ -8,5 +8,4 @@ module no.bankaxept.epayment.sdk.merchant {
     requires jsr305;
 
     exports no.bankaxept.epayment.client.merchant;
-    exports no.bankaxept.epayment.swagger.merchant.api;
 }
