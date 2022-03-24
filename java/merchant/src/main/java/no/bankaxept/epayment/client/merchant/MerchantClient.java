@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.bankaxept.epayment.client.base.BaseClient;
 import no.bankaxept.epayment.client.base.EmptyResponseProcessor;
 import no.bankaxept.epayment.client.base.SinglePublisher;
-import no.bankaxept.epayment.swagger.merchant.PaymentRequest;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

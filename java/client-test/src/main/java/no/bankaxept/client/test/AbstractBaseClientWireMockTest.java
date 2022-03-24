@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -22,7 +23,7 @@ public abstract class AbstractBaseClientWireMockTest {
     protected BaseClient baseClient; //Because it fetches token on start, it needs to be started after setting up wiremock
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private final String validTokenResponse = "{\n" +
-            "\"expiresOn\": " + clock.instant().plus(2, ChronoUnit.HOURS) + ",\n" +
+            "\"expiresOn\": " + clock.instant().plus(2, ChronoUnit.HOURS).toEpochMilli() + ",\n" +
             "\"accessToken\": \"a-token\"\n" +
             "}";
     private final Executor executor = Executors.newSingleThreadExecutor();

@@ -6,8 +6,7 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.client.test.AbstractBaseClientWireMockTest;
-import no.bankaxept.epayment.swagger.merchant.Amount;
-import no.bankaxept.epayment.swagger.merchant.PaymentRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
@@ -19,12 +18,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     private MerchantClient client;
+    private final OffsetDateTime transactionTime = OffsetDateTime.now();
+
+    @BeforeEach
+    public void setup(){
+        super.setup();
+        client = new MerchantClient(baseClient);
+    }
+
 
     @Test
     public void simple_payment_request() throws JsonProcessingException {
-        var transactionTime = OffsetDateTime.now();
         stubFor(PaymentEndpointMapping(transactionTime, ok()));
-        client = new MerchantClient(baseClient);
         var paymentRequest = createPaymentRequest(transactionTime);
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
                 .verifyComplete();
@@ -32,9 +37,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
 
     @Test
     public void simple_payment_with_error() throws JsonProcessingException {
-        var transactionTime = OffsetDateTime.now();
         stubFor(PaymentEndpointMapping(transactionTime, serverError()));
-        client = new MerchantClient(baseClient);
         var paymentRequest = createPaymentRequest(transactionTime);
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
                 .verifyComplete();

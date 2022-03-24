@@ -65,6 +65,9 @@ public class AccessTokenProcessor implements Flow.Processor<HttpResponse, String
         AccessToken token;
         try {
             token = AccessToken.parse(item.getBody());
+            if(token.getExpiry().isBefore(clock.instant())) {
+                throw new IllegalStateException("Fetched an already expired token");
+            }
         } catch (Exception e) {
             onError(e);
             return;

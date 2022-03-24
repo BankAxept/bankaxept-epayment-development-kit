@@ -1,7 +1,6 @@
 package no.bankaxept.epayment.client.webflux;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.client.test.AbstractBaseClientWireMockTest;
@@ -25,8 +24,6 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
 
     @Test
     public void should_add_all_relevant_headers() {
-        WireMock.stubFor(tokenEndpointMapping(validTokenResponse()));
-        baseClient = createBaseClient();
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
                 .verifyComplete();
     }
@@ -57,7 +54,6 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
         }
 
         @Test
-        @Order(3)
         public void new_token_is_fetched_after_error() {
             stubFor(tokenEndpointMapping(serverError()));
             baseClient = createBaseClient();
