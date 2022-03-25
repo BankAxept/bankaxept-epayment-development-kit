@@ -1,6 +1,6 @@
 package no.bankaxept.epayment.client.base.accesstoken;
 
-import no.bankaxept.epayment.client.base.AccessFailed;
+import no.bankaxept.epayment.client.base.exception.AccessFailed;
 import no.bankaxept.epayment.client.base.http.HttpStatus;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
 import org.junit.jupiter.api.Test;
