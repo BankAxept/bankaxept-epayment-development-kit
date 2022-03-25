@@ -14,7 +14,7 @@ public abstract class SdkClient {
         this.baseClient = new BaseClient(baseurl, apimKey, username, password);
     }
 
-    public Flow.Publisher<Void> postEmptyResponseBody(String url, SinglePublisher<String> bodyPublisher, String correlationId){
+    protected Flow.Publisher<Void> postEmptyResponseBody(String url, SinglePublisher<String> bodyPublisher, String correlationId){
         var responseProcessor = new EmptyResponseProcessor();
         baseClient.post(url, bodyPublisher, correlationId).subscribe(responseProcessor);
         return responseProcessor;
