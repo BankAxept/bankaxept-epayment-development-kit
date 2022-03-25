@@ -33,7 +33,8 @@ public class WebFluxHttpClientTest {
         stubFor(post("/test").willReturn(ok()));
         Flux<HttpResponse> fluxPublisher = JdkFlowAdapter.flowPublisherToFlux(client.post("/test", JdkFlowAdapter.publisherToFlowPublisher(Mono.just("")), Map.of()));
         StepVerifier.create(fluxPublisher)
-                .verifyComplete(); //Nothing is emitted if response is empty
+                .expectNext(new HttpResponse(200, ""))
+                .verifyComplete();
     }
 
     @Test

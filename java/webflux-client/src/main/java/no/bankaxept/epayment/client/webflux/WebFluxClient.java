@@ -29,7 +29,9 @@ public class WebFluxClient implements HttpClient {
                         .headers(httpHeaders -> httpHeaders.putAll(headers))
                         .exchangeToMono(clientResponse -> {
                             if (clientResponse.statusCode().is2xxSuccessful())
-                                return clientResponse.bodyToMono(String.class).map(v -> new HttpResponse(clientResponse.statusCode().value(), v));
+                                return clientResponse.bodyToMono(String.class)
+                                        .defaultIfEmpty("")
+                                        .map(v -> new HttpResponse(clientResponse.statusCode().value(), v));
                             return Mono.just(new HttpResponse(clientResponse.statusCode().value(), null));
                         }));
     }

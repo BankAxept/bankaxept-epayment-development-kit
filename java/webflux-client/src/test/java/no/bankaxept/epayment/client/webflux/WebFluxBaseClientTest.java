@@ -4,7 +4,8 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.client.test.AbstractBaseClientWireMockTest;
-import no.bankaxept.epayment.client.base.AccessFailed;
+import no.bankaxept.epayment.client.base.exception.AccessFailed;
+import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.http.HttpStatus;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
 import org.junit.jupiter.api.*;
@@ -25,6 +26,7 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void should_add_all_relevant_headers() {
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
+                .expectNext(new HttpResponse(200, ""))
                 .verifyComplete();
     }
 
@@ -63,6 +65,7 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
             removeStub(tokenEndpointMapping(serverError()));
             stubFor(tokenEndpointMapping(validTokenResponse()));
             StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
+                    .expectNext(new HttpResponse(200, ""))
                     .verifyComplete();        //Added delay for consistency
         }
     }
