@@ -61,8 +61,22 @@ public class AccessTokenProcessorTest {
         verify(subscriberMock).onError(any());
     }
 
+    @Test
+    public void should_throw_an_error_if_fetched_token_is_already_expired() throws IOException {
+        doReturn(new SinglePublisher<>(new HttpResponse(200, alreadyExpiredToken()), executor)).when(httpClientMock).post(eq("uri"), any(), any());
+        accessTokenProcessor = new AccessTokenProcessor("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
+        accessTokenProcessor.subscribe(subscriberMock);
+        verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
+        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(5000L), eq(TimeUnit.MILLISECONDS));
+        verify(subscriberMock).onError(any(IllegalStateException.class));
+    }
+
     private String tokenResponseExpiresIn20Minutes() throws IOException {
         return readJsonFromFile("token-response2.json").replace("123", Long.toString(clock.instant().plus(20, ChronoUnit.MINUTES).toEpochMilli()));
+    }
+
+    private String alreadyExpiredToken() throws IOException {
+        return readJsonFromFile("token-response2.json").replace("123", Long.toString(clock.instant().minus(20, ChronoUnit.DAYS).toEpochMilli()));
     }
 
     private String readJsonFromFile(@SuppressWarnings("SameParameterValue") String filename) throws IOException {
