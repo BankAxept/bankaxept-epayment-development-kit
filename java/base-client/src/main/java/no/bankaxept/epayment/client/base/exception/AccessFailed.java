@@ -1,4 +1,4 @@
-package no.bankaxept.epayment.client.base;
+package no.bankaxept.epayment.client.base.exception;
 
 public class AccessFailed extends RuntimeException{
 
