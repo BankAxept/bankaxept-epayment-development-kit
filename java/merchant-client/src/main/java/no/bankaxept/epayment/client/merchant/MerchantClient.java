@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.bankaxept.epayment.client.base.BaseClient;
-import no.bankaxept.epayment.client.base.SdkClient;
+import no.bankaxept.epayment.client.base.AbstractClient;
 import no.bankaxept.epayment.client.base.SinglePublisher;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
 
-public class MerchantClient extends SdkClient {
+public class MerchantClient extends AbstractClient {
 
     private final static String PAYMENTS_URL = "/payments";
 

@@ -2,15 +2,15 @@ package no.bankaxept.epayment.client.base;
 
 import java.util.concurrent.Flow;
 
-public abstract class SdkClient {
+public abstract class AbstractClient {
 
     private final BaseClient baseClient;
 
-    public SdkClient(BaseClient baseClient) {
+    public AbstractClient(BaseClient baseClient) {
         this.baseClient = baseClient;
     }
 
-    public SdkClient(String baseurl, String apimKey, String username, String password) {
+    public AbstractClient(String baseurl, String apimKey, String username, String password) {
         this.baseClient = new BaseClient(baseurl, apimKey, username, password);
     }
 
