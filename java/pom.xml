@@ -15,7 +15,7 @@
         <module>base-client</module>
         <module>webflux-client</module>
         <module>client-test</module>
-        <module>merchant</module>
+        <module>merchant-client</module>
     </modules>
     <build>
         <pluginManagement>

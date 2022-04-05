@@ -8,7 +8,7 @@
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>merchant</artifactId>
+    <artifactId>merchant-client</artifactId>
 
     <dependencies>
         <dependency>
