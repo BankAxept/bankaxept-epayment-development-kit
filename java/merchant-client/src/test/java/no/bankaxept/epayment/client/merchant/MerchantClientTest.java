@@ -6,8 +6,7 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.client.test.AbstractBaseClientWireMockTest;
-import no.bankaxept.epayment.client.base.exception.NonRetryableException;
-import no.bankaxept.epayment.client.base.exception.RetryableException;
+import no.bankaxept.epayment.client.base.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,9 +35,9 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
 
         @Test
         public void success() throws JsonProcessingException {
-            stubFor(PaymentEndpointMapping(transactionTime, ok()));
-            var paymentRequest = createPaymentRequest(transactionTime);
-            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
+            stubFor(PaymentEndpointMapping(transactionTime, created()));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(createPaymentRequest(transactionTime), "1")))
+                    .expectNext(Response.Accepted)
                     .verifyComplete();
         }
 
@@ -47,8 +46,8 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
             stubFor(PaymentEndpointMapping(transactionTime, serverError()));
             var paymentRequest = createPaymentRequest(transactionTime);
             StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
-                    .expectError(RetryableException.class)
-                    .verify();
+                    .expectNext(Response.Failed)
+                    .verifyComplete();
         }
 
         @Test
@@ -56,8 +55,8 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
             stubFor(PaymentEndpointMapping(transactionTime, forbidden()));
             var paymentRequest = createPaymentRequest(transactionTime);
             StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
-                    .expectError(NonRetryableException.class)
-                    .verify();
+                    .expectNext(Response.ClientError)
+                    .verifyComplete();
         }
 
         private PaymentRequest createPaymentRequest(OffsetDateTime transactionTime) {
