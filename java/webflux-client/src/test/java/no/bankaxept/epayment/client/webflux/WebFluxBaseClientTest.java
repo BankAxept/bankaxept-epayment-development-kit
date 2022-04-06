@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.client.test.AbstractBaseClientWireMockTest;
-import no.bankaxept.epayment.client.base.exception.AccessFailed;
+import no.bankaxept.epayment.client.base.AccessFailed;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.http.HttpStatus;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;

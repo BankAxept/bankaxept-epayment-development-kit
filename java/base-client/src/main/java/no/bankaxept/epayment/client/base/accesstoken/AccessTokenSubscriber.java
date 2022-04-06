@@ -1,6 +1,6 @@
 package no.bankaxept.epayment.client.base.accesstoken;
 
-import no.bankaxept.epayment.client.base.exception.AccessFailed;
+import no.bankaxept.epayment.client.base.AccessFailed;
 
 import java.time.Duration;
 import java.util.concurrent.*;
