@@ -1,5 +1,7 @@
 package no.bankaxept.epayment.client.base.http;
 
+import no.bankaxept.epayment.client.base.Response;
+
 import java.util.Objects;
 
 public class HttpStatus {
@@ -7,12 +9,28 @@ public class HttpStatus {
     private final int status;
 
     public HttpStatus(int status) {
-        if(status < 99 || status > 1000) throw new IllegalArgumentException("Unknown http status");
+        if (status < 99 || status > 1000) throw new IllegalArgumentException("Unknown http status");
         this.status = status;
     }
 
     public boolean is2xxOk() {
         return startsWith(2);
+    }
+
+    public Response toResponse() {
+        switch (status) {
+            case 201:
+                return Response.Accepted;
+            case 422:
+                return Response.Rejected;
+            case 409:
+                return Response.Conflicted;
+            default:
+                if (is2xxOk()) return Response.Repeated;
+                if (is4xxClientError()) return Response.ClientError;
+                if (is5xxServerError()) return Response.Failed;
+                else return Response.Unknown;
+        }
     }
 
     public boolean is4xxClientError() {
