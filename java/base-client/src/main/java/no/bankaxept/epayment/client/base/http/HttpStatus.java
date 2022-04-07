@@ -1,6 +1,6 @@
 package no.bankaxept.epayment.client.base.http;
 
-import no.bankaxept.epayment.client.base.Response;
+import no.bankaxept.epayment.client.base.ResponseStatus;
 
 import java.util.Objects;
 
@@ -17,19 +17,19 @@ public class HttpStatus {
         return startsWith(2);
     }
 
-    public Response toResponse() {
+    public ResponseStatus toResponse() {
         switch (status) {
+            case 200:
+                return ResponseStatus.Repeated;
             case 201:
-                return Response.Accepted;
+                return ResponseStatus.Accepted;
             case 422:
-                return Response.Rejected;
+                return ResponseStatus.Rejected;
             case 409:
-                return Response.Conflicted;
+                return ResponseStatus.Conflicted;
             default:
-                if (is2xxOk()) return Response.Repeated;
-                if (is4xxClientError()) return Response.ClientError;
-                if (is5xxServerError()) return Response.Failed;
-                else return Response.Unknown;
+                if (is4xxClientError()) return ResponseStatus.ClientError;
+                else return ResponseStatus.Failed;
         }
     }
 

@@ -14,7 +14,7 @@ public abstract class AbstractClient {
         this.baseClient = new BaseClient(baseurl, apimKey, username, password);
     }
 
-    protected Flow.Publisher<Response> postEmptyResponseBody(String url, SinglePublisher<String> bodyPublisher, String correlationId){
+    protected Flow.Publisher<ResponseStatus> postEmptyResponseBody(String url, SinglePublisher<String> bodyPublisher, String correlationId){
         return new EmptyResponseProcessor(baseClient.post(url, bodyPublisher, correlationId));
     }
 }
