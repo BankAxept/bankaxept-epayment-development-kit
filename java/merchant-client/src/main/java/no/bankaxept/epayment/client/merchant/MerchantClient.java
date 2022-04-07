@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.bankaxept.epayment.client.base.*;
-import no.bankaxept.epayment.client.base.http.HttpResponse;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -32,7 +31,7 @@ public class MerchantClient {
         this.baseClient = new BaseClient(baseurl, apimKey, username, password);
     }
 
-    public Flow.Publisher<ResponseStatus> payment(PaymentRequest request, String correlationId) {
+    public Flow.Publisher<RequestStatus> payment(PaymentRequest request, String correlationId) {
         try {
             return new MapOperator<>(baseClient.post(PAYMENTS_URL, new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
         } catch (JsonProcessingException e) {
