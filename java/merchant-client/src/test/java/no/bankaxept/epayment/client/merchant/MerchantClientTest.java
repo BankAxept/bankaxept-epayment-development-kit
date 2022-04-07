@@ -34,7 +34,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     public class PaymentsTests {
 
         @Test
-        public void success() throws JsonProcessingException {
+        public void success() {
             stubFor(PaymentEndpointMapping(transactionTime, created()));
             StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(createPaymentRequest(transactionTime), "1")))
                     .expectNext(ResponseStatus.Accepted)
@@ -42,7 +42,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         }
 
         @Test
-        public void server_error() throws JsonProcessingException {
+        public void server_error() {
             stubFor(PaymentEndpointMapping(transactionTime, serverError()));
             var paymentRequest = createPaymentRequest(transactionTime);
             StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
@@ -51,7 +51,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         }
 
         @Test
-        public void client_error() throws JsonProcessingException {
+        public void client_error() {
             stubFor(PaymentEndpointMapping(transactionTime, forbidden()));
             var paymentRequest = createPaymentRequest(transactionTime);
             StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))

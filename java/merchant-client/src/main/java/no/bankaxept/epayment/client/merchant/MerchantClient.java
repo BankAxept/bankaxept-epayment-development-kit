@@ -32,8 +32,12 @@ public class MerchantClient {
         this.baseClient = new BaseClient(baseurl, apimKey, username, password);
     }
 
-    public Flow.Publisher<ResponseStatus> payment(PaymentRequest request, String correlationId) throws JsonProcessingException {
-        return new MapOperator<>(baseClient.post(PAYMENTS_URL, new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
+    public Flow.Publisher<ResponseStatus> payment(PaymentRequest request, String correlationId) {
+        try {
+            return new MapOperator<>(baseClient.post(PAYMENTS_URL, new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
