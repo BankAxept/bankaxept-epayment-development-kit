@@ -30,10 +30,9 @@ public class TokenRequestorClient {
         this.baseClient = new BaseClient(baseurl, apimKey, username, password);
     }
 
-    public Flow.Publisher<RequestResponse<EnrolCardResponse>> enrol(EnrolCardRequest request, String correlationId) {
+    public Flow.Publisher<RequestStatus> enrol(EnrolCardRequest request, String correlationId) {
         return new MapOperator<>(baseClient.post(ENROLMENT_URL, new SinglePublisher<>(serialize(request), executor), correlationId),
-                httpResponse -> new RequestResponse<>(httpResponse.getStatus().toResponse(),
-                        deserializeOrNull(EnrolCardResponse.class, httpResponse.getBody())));
+                httpResponse -> httpResponse.getStatus().toResponse());
     }
 
     public Flow.Publisher<RequestStatus> delete(String tokenId, String correlationId) {
@@ -46,14 +45,6 @@ public class TokenRequestorClient {
             return objectMapper.writeValueAsString(input);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private <T> T deserializeOrNull(Class<T> clazz, String input) {
-        try {
-            return objectMapper.readValue(input, clazz);
-        } catch (JsonProcessingException e) {
-            return null;
         }
     }
 }

@@ -6,7 +6,6 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.client.test.AbstractBaseClientWireMockTest;
-import no.bankaxept.epayment.client.base.RequestResponse;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,15 +41,7 @@ class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
     public void enrolment_successful() throws JsonProcessingException {
         stubFor(EnrolmentEndpoint(created().withBody(objectMapper.writeValueAsString(new EnrolCardResponse().tokenId(tokenId)))));
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.enrol(createEnrolmentRequest(), someCorrelationId)))
-                .expectNext(new RequestResponse<>(RequestStatus.Accepted, new EnrolCardResponse().tokenId(tokenId)))
-                .verifyComplete();
-    }
-
-    @Test
-    public void enrolment_no_body() {
-        stubFor(EnrolmentEndpoint(ok()));
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.enrol(createEnrolmentRequest(), someCorrelationId)))
-                .expectNext(new RequestResponse<>(RequestStatus.Repeated, null))
+                .expectNext(RequestStatus.Accepted)
                 .verifyComplete();
     }
 
