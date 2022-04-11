@@ -16,6 +16,7 @@
         <module>webflux-client</module>
         <module>client-test</module>
         <module>merchant-client</module>
+        <module>token-requestor-client</module>
     </modules>
     <build>
         <pluginManagement>
