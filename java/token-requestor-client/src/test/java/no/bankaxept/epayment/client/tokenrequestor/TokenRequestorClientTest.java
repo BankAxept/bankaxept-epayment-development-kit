@@ -17,7 +17,7 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 
-class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
+public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
 
     private TokenRequestorClient client;
 
