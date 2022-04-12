@@ -1,7 +1,5 @@
 package no.bankaxept.epayment.client.tokenrequestor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
@@ -29,8 +27,6 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
 
     private final UUID tokenId = UUID.randomUUID();
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     @BeforeEach
     public void setup() {
         super.setup();
@@ -38,8 +34,8 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
     }
 
     @Test
-    public void enrolment_successful() throws JsonProcessingException {
-        stubFor(EnrolmentEndpoint(created().withBody(objectMapper.writeValueAsString(new EnrolCardResponse().tokenId(tokenId)))));
+    public void enrolment_successful() {
+        stubFor(EnrolmentEndpoint(created()));
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.enrol(createEnrolmentRequest(), someCorrelationId)))
                 .expectNext(RequestStatus.Accepted)
                 .verifyComplete();

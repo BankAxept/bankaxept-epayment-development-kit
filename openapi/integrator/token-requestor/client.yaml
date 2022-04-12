@@ -105,12 +105,15 @@ components:
     EnrolCardCallbackResult:
       type: object
       required:
+        - tokenId
         - tokenRequestorId
         - paymentToken
         - paymentAccountReference
         - accountNumberLastFourDigits
         - issuerId
       properties:
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
         tokenRequestorId:
           $ref: '../components.yaml#/components/schemas/tokenRequestorId'
         paymentToken:
