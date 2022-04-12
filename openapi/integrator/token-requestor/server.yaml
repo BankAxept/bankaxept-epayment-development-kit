@@ -27,17 +27,9 @@ paths:
               $ref: '#/components/schemas/EnrolCardRequest'
       responses:
         '200':
-          description: The enrolment request was already accepted.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnrolCardResponse'
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: The enrolment request was accepted.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnrolCardResponse'
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -87,14 +79,6 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         encryptedCardholderAuthenticationData:
           $ref: '#/components/schemas/encryptedEnrolmentCardholderAuthenticationData'
-
-    EnrolCardResponse:
-      type: object
-      required:
-        - tokenId
-      properties:
-        tokenId:
-          $ref: '../components.yaml#/components/schemas/tokenId'
 
     EnrolmentCardholderAuthenticationData:
       type: object
