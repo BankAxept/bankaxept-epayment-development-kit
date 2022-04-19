@@ -5,7 +5,7 @@ info:
   description: BankAxept ePayment Token Requestor APIs - Token Requestor side
 
 paths:
-  /payment-tokens/{tokenId}:
+  /payment-tokens:
     description: EnrolCard callback
     post:
       operationId: enrolCardCallback
@@ -94,9 +94,12 @@ components:
       type: object
       required:
         - code
+        - tokenId
       properties:
         code:
           $ref: '#/components/schemas/EnrolCardCode'
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
         result:
           $ref: '#/components/schemas/EnrolCardCallbackResult'
         errorMessage:
@@ -105,15 +108,12 @@ components:
     EnrolCardCallbackResult:
       type: object
       required:
-        - tokenId
         - tokenRequestorId
         - paymentToken
         - paymentAccountReference
         - accountNumberLastFourDigits
         - issuerId
       properties:
-        tokenId:
-          $ref: '../components.yaml#/components/schemas/tokenId'
         tokenRequestorId:
           $ref: '../components.yaml#/components/schemas/tokenRequestorId'
         paymentToken:
