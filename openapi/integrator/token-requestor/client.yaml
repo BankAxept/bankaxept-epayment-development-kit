@@ -10,7 +10,6 @@ paths:
     post:
       operationId: enrolCardCallback
       parameters:
-        - $ref: '../components.yaml#/components/parameters/tokenId'
         - $ref: '../components.yaml#/components/parameters/correlationId'
       requestBody:
         required: true
