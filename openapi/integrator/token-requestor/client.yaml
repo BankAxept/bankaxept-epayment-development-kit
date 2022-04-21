@@ -94,11 +94,14 @@ components:
       required:
         - code
         - tokenId
+        - messageId
       properties:
         code:
           $ref: '#/components/schemas/EnrolCardCode'
         tokenId:
           $ref: '../components.yaml#/components/schemas/tokenId'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
         result:
           $ref: '#/components/schemas/EnrolCardCallbackResult'
         errorMessage:
