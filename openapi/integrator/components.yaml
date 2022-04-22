@@ -112,6 +112,12 @@ components:
       example: '2108'
       description: >-
         The expiration date of the token (YYMM).
+    tokenRequestorAggregatorId:
+      type: string
+      maxLength: 36
+      example: "19474920408"
+      description: >-
+        The globally unique id for the token requestor aggregator.
     tokenRequestorId:
       type: string
       pattern: "^[0-9]{1,11}$"

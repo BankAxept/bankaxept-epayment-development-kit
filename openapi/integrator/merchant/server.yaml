@@ -290,6 +290,7 @@ components:
       required:
         - amount
         - encryptedCardholderAuthenticationData
+        - merchantAggregatorId
         - merchantId
         - merchantName
         - merchantReference
@@ -309,6 +310,8 @@ components:
           example: false
         encryptedCardholderAuthenticationData:
           $ref: '#/components/schemas/encryptedPaymentCardholderAuthenticationData'
+        merchantAggregatorId:
+          $ref: '#/components/schemas/merchantAggregatorId'
         merchantId:
           $ref: '#/components/schemas/merchantId'
         merchantName:
@@ -439,6 +442,12 @@ components:
       description: >-
         The Payment and Cardholder Authentication Data is encrypted according to the Java Web Encryption specification defined in RFC-7516.
         See schema PaymentCardholderAuthenticationData for decrypted data format
+    merchantAggregatorId:
+      type: string
+      maxLength: 36
+      example: "10030005"
+      description: >-
+        The merchant aggregator's unique identifier.
     merchantId:
       type: string
       maxLength: 36
