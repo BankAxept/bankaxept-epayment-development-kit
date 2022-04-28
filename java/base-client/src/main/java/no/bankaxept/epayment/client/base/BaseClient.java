@@ -28,7 +28,7 @@ public class BaseClient {
                 .findFirst()
                 .map(httpClientProvider -> httpClientProvider.create(baseurl))
                 .orElseThrow();
-        this.tokenPublisher = new AccessTokenProcessor("/token", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
+        this.tokenPublisher = new AccessTokenProcessor("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
     }
 
     public Flow.Publisher<HttpResponse> post(
