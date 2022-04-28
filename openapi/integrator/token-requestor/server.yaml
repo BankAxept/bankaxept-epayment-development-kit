@@ -69,13 +69,10 @@ components:
     EnrolCardRequest:
       type: object
       required:
-        - tokenRequestorAggregatorId
         - tokenRequestorId
         - messageId
         - encryptedCardholderAuthenticationData
       properties:
-        tokenRequestorAggregatorId:
-          $ref: '../components.yaml#/components/schemas/tokenRequestorAggregatorId'
         tokenRequestorId:
           $ref: '../components.yaml#/components/schemas/tokenRequestorId'
         messageId:
