@@ -445,7 +445,6 @@ components:
     merchantAggregatorId:
       type: string
       maxLength: 36
-      example: "10030005"
       description: >-
         The merchant aggregator's unique identifier.
     merchantId:
