@@ -142,6 +142,11 @@ components:
       example: "99977512345"
       description: >-
         The payment card's bank account number.
+    authenticationDateTime:
+      type: string
+      format: date-time
+    authenticationReference:
+      type: string
 
   parameters:
     paymentId:
