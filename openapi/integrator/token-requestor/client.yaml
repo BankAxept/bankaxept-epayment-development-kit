@@ -112,7 +112,6 @@ components:
       required:
         - tokenRequestorId
         - paymentToken
-        - paymentAccountReference
         - accountNumberLastFourDigits
         - issuerId
       properties:
@@ -120,8 +119,6 @@ components:
           $ref: '../components.yaml#/components/schemas/tokenRequestorId'
         paymentToken:
           $ref: '../components.yaml#/components/schemas/TokenPaymentData'
-        paymentAccountReference:
-          $ref: '../components.yaml#/components/schemas/paymentAccountReference'
         accountNumberLastFourDigits:
           type: string
           pattern: '^[0-9]{4}$'
