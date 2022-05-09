@@ -36,7 +36,7 @@ public abstract class AbstractBaseClientWireMockTest {
     }
 
     protected MappingBuilder tokenEndpointMapping(ResponseDefinitionBuilder responseBuilder) {
-        return WireMock.post("/token")
+        return WireMock.post("/bankaxept-epayment/access-token-api/v1/accesstoken")
                 .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
                 .withBasicAuth("username", "password")
                 .willReturn(responseBuilder);
