@@ -70,7 +70,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         }
 
         private MappingBuilder PaymentEndpointMapping(OffsetDateTime transactionTime, ResponseDefinitionBuilder responseBuilder) {
-            return post("/payments")
+            return post("/bankaxept-epayment/merchant-api/v1/payments")
                     .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
                     .withHeader("X-Correlation-Id", new EqualToPattern("1"))
                     .withRequestBody(matchingJsonPath("merchantId", equalTo("10030005")))
