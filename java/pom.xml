@@ -69,5 +69,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <swagger.parser.version>2.0.30</swagger.parser.version>
+        <!-- Override the netty version spring boot uses with the version used by com.azure packages -->
+        <netty.version>4.1.72.Final</netty.version>
     </properties>
 </project>
