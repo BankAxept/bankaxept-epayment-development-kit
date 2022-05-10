@@ -1,11 +1,13 @@
-package no.bankaxept.client.test;
+package no.bankaxept.epayment.test.client;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.epayment.client.base.BaseClient;
 import no.bankaxept.epayment.client.base.SinglePublisher;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.time.Clock;
@@ -30,9 +32,14 @@ public abstract class AbstractBaseClientWireMockTest {
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     @BeforeEach
-    public void setup() {
+    public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
         WireMock.stubFor(tokenEndpointMapping(validTokenResponse()));
-        baseClient = createBaseClient();
+        baseClient = createBaseClient(wmRuntimeInfo.getHttpPort());
+    }
+
+    @AfterEach
+    public void tearDown() {
+        baseClient.shutDown();
     }
 
     protected MappingBuilder tokenEndpointMapping(ResponseDefinitionBuilder responseBuilder) {
@@ -46,8 +53,8 @@ public abstract class AbstractBaseClientWireMockTest {
         return WireMock.ok().withBody(validTokenResponse);
     }
 
-    protected BaseClient createBaseClient() {
-        return new BaseClient("http://localhost:8443", "key", "username", "password", clock);
+    protected BaseClient createBaseClient(int port) {
+        return new BaseClient("http://localhost:" + port, "key", "username", "password", clock);
     }
 
     protected Flow.Publisher<String> emptyPublisher() {

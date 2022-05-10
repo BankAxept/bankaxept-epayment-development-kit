@@ -1,8 +1,10 @@
-package no.bankaxept.epayment.client.base.accesstoken;
+package no.bankaxept.epayment.test.client.base;
 
 import no.bankaxept.epayment.client.base.SinglePublisher;
+import no.bankaxept.epayment.client.base.accesstoken.AccessTokenProcessor;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -26,20 +28,25 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class AccessTokenProcessorTest {
+class AccessTokenProcessorTest {
 
     @Spy
-    public ScheduledExecutorService schedulerMock = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService schedulerMock = Executors.newScheduledThreadPool(1);
 
     @Mock
-    public HttpClient httpClientMock;
+    private HttpClient httpClientMock;
 
     @Mock
-    public Flow.Subscriber<String> subscriberMock;
+    private Flow.Subscriber<String> subscriberMock;
 
-    public AccessTokenProcessor accessTokenProcessor;
-    public final Clock clock  = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-    public final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private AccessTokenProcessor accessTokenProcessor;
+    private final Clock clock  = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    @AfterEach
+    public void tearDown(){
+        accessTokenProcessor.shutDown();
+    }
 
     @Test
     public void should_schedule_on_startup_then_new_on_success() throws IOException {
@@ -52,13 +59,14 @@ public class AccessTokenProcessorTest {
     }
 
     @Test
-    public void should_schedule_on_startup_then_again_on_error() {
+    public void should_schedule_on_startup_then_again_on_error() throws IOException {
         doReturn(new SinglePublisher<>(new HttpResponse(500, "error"), executor)).when(httpClientMock).post(eq("uri"), any(), any());
         accessTokenProcessor = new AccessTokenProcessor("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
         accessTokenProcessor.subscribe(subscriberMock);
         verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
         verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(5000L), eq(TimeUnit.MILLISECONDS));
         verify(subscriberMock).onError(any());
+
     }
 
     private String tokenResponseExpiresIn20Minutes() throws IOException {
