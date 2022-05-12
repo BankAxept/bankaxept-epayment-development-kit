@@ -1,7 +1,9 @@
 package no.bankaxept.epayment.client.base;
 
-import no.bankaxept.epayment.client.base.accesstoken.AccessTokenProcessor;
+import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
+import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
@@ -15,7 +17,7 @@ import java.util.ServiceLoader;
 import java.util.concurrent.*;
 
 public class BaseClient {
-    private final AccessTokenProcessor tokenPublisher;
+    private final AccessTokenPublisher tokenPublisher;
     private final HttpClient httpClient;
     private final Duration tokenTimeout = Duration.ofSeconds(10);
 
@@ -28,7 +30,19 @@ public class BaseClient {
                 .findFirst()
                 .map(httpClientProvider -> httpClientProvider.create(baseurl))
                 .orElseThrow();
-        this.tokenPublisher = new AccessTokenProcessor("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
+        this.tokenPublisher = new ScheduledAccessTokenPublisher("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
+    }
+
+    private BaseClient(String baseurl, String token) {
+        httpClient = ServiceLoader.load(HttpClientProvider.class)
+                .findFirst()
+                .map(httpClientProvider -> httpClientProvider.create(baseurl))
+                .orElseThrow();
+        this.tokenPublisher = new StaticAccessTokenPublisher(token);
+    }
+
+    public static BaseClient withStaticToken(String baseurl, String token) {
+        return new BaseClient(baseurl, token);
     }
 
     public Flow.Publisher<HttpResponse> post(

@@ -6,9 +6,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.bankaxept.epayment.client.base.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
+
+import static java.util.Collections.emptyMap;
 
 public class TokenRequestorClient {
     private final BaseClient baseClient;
@@ -32,13 +36,21 @@ public class TokenRequestorClient {
     }
 
     public Flow.Publisher<RequestStatus> enrol(EnrolCardRequest request, String correlationId) {
-        return new MapOperator<>(baseClient.post(ENROLMENT_URL, new SinglePublisher<>(serialize(request), executor), correlationId),
+        return enrol(request, correlationId, emptyMap());
+    }
+
+    public Flow.Publisher<RequestStatus> enrol(EnrolCardRequest request, String correlationId, Map<String, List<String>> customHeaders) {
+        return new MapOperator<>(baseClient.post(ENROLMENT_URL, new SinglePublisher<>(serialize(request), executor), correlationId, customHeaders),
+                httpResponse -> httpResponse.getStatus().toResponse());
+    }
+
+    public Flow.Publisher<RequestStatus> delete(String tokenId, String correlationId, Map<String, List<String>> customHeaders) {
+        return new MapOperator<>(baseClient.post(String.format(DELETION_URL, tokenId), new SinglePublisher<>("", executor), correlationId, customHeaders),
                 httpResponse -> httpResponse.getStatus().toResponse());
     }
 
     public Flow.Publisher<RequestStatus> delete(String tokenId, String correlationId) {
-        return new MapOperator<>(baseClient.post(String.format(DELETION_URL, tokenId), new SinglePublisher<>("", executor), correlationId),
-                httpResponse -> httpResponse.getStatus().toResponse());
+        return delete(tokenId, correlationId, emptyMap());
     }
 
     private <T> String serialize(T input) {

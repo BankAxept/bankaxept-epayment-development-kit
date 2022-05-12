@@ -6,9 +6,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.bankaxept.epayment.client.base.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
+
+import static java.util.Collections.emptyMap;
 
 public class MerchantClient {
 
@@ -31,12 +35,16 @@ public class MerchantClient {
         this.baseClient = new BaseClient(baseurl, apimKey, username, password);
     }
 
-    public Flow.Publisher<RequestStatus> payment(PaymentRequest request, String correlationId) {
+    public Flow.Publisher<RequestStatus> payment(PaymentRequest request, String correlationId, Map<String, List<String>> customHeaders) {
         try {
-            return new MapOperator<>(baseClient.post(PAYMENTS_URL, new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
+            return new MapOperator<>(baseClient.post(PAYMENTS_URL, new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Flow.Publisher<RequestStatus> payment(PaymentRequest request, String correlationId) {
+        return payment(request, correlationId, emptyMap());
     }
 
 }

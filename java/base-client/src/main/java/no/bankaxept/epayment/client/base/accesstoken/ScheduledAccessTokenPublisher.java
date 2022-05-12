@@ -14,7 +14,7 @@ import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AccessTokenProcessor implements Flow.Processor<HttpResponse, String> {
+public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow.Subscriber<HttpResponse> {
     private final ScheduledExecutorService scheduler;
     private final ExecutorService fetchExecutor = Executors.newSingleThreadExecutor();
     private final Clock clock;
@@ -29,7 +29,7 @@ public class AccessTokenProcessor implements Flow.Processor<HttpResponse, String
 
     private final Queue<Flow.Subscriber<? super String>> subscribers = new LinkedBlockingQueue<>();
 
-    public AccessTokenProcessor(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
+    public ScheduledAccessTokenPublisher(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
         this.headers = createHeaders(apimKey, username, password);
         this.clock = clock;
@@ -95,6 +95,7 @@ public class AccessTokenProcessor implements Flow.Processor<HttpResponse, String
     }
 
     public void shutDown() {
+        shutDown = true;
         scheduler.shutdown();
         fetchExecutor.shutdown();
         try {
