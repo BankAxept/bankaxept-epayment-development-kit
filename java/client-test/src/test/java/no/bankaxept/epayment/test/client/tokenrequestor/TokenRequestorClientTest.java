@@ -1,10 +1,13 @@
-package no.bankaxept.epayment.client.tokenrequestor;
+package no.bankaxept.epayment.test.client.tokenrequestor;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import no.bankaxept.client.test.AbstractBaseClientWireMockTest;
+import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
 import no.bankaxept.epayment.client.base.RequestStatus;
+import no.bankaxept.epayment.client.tokenrequestor.EnrolCardRequest;
+import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
@@ -28,8 +31,8 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
     private final UUID tokenId = UUID.randomUUID();
 
     @BeforeEach
-    public void setup() {
-        super.setup();
+    public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+        super.setup(wmRuntimeInfo);
         client = new TokenRequestorClient(baseClient);
     }
 

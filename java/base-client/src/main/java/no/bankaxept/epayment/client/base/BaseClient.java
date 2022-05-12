@@ -50,4 +50,8 @@ public class BaseClient {
         allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
         return httpClient.post(uri, body, allHeaders);
     }
+
+    public void shutDown() {
+        tokenPublisher.shutDown();
+    }
 }

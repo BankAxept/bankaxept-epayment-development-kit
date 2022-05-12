@@ -16,8 +16,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class AccessTokenProcessor implements Flow.Processor<HttpResponse, String> {
     private final ScheduledExecutorService scheduler;
-    private final Executor fetchExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService fetchExecutor = Executors.newSingleThreadExecutor();
     private final Clock clock;
+
+    private boolean shutDown;
 
     private final HttpClient httpClient;
     private final String uri;
@@ -44,10 +46,12 @@ public class AccessTokenProcessor implements Flow.Processor<HttpResponse, String
     }
 
     private void scheduleFetch(long millis) {
+        if (shutDown) return;
         scheduler.schedule(this::fetchNewToken, millis, TimeUnit.MILLISECONDS);
     }
 
     private void fetchNewToken() {
+        if (shutDown) return;
         httpClient.post(uri, new SinglePublisher<>("", fetchExecutor), headers).subscribe(this);
     }
 
@@ -88,6 +92,16 @@ public class AccessTokenProcessor implements Flow.Processor<HttpResponse, String
 
     @Override
     public void onComplete() {
+    }
+
+    public void shutDown() {
+        scheduler.shutdown();
+        fetchExecutor.shutdown();
+        try {
+            while (!scheduler.awaitTermination(500, TimeUnit.MILLISECONDS) && !fetchExecutor.awaitTermination(500, TimeUnit.MILLISECONDS)) {
+            }
+        } catch (InterruptedException ignored) {
+        }
     }
 
     @Override

@@ -1,10 +1,13 @@
-package no.bankaxept.epayment.client.webflux;
+package no.bankaxept.epayment.test.client.webflux;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.ContainsPattern;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
+import no.bankaxept.epayment.client.webflux.WebFluxClient;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.core.publisher.Flux;
@@ -18,10 +21,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@WireMockTest(httpPort = 8443)
+@WireMockTest
 public class WebFluxHttpClientTest {
+    private  HttpClient client;
 
-    private final HttpClient client = new WebFluxClient("http://localhost:8443");
+    @BeforeEach
+    public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+        client = new WebFluxClient("http://localhost:" + wmRuntimeInfo.getHttpPort());
+    }
 
     @AfterEach
     public void cleanUp() {
@@ -29,7 +36,7 @@ public class WebFluxHttpClientTest {
     }
 
     @Test
-    public void simple_request_no_body_no_headers(){
+    public void simple_request_no_body_no_headers() {
         stubFor(post("/test").willReturn(ok()));
         Flux<HttpResponse> fluxPublisher = JdkFlowAdapter.flowPublisherToFlux(client.post("/test", JdkFlowAdapter.publisherToFlowPublisher(Mono.just("")), Map.of()));
         StepVerifier.create(fluxPublisher)
@@ -38,7 +45,7 @@ public class WebFluxHttpClientTest {
     }
 
     @Test
-    public void simple_request_empty_body_no_headers(){
+    public void simple_request_empty_body_no_headers() {
         stubFor(post("/test").willReturn(ok().withBody("response")));
         var publisher = client.post("/test", JdkFlowAdapter.publisherToFlowPublisher(Mono.empty()), Map.of());
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(publisher))
@@ -47,7 +54,7 @@ public class WebFluxHttpClientTest {
     }
 
     @Test
-    public void simple_request_with_body_and_header(){
+    public void simple_request_with_body_and_header() {
         stubFor(post("/test")
                 .withHeader("test-header", new ContainsPattern("test-value"))
                 .willReturn(ok().withBody("response-body")));

@@ -5,18 +5,17 @@
     <parent>
         <artifactId>development-kit-parent</artifactId>
         <groupId>no.bankaxept.epayment</groupId>
-        <version>${revision}</version>
+        <version>0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>development-kit</artifactId>
     <packaging>pom</packaging>
-    <version>${revision}</version>
     <modules>
         <module>base-client</module>
         <module>webflux-client</module>
-        <module>client-test</module>
         <module>merchant-client</module>
         <module>token-requestor-client</module>
+        <module>client-test</module>
     </modules>
     <build>
         <pluginManagement>
@@ -28,19 +27,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <!-- This is the current stable version -->
-                <version>3.0.0-M5</version>
-            </plugin>
-        </plugins>
     </build>
     <dependencyManagement>
         <dependencies>
@@ -49,57 +35,41 @@
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>base-client</artifactId>
-                <version>${revision}</version>
+                <version>0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>webflux-client</artifactId>
-                <version>${revision}</version>
+                <version>0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>client-test</artifactId>
-                <version>${revision}</version>
+                <version>0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring.boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>no.bankaxept.epayment</groupId>
+                <artifactId>merchant-client</artifactId>
+                <version>0.1-SNAPSHOT</version>
             </dependency>
-
+            <dependency>
+                <groupId>no.bankaxept.epayment</groupId>
+                <artifactId>token-requestor-client</artifactId>
+                <version>0.1-SNAPSHOT</version>
+            </dependency>
             <!-- openapi generation -->
             <dependency>
                 <groupId>io.swagger.parser.v3</groupId>
                 <artifactId>swagger-parser</artifactId>
                 <version>${swagger.parser.version}</version>
             </dependency>
-
-            <!-- Tests -->
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-inline</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock-jre8</artifactId>
-                <version>${wiremock.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <spring.boot.version>2.6.4</spring.boot.version>
-        <wiremock.version>2.32.0</wiremock.version>
-        <mockito.version>4.4.0</mockito.version>
         <swagger.parser.version>2.0.30</swagger.parser.version>
+        <!-- Override the netty version spring boot uses with the version used by com.azure packages -->
+        <netty.version>4.1.72.Final</netty.version>
     </properties>
 </project>
