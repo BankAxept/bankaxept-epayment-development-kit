@@ -62,14 +62,14 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
     }
 
     private MappingBuilder DeletionEndpoint(ResponseDefinitionBuilder responseBuilder) {
-        return post("/token-requestor/v1/payment-tokens/" + tokenId + "/deletion")
+        return post("/payment-tokens/" + tokenId + "/deletion")
                 .withHeader("Authorization", new EqualToPattern(bearerToken()))
                 .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
                 .willReturn(responseBuilder);
     }
 
     private MappingBuilder EnrolmentEndpoint(ResponseDefinitionBuilder responseBuilder) {
-        return post("/token-requestor/v1/payment-tokens")
+        return post("/payment-tokens")
                 .withHeader("Authorization", new EqualToPattern(bearerToken()))
                 .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
                 .withRequestBody(matchingJsonPath("tokenRequestorId", equalTo(tokenRequestorIdExample)))

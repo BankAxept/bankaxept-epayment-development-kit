@@ -5,7 +5,7 @@ info:
   description: BankAxept ePayment Token Requestor APIs - ePayment Platform side
   
 servers:
-  - url: token-requestor/v1
+  - url: /bankaxept-epayment/token-requestor-api/v1
 
 security:
   - ocpApimSubscriptionKey: [ ]

@@ -18,8 +18,7 @@ public class MerchantClient {
 
     private final BaseClient baseClient;
 
-    private final static String BASE_URL = "/bankaxept-epayment/merchant-api/v1";
-    private final static String PAYMENTS_URL = BASE_URL + "/payments";
+    private final static String PAYMENTS_URL = "/payments";
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
