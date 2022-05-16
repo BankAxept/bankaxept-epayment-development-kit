@@ -25,15 +25,15 @@ public abstract class AbstractBaseClientWireMockTest {
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private final static String aToken = "a-token";
 
-    private final String validTokenResponse = "{\n" +
+    private final String validTokenResponseTemplate = "{\n" +
             "\"expiresOn\": " + clock.instant().plus(2, ChronoUnit.HOURS).toEpochMilli() + ",\n" +
-            "\"accessToken\": \"" + aToken + "\"\n" +
+            "\"accessToken\": \"%s\"\n" +
             "}";
+
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     @BeforeEach
     public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
-        WireMock.stubFor(tokenEndpointMapping(validTokenResponse()));
         baseClient = createBaseClient(wmRuntimeInfo.getHttpPort());
     }
 
@@ -50,10 +50,18 @@ public abstract class AbstractBaseClientWireMockTest {
     }
 
     protected ResponseDefinitionBuilder validTokenResponse() {
-        return WireMock.ok().withBody(validTokenResponse);
+        return validTokenResponse(aToken);
+    }
+
+    protected ResponseDefinitionBuilder validTokenResponse(String token) {
+        return WireMock.ok().withBody(String.format(validTokenResponseTemplate, token));
     }
 
     protected BaseClient createBaseClient(int port) {
+        return BaseClient.withStaticToken("http://localhost:" + port, aToken);
+    }
+
+    protected BaseClient createScheduledBaseClient(int port) {
         return new BaseClient("http://localhost:" + port, "key", "username", "password", clock);
     }
 

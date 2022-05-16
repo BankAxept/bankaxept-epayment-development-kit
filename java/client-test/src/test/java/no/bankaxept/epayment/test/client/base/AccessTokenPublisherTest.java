@@ -61,7 +61,7 @@ class AccessTokenPublisherTest {
     }
 
     @Test
-    public void should_schedule_on_startup_then_again_on_error() throws IOException {
+    public void should_schedule_on_startup_then_again_on_error() {
         doReturn(new SinglePublisher<>(new HttpResponse(500, "error"), executor)).when(httpClientMock).post(eq("uri"), any(), any());
         accessTokenProcessor = new ScheduledAccessTokenPublisher("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
         accessTokenProcessor.subscribe(subscriberMock);

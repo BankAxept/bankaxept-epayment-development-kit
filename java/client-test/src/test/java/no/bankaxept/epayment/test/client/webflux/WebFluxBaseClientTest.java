@@ -1,6 +1,7 @@
 package no.bankaxept.epayment.test.client.webflux;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.*;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,13 +27,6 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
     public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
         super.setup(wmRuntimeInfo);
         stubFor(testEndpointMapping());
-    }
-
-    @Test
-    public void should_add_all_relevant_headers() {
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
-                .expectNext(new HttpResponse(200, ""))
-                .verifyComplete();
     }
 
     @Test
@@ -50,18 +43,27 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
     }
 
     @Nested
-    @DisplayName("Access token errors")
+    @DisplayName("Scheduled token tests")
     public class WebfluxAccessTokenErrorTests {
 
         @BeforeEach
-        public void setup() {
-            stubFor(testEndpointMapping());
+        public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+            WireMock.stubFor(tokenEndpointMapping(validTokenResponse("scheduled-token")));
+            baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
+            stubFor(testEndpointMapping("scheduled-token"));
+        }
+
+        @Test
+        public void should_add_all_relevant_headers_with_scheduled_token() {
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
+                    .expectNext(new HttpResponse(200, ""))
+                    .verifyComplete();
         }
 
         @Test
         public void should_fail_if_client_error_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) {
             stubFor(tokenEndpointMapping(forbidden()));
-            baseClient = createBaseClient(wmRuntimeInfo.getHttpPort());
+            baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
             assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
                     .getCause().isInstanceOf(HttpStatusException.class)
                     .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(403));
@@ -70,14 +72,14 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
         @Test
         public void should_fail_if_connection_reset_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) {
             stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
-            baseClient = createBaseClient(wmRuntimeInfo.getHttpPort());
+            baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
             assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class);
         }
 
         @Test
         public void new_token_is_fetched_after_error(WireMockRuntimeInfo wmRuntimeInfo) {
             stubFor(tokenEndpointMapping(serverError()));
-            baseClient = createBaseClient(wmRuntimeInfo.getHttpPort());
+            baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
             assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
                     .getCause().isInstanceOf(HttpStatusException.class)
                     .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(500));
@@ -90,8 +92,13 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
     }
 
     private MappingBuilder testEndpointMapping() {
+        return testEndpointMapping("a-token");
+    }
+
+
+    private MappingBuilder testEndpointMapping(String token) {
         return post("/test")
-                .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
+                .withHeader("Authorization", new EqualToPattern("Bearer " + token))
                 .withHeader("X-Correlation-Id", new EqualToPattern("1"))
                 .willReturn(ok());
     }
