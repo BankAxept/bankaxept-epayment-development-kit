@@ -1,9 +1,6 @@
 package no.bankaxept.epayment.client.base;
 
-import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
-import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
-import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
-import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.*;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
@@ -41,8 +38,21 @@ public class BaseClient {
         this.tokenPublisher = new StaticAccessTokenPublisher(token);
     }
 
+    private BaseClient(String baseurl) {
+        httpClient = ServiceLoader.load(HttpClientProvider.class)
+                .findFirst()
+                .map(httpClientProvider -> httpClientProvider.create(baseurl))
+                .orElseThrow();
+        this.tokenPublisher = new EmptyAccessTokenPublisher();
+
+    }
+
     public static BaseClient withStaticToken(String baseurl, String token) {
         return new BaseClient(baseurl, token);
+    }
+
+    public static BaseClient withoutToken(String baseurl) {
+        return new BaseClient(baseurl);
     }
 
     public Flow.Publisher<HttpResponse> post(
@@ -62,7 +72,7 @@ public class BaseClient {
         var allHeaders = new LinkedHashMap<>(headers);
         if (!headers.containsKey("X-Correlation-Id"))
             allHeaders.put("X-Correlation-Id", List.of(correlationId));
-        if (!headers.containsKey("Authorization"))
+        if (!headers.containsKey("Authorization") && ! (tokenPublisher instanceof EmptyAccessTokenPublisher))
             allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
         return httpClient.post(uri, body, allHeaders);
     }
