@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import no.bankaxept.epayment.client.base.BaseClient;
 import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
 import no.bankaxept.epayment.client.base.AccessFailed;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
@@ -12,6 +13,10 @@ import no.bankaxept.epayment.client.base.http.HttpStatusException;
 import org.junit.jupiter.api.*;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,6 +32,19 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void should_add_all_relevant_headers() {
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
+                .expectNext(new HttpResponse(200, ""))
+                .verifyComplete();
+    }
+
+    @Test
+    public void should_be_possible_to_override_headers(WireMockRuntimeInfo wmRuntimeInfo) {
+        baseClient = BaseClient.withStaticToken("http://localhost:" + wmRuntimeInfo.getHttpPort(), "static-token");
+        stubFor(post("/test")
+                .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
+                .withHeader("X-Correlation-Id", new EqualToPattern("1"))
+                .willReturn(ok()));
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "2",
+                Map.of("Authorization", List.of("Bearer a-token"), "X-Correlation-Id", List.of("1")))))
                 .expectNext(new HttpResponse(200, ""))
                 .verifyComplete();
     }

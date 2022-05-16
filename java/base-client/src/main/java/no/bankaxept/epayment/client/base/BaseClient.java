@@ -60,8 +60,10 @@ public class BaseClient {
             Map<String, List<String>> headers
     ) {
         var allHeaders = new LinkedHashMap<>(headers);
-        allHeaders.put("X-Correlation-Id", List.of(correlationId));
-        allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
+        if (!headers.containsKey("X-Correlation-Id"))
+            allHeaders.put("X-Correlation-Id", List.of(correlationId));
+        if (!headers.containsKey("Authorization"))
+            allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
         return httpClient.post(uri, body, allHeaders);
     }
 
