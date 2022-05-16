@@ -17,7 +17,7 @@ import static java.util.Collections.emptyMap;
 public class TokenRequestorClient {
     private final BaseClient baseClient;
 
-    private final static String BASE_URL = "/bankaxept-epayment/token-requestor-api/v1";
+    private final static String BASE_URL = "/token-requestor/v1";
     private final static String ENROLMENT_URL = BASE_URL + "/payment-tokens";
     private final static String DELETION_URL = BASE_URL + "/payment-tokens/%s/deletion"; //Token id in path
 
