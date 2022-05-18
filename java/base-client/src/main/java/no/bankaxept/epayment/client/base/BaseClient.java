@@ -72,8 +72,10 @@ public class BaseClient {
         var allHeaders = new LinkedHashMap<>(headers);
         if (!headers.containsKey("X-Correlation-Id"))
             allHeaders.put("X-Correlation-Id", List.of(correlationId));
-        if (!headers.containsKey("Authorization") && ! (tokenPublisher instanceof EmptyAccessTokenPublisher))
+        if (!headers.containsKey("Authorization") && !(tokenPublisher instanceof EmptyAccessTokenPublisher))
             allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
+        if (!headers.containsKey("Content-Type"))
+            allHeaders.put("Content-Type", List.of("application/json"));
         return httpClient.post(uri, body, allHeaders);
     }
 
