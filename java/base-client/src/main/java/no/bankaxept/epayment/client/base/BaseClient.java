@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 public class BaseClient {
     private final AccessTokenPublisher tokenPublisher;
@@ -44,7 +45,14 @@ public class BaseClient {
                 .map(httpClientProvider -> httpClientProvider.create(baseurl))
                 .orElseThrow();
         this.tokenPublisher = new EmptyAccessTokenPublisher();
+    }
 
+    private BaseClient(String baseurl, Supplier<String> tokenSupplier) {
+        httpClient = ServiceLoader.load(HttpClientProvider.class)
+                .findFirst()
+                .map(httpClientProvider -> httpClientProvider.create(baseurl))
+                .orElseThrow();
+        this.tokenPublisher = new SuppliedAccessTokenPublisher(tokenSupplier);
     }
 
     public static BaseClient withStaticToken(String baseurl, String token) {
@@ -53,6 +61,10 @@ public class BaseClient {
 
     public static BaseClient withoutToken(String baseurl) {
         return new BaseClient(baseurl);
+    }
+
+    public static BaseClient withSuppliedToken(String baseurl, Supplier<String> tokenSupplier) {
+        return new BaseClient(baseurl, tokenSupplier);
     }
 
     public Flow.Publisher<HttpResponse> post(
