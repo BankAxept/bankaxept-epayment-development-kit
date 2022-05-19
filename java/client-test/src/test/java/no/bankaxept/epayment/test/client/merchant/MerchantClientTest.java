@@ -1,15 +1,15 @@
 package no.bankaxept.epayment.test.client.merchant;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import no.bankaxept.epayment.client.merchant.*;
 import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
 import no.bankaxept.epayment.client.base.RequestStatus;
-import no.bankaxept.epayment.client.merchant.Amount;
-import no.bankaxept.epayment.client.merchant.MerchantClient;
-import no.bankaxept.epayment.client.merchant.PaymentRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -93,8 +93,8 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
 
         @Test
         public void success() {
-            stubFor(RollbackEndpointMapping("x-id", "message-id", created()));
-            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollback("x-id", "message-id")))
+            stubFor(RollbackEndpointMapping("1", "message-id", created()));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollback("1", "message-id")))
                     .expectNext(RequestStatus.Accepted)
                     .verifyComplete();
         }
@@ -105,6 +105,32 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                     .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
                     .willReturn(responseBuilder);
         }
+    }
 
+
+    @Nested
+    @DisplayName("Capture")
+    public class CaptureTest {
+
+        private ObjectMapper om = new ObjectMapper();
+
+        @Test
+        public void success() throws JsonProcessingException {
+            stubFor(CaptureEndpointMapping("payment-id", "1", created().withBody(
+                    om.writeValueAsString(new CaptureResponse().captureId("capture-id"))
+            )));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.capture("payment-id",new CaptureRequest().amount(new Amount().currency("NOK").value(10000L)).messageId("74313af1-e2cc-403f-85f1-6050725b01b6"),"1")))
+                    .expectNext(new CaptureResponse().captureId("capture-id"))
+                    .verifyComplete();
+        }
+
+        private MappingBuilder CaptureEndpointMapping(String paymentId, String correlationId, ResponseDefinitionBuilder responseBuilder) {
+            return post(String.format("/payments/%s/captures", paymentId))
+                    .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
+                    .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
+                    .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
+                    .withRequestBody(matchingJsonPath("amount", containing("10000").and(containing("NOK"))))
+                    .willReturn(responseBuilder);
+        }
     }
 }
