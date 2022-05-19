@@ -19,6 +19,8 @@ public class MerchantClient {
     private final BaseClient baseClient;
 
     private final static String PAYMENTS_URL = "/payments";
+    private final static String ROLLBACK_URL = "/payments/messages/%s";
+
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
@@ -40,6 +42,14 @@ public class MerchantClient {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Flow.Publisher<RequestStatus> rollback(String correlationId, String messageId, Map<String, List<String>> customHeaders) {
+        return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_URL, messageId), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
+    }
+
+    public Flow.Publisher<RequestStatus> rollback(String correlationId, String messageId) {
+        return rollback(correlationId, messageId, emptyMap());
     }
 
     public Flow.Publisher<RequestStatus> payment(PaymentRequest request, String correlationId) {

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class BaseClient {
@@ -67,6 +68,17 @@ public class BaseClient {
         return new BaseClient(baseurl, tokenSupplier);
     }
 
+    private Map<String, List<String>> filterHeaders(Map<String, List<String>> headers, String correlationId, boolean hasBody) {
+        var filteredHeaders = new LinkedHashMap<>(headers);
+        if (!headers.containsKey("X-Correlation-Id"))
+            filteredHeaders.put("X-Correlation-Id", List.of(correlationId));
+        if (!headers.containsKey("Authorization") && !(tokenPublisher instanceof EmptyAccessTokenPublisher))
+            filteredHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
+        if (hasBody && !headers.containsKey("Content-Type"))
+            filteredHeaders.put("Content-Type", List.of("application/json"));
+        return filteredHeaders;
+    }
+
     public Flow.Publisher<HttpResponse> post(
             String uri,
             Flow.Publisher<String> body,
@@ -81,14 +93,15 @@ public class BaseClient {
             String correlationId,
             Map<String, List<String>> headers
     ) {
-        var allHeaders = new LinkedHashMap<>(headers);
-        if (!headers.containsKey("X-Correlation-Id"))
-            allHeaders.put("X-Correlation-Id", List.of(correlationId));
-        if (!headers.containsKey("Authorization") && !(tokenPublisher instanceof EmptyAccessTokenPublisher))
-            allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
-        if (!headers.containsKey("Content-Type"))
-            allHeaders.put("Content-Type", List.of("application/json"));
-        return httpClient.post(uri, body, allHeaders);
+        return httpClient.post(uri, body, filterHeaders(headers, correlationId, true));
+    }
+
+    public Flow.Publisher<HttpResponse> delete(
+            String uri,
+            String correlationId,
+            Map<String, List<String>> headers
+    ) {
+        return httpClient.delete(uri, filterHeaders(headers, correlationId, false));
     }
 
     public void shutDown() {

@@ -11,6 +11,8 @@ import no.bankaxept.epayment.client.merchant.Amount;
 import no.bankaxept.epayment.client.merchant.MerchantClient;
 import no.bankaxept.epayment.client.merchant.PaymentRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
@@ -30,53 +32,79 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         client = new MerchantClient(baseClient);
     }
 
-    @Test
-    public void success() {
-        stubFor(PaymentEndpointMapping(transactionTime, created()));
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(createPaymentRequest(transactionTime), "1")))
-                .expectNext(RequestStatus.Accepted)
-                .verifyComplete();
+    @Nested
+    @DisplayName("Payment")
+    public class paymentTests {
+
+        @Test
+        public void success() {
+            stubFor(PaymentEndpointMapping(transactionTime, created()));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(createPaymentRequest(transactionTime), "1")))
+                    .expectNext(RequestStatus.Accepted)
+                    .verifyComplete();
+        }
+
+        @Test
+        public void server_error() {
+            stubFor(PaymentEndpointMapping(transactionTime, serverError()));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(createPaymentRequest(transactionTime), "1")))
+                    .expectNext(RequestStatus.Failed)
+                    .verifyComplete();
+        }
+
+        @Test
+        public void client_error() {
+            stubFor(PaymentEndpointMapping(transactionTime, forbidden()));
+            var paymentRequest = createPaymentRequest(transactionTime);
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
+                    .expectNext(RequestStatus.ClientError)
+                    .verifyComplete();
+        }
+
+        private PaymentRequest createPaymentRequest(OffsetDateTime transactionTime) {
+            return new PaymentRequest()
+                    .amount(new Amount().currency("NOK").value(10000L))
+                    .merchantId("10030005")
+                    .merchantName("Corner shop")
+                    .merchantReference("reference")
+                    .messageId("74313af1-e2cc-403f-85f1-6050725b01b6")
+                    .inStore(true)
+                    .transactionTime(transactionTime);
+        }
+
+        private MappingBuilder PaymentEndpointMapping(OffsetDateTime transactionTime, ResponseDefinitionBuilder responseBuilder) {
+            return post("/payments")
+                    .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
+                    .withHeader("X-Correlation-Id", new EqualToPattern("1"))
+                    .withRequestBody(matchingJsonPath("merchantId", equalTo("10030005")))
+                    .withRequestBody(matchingJsonPath("merchantName", equalTo("Corner shop")))
+                    .withRequestBody(matchingJsonPath("merchantReference", equalTo("reference")))
+                    .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
+                    .withRequestBody(matchingJsonPath("inStore", equalTo("true")))
+                    .withRequestBody(matchingJsonPath("amount", containing("10000").and(containing("NOK"))))
+                    .withRequestBody(matchingJsonPath("transactionTime", equalTo(transactionTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))))
+                    .willReturn(responseBuilder);
+        }
     }
 
-    @Test
-    public void server_error() {
-        stubFor(PaymentEndpointMapping(transactionTime, serverError()));
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(createPaymentRequest(transactionTime), "1")))
-                .expectNext(RequestStatus.Failed)
-                .verifyComplete();
-    }
+    @Nested
+    @DisplayName("Rollback")
+    public class RollbackTest {
 
-    @Test
-    public void client_error() {
-        stubFor(PaymentEndpointMapping(transactionTime, forbidden()));
-        var paymentRequest = createPaymentRequest(transactionTime);
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
-                .expectNext(RequestStatus.ClientError)
-                .verifyComplete();
-    }
+        @Test
+        public void success() {
+            stubFor(RollbackEndpointMapping("x-id", "message-id", created()));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollback("x-id", "message-id")))
+                    .expectNext(RequestStatus.Accepted)
+                    .verifyComplete();
+        }
 
-    private PaymentRequest createPaymentRequest(OffsetDateTime transactionTime) {
-        return new PaymentRequest()
-                .amount(new Amount().currency("NOK").value(10000L))
-                .merchantId("10030005")
-                .merchantName("Corner shop")
-                .merchantReference("reference")
-                .messageId("74313af1-e2cc-403f-85f1-6050725b01b6")
-                .inStore(true)
-                .transactionTime(transactionTime);
-    }
+        private MappingBuilder RollbackEndpointMapping(String correlationId, String messageId,  ResponseDefinitionBuilder responseBuilder) {
+            return delete(String.format("/payments/messages/%s", messageId))
+                    .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
+                    .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
+                    .willReturn(responseBuilder);
+        }
 
-    private MappingBuilder PaymentEndpointMapping(OffsetDateTime transactionTime, ResponseDefinitionBuilder responseBuilder) {
-        return post("/payments")
-                .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
-                .withHeader("X-Correlation-Id", new EqualToPattern("1"))
-                .withRequestBody(matchingJsonPath("merchantId", equalTo("10030005")))
-                .withRequestBody(matchingJsonPath("merchantName", equalTo("Corner shop")))
-                .withRequestBody(matchingJsonPath("merchantReference", equalTo("reference")))
-                .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
-                .withRequestBody(matchingJsonPath("inStore", equalTo("true")))
-                .withRequestBody(matchingJsonPath("amount", containing("10000").and(containing("NOK"))))
-                .withRequestBody(matchingJsonPath("transactionTime", equalTo(transactionTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))))
-                .willReturn(responseBuilder);
     }
 }
