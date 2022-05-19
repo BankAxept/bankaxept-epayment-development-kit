@@ -136,7 +136,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
 
     @Nested
     @DisplayName("Capture Rollback")
-    public class CaptureRollback {
+    public class CaptureRollbackTest {
         @Test
         public void success() {
             stubFor(CaptureRollbackEndpointMapping("payment-id", "message-id", "1", created()));
@@ -199,6 +199,26 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                         .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
                         .withRequestBody(matchingJsonPath("amount", containing("10000").and(containing("NOK"))))
                         .withRequestBody(matchingJsonPath("inStore", equalTo("true")))
+                        .willReturn(responseBuilder);
+            }
+        }
+
+
+        @Nested
+        @DisplayName("Refund Rollback")
+        public class RefundRollbackTest {
+            @Test
+            public void success() {
+                stubFor(RefundRollbackEndpointMapping("payment-id", "message-id", "1", created()));
+                StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollbackRefund("payment-id", "message-id", "1")))
+                        .expectNext(RequestStatus.Accepted)
+                        .verifyComplete();
+            }
+
+            private MappingBuilder RefundRollbackEndpointMapping(String paymentId, String messageId, String correlationId, ResponseDefinitionBuilder responseBuilder) {
+                return delete(String.format("/payments/%s/refunds/messages/%s", paymentId, messageId))
+                        .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
+                        .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
                         .willReturn(responseBuilder);
             }
         }
