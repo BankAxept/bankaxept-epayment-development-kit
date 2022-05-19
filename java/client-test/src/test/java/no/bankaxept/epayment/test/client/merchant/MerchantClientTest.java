@@ -26,6 +26,8 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     private MerchantClient client;
     private final OffsetDateTime transactionTime = OffsetDateTime.now();
 
+    private ObjectMapper om = new ObjectMapper();
+
     @BeforeEach
     public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
         super.setup(wmRuntimeInfo);
@@ -112,14 +114,12 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @DisplayName("Capture")
     public class CaptureTest {
 
-        private ObjectMapper om = new ObjectMapper();
-
         @Test
         public void success() throws JsonProcessingException {
             stubFor(CaptureEndpointMapping("payment-id", "1", created().withBody(
                     om.writeValueAsString(new CaptureResponse().captureId("capture-id"))
             )));
-            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.capture("payment-id",new CaptureRequest().amount(new Amount().currency("NOK").value(10000L)).messageId("74313af1-e2cc-403f-85f1-6050725b01b6"),"1")))
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.capture("payment-id", new CaptureRequest().amount(new Amount().currency("NOK").value(10000L)).messageId("74313af1-e2cc-403f-85f1-6050725b01b6"), "1")))
                     .expectNext(new CaptureResponse().captureId("capture-id"))
                     .verifyComplete();
         }
@@ -159,7 +159,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         @Test
         public void success() {
             stubFor(CancelEndpointMapping("payment-id", "1", created()));
-            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cancel("payment-id",  "1")))
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cancel("payment-id", "1")))
                     .expectNext(RequestStatus.Accepted)
                     .verifyComplete();
         }
@@ -169,6 +169,38 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                     .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
                     .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
                     .willReturn(responseBuilder);
+        }
+
+        @Nested
+        @DisplayName("Refund")
+        public class RefundTest {
+            @Test
+            public void success() throws JsonProcessingException {
+                stubFor(RefundEndpointMapping("payment-id",
+                        "1",
+                        created()
+                                .withBody(om.writeValueAsString(new RefundResponse().refundId("refund-id")))));
+                StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.refund("payment-id",
+                                new RefundRequest()
+                                        .amount(new Amount()
+                                                .value(10000L)
+                                                .currency("NOK"))
+                                        .inStore(true)
+                                        .messageId("74313af1-e2cc-403f-85f1-6050725b01b6"),
+                                "1")))
+                        .expectNext(new RefundResponse().refundId("refund-id"))
+                        .verifyComplete();
+            }
+
+            private MappingBuilder RefundEndpointMapping(String paymentId, String correlationId, ResponseDefinitionBuilder responseBuilder) {
+                return post(String.format("/payments/%s/refunds", paymentId))
+                        .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
+                        .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
+                        .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
+                        .withRequestBody(matchingJsonPath("amount", containing("10000").and(containing("NOK"))))
+                        .withRequestBody(matchingJsonPath("inStore", equalTo("true")))
+                        .willReturn(responseBuilder);
+            }
         }
     }
 }

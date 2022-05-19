@@ -23,6 +23,7 @@ public class MerchantClient {
     private final static String CAPTURE_URL = "/payments/%s/captures";
     private final static String ROLLBACK_CAPTURE_URL = "/payments/%s/captures/messages/%s";
     private final static String CANCEL_URL = "/payments/%s/cancellation";
+    private final static String REFUND_URL = "/payments/%s/refunds";
 
 
     private final ObjectMapper objectMapper = new ObjectMapper()
@@ -73,7 +74,25 @@ public class MerchantClient {
         return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_CAPTURE_URL, paymentId, messageId), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
     }
 
-    public Flow.Publisher<RequestStatus> cancel(String paymentId, String correlationId) {
+    public Flow.Publisher<RefundResponse> refund(String paymentId, RefundRequest request, String correlationId, Map<String, List<String>> customHeaders) {
+        try {
+            return new MapOperator<>(baseClient.post(String.format(REFUND_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId, customHeaders), httpResponse -> {
+                try {
+                    return objectMapper.readValue(httpResponse.getBody(), RefundResponse.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Flow.Publisher<RefundResponse> refund(String paymentId, RefundRequest request, String correlationId) {
+        return refund(paymentId, request, correlationId, Map.of());
+    }
+
+        public Flow.Publisher<RequestStatus> cancel(String paymentId, String correlationId) {
         return cancel(paymentId, correlationId, Map.of());
     }
 
