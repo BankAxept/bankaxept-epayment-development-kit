@@ -22,7 +22,7 @@ public class MerchantClient {
     private final static String ROLLBACK_PAYMENT_URL = "/payments/messages/%s";
     private final static String CAPTURE_URL = "/payments/%s/captures";
     private final static String ROLLBACK_CAPTURE_URL = "/payments/%s/captures/messages/%s";
-
+    private final static String CANCEL_URL = "/payments/%s/cancellation";
 
 
     private final ObjectMapper objectMapper = new ObjectMapper()
@@ -65,8 +65,16 @@ public class MerchantClient {
         }
     }
 
+    public Flow.Publisher<RequestStatus> cancel(String paymentId, String correlationId, Map<String, List<String>> customHeaders) {
+        return new MapOperator<>(baseClient.post(String.format(CANCEL_URL, paymentId), new SinglePublisher<>("", executor), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
+    }
+
     public Flow.Publisher<RequestStatus> rollbackCapture(String paymentId, String messageId, String correlationId, Map<String, List<String>> customHeaders) {
         return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_CAPTURE_URL, paymentId, messageId), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
+    }
+
+    public Flow.Publisher<RequestStatus> cancel(String paymentId, String correlationId) {
+        return cancel(paymentId, correlationId, Map.of());
     }
 
     public Flow.Publisher<RequestStatus> rollbackCapture(String paymentId, String messageId, String correlationId) {

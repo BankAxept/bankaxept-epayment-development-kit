@@ -152,4 +152,23 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                     .willReturn(responseBuilder);
         }
     }
+
+    @Nested
+    @DisplayName("Cancel")
+    public class CancelTest {
+        @Test
+        public void success() {
+            stubFor(CancelEndpointMapping("payment-id", "1", created()));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cancel("payment-id",  "1")))
+                    .expectNext(RequestStatus.Accepted)
+                    .verifyComplete();
+        }
+
+        private MappingBuilder CancelEndpointMapping(String paymentId, String correlationId, ResponseDefinitionBuilder responseBuilder) {
+            return post(String.format("/payments/%s/cancellation", paymentId))
+                    .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
+                    .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
+                    .willReturn(responseBuilder);
+        }
+    }
 }
