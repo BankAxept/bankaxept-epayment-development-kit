@@ -25,6 +25,7 @@ public class MerchantClient {
     private final static String CANCEL_URL = "/payments/%s/cancellation";
     private final static String REFUND_URL = "/payments/%s/refunds";
     private final static String ROLLBACK_REFUND_URL = "/payments/%s/refunds/messages/%s";
+    private final static String SETTLEMENT_CUTOFF_URL = "/settlements/%s/%s";
 
 
     private final ObjectMapper objectMapper = new ObjectMapper()
@@ -89,12 +90,20 @@ public class MerchantClient {
         }
     }
 
+    public Flow.Publisher<RequestStatus> cutOffSettlementBatch(String merchantId, String batchNumber, String correlationId, Map<String, List<String>> customHeaders) {
+        return new MapOperator<>(baseClient.put(String.format(SETTLEMENT_CUTOFF_URL, merchantId, batchNumber), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
+    }
+
     public Flow.Publisher<RequestStatus> rollbackRefund(String paymentId, String messageId, String correlationId, Map<String, List<String>> customHeaders) {
         return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_REFUND_URL, paymentId, messageId), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
     }
 
     public Flow.Publisher<RefundResponse> refund(String paymentId, RefundRequest request, String correlationId) {
         return refund(paymentId, request, correlationId, Map.of());
+    }
+
+    public Flow.Publisher<RequestStatus> cutOffSettlementBatch(String merchantId, String batchNumber, String correlationId) {
+        return cutOffSettlementBatch(merchantId, batchNumber, correlationId, Map.of());
     }
 
     public Flow.Publisher<RequestStatus> cancel(String paymentId, String correlationId) {

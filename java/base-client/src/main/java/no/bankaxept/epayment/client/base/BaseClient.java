@@ -104,6 +104,15 @@ public class BaseClient {
         return httpClient.delete(uri, filterHeaders(headers, correlationId, false));
     }
 
+
+    public Flow.Publisher<HttpResponse> put(
+            String uri,
+            String correlationId,
+            Map<String, List<String>> headers
+    ) {
+        return httpClient.put(uri, filterHeaders(headers, correlationId, false));
+    }
+
     public void shutDown() {
         tokenPublisher.shutDown();
     }

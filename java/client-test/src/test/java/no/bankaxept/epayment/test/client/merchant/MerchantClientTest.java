@@ -203,7 +203,6 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
             }
         }
 
-
         @Nested
         @DisplayName("Refund Rollback")
         public class RefundRollbackTest {
@@ -217,6 +216,25 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
 
             private MappingBuilder RefundRollbackEndpointMapping(String paymentId, String messageId, String correlationId, ResponseDefinitionBuilder responseBuilder) {
                 return delete(String.format("/payments/%s/refunds/messages/%s", paymentId, messageId))
+                        .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
+                        .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
+                        .willReturn(responseBuilder);
+            }
+        }
+
+        @Nested
+        @DisplayName("Cut off Settlement Batch")
+        public class CutOffSettlementBatchTest {
+            @Test
+            public void success() {
+                stubFor(cutOffSettlementBatchEndpointMapping("merchant-id", "batch-number", "1", created()));
+                StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cutOffSettlementBatch("merchant-id", "batch-number", "1")))
+                        .expectNext(RequestStatus.Accepted)
+                        .verifyComplete();
+            }
+
+            private MappingBuilder cutOffSettlementBatchEndpointMapping(String merchantId, String batchNumber, String correlationId, ResponseDefinitionBuilder responseBuilder) {
+                return put(String.format("/settlements/%s/%s", merchantId, batchNumber))
                         .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
                         .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
                         .willReturn(responseBuilder);
