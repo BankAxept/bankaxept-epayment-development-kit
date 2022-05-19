@@ -19,8 +19,10 @@ public class MerchantClient {
     private final BaseClient baseClient;
 
     private final static String PAYMENTS_URL = "/payments";
-    private final static String ROLLBACK_URL = "/payments/messages/%s";
+    private final static String ROLLBACK_PAYMENT_URL = "/payments/messages/%s";
     private final static String CAPTURE_URL = "/payments/%s/captures";
+    private final static String ROLLBACK_CAPTURE_URL = "/payments/%s/captures/messages/%s";
+
 
 
     private final ObjectMapper objectMapper = new ObjectMapper()
@@ -45,8 +47,8 @@ public class MerchantClient {
         }
     }
 
-    public Flow.Publisher<RequestStatus> rollback(String correlationId, String messageId, Map<String, List<String>> customHeaders) {
-        return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_URL, messageId), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
+    public Flow.Publisher<RequestStatus> rollbackPayment(String correlationId, String messageId, Map<String, List<String>> customHeaders) {
+        return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_PAYMENT_URL, messageId), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
     }
 
     public Flow.Publisher<CaptureResponse> capture(String paymentId, CaptureRequest request, String correlationId, Map<String, List<String>> customHeaders) {
@@ -63,12 +65,20 @@ public class MerchantClient {
         }
     }
 
+    public Flow.Publisher<RequestStatus> rollbackCapture(String paymentId, String messageId, String correlationId, Map<String, List<String>> customHeaders) {
+        return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_CAPTURE_URL, paymentId, messageId), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
+    }
+
+    public Flow.Publisher<RequestStatus> rollbackCapture(String paymentId, String messageId, String correlationId) {
+        return rollbackCapture(paymentId, messageId, correlationId, Map.of());
+    }
+
     public Flow.Publisher<CaptureResponse> capture(String paymentId, CaptureRequest request, String correlationId) {
         return capture(paymentId, request, correlationId, emptyMap());
     }
 
-    public Flow.Publisher<RequestStatus> rollback(String correlationId, String messageId) {
-        return rollback(correlationId, messageId, emptyMap());
+    public Flow.Publisher<RequestStatus> rollbackPayment(String correlationId, String messageId) {
+        return rollbackPayment(correlationId, messageId, emptyMap());
     }
 
     public Flow.Publisher<RequestStatus> payment(PaymentRequest request, String correlationId) {

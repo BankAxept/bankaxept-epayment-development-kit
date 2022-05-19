@@ -88,18 +88,18 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     }
 
     @Nested
-    @DisplayName("Rollback")
+    @DisplayName("Payment Rollback")
     public class RollbackTest {
 
         @Test
         public void success() {
-            stubFor(RollbackEndpointMapping("1", "message-id", created()));
-            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollback("1", "message-id")))
+            stubFor(PaymentRollbackEndpointMapping("1", "message-id", created()));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollbackPayment("1", "message-id")))
                     .expectNext(RequestStatus.Accepted)
                     .verifyComplete();
         }
 
-        private MappingBuilder RollbackEndpointMapping(String correlationId, String messageId,  ResponseDefinitionBuilder responseBuilder) {
+        private MappingBuilder PaymentRollbackEndpointMapping(String correlationId, String messageId, ResponseDefinitionBuilder responseBuilder) {
             return delete(String.format("/payments/messages/%s", messageId))
                     .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
                     .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
@@ -130,6 +130,25 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                     .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
                     .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
                     .withRequestBody(matchingJsonPath("amount", containing("10000").and(containing("NOK"))))
+                    .willReturn(responseBuilder);
+        }
+    }
+
+    @Nested
+    @DisplayName("Capture Rollback")
+    public class CaptureRollback {
+        @Test
+        public void success() {
+            stubFor(CaptureRollbackEndpointMapping("payment-id", "message-id", "1", created()));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollbackCapture("payment-id", "message-id", "1")))
+                    .expectNext(RequestStatus.Accepted)
+                    .verifyComplete();
+        }
+
+        private MappingBuilder CaptureRollbackEndpointMapping(String paymentId, String messageId, String correlationId, ResponseDefinitionBuilder responseBuilder) {
+            return delete(String.format("/payments/%s/captures/messages/%s", paymentId, messageId))
+                    .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
+                    .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
                     .willReturn(responseBuilder);
         }
     }
