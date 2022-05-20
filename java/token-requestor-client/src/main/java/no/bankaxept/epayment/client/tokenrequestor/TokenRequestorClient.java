@@ -35,21 +35,13 @@ public class TokenRequestorClient {
     }
 
     public Flow.Publisher<RequestStatus> enrol(EnrolCardRequest request, String correlationId) {
-        return enrol(request, correlationId, emptyMap());
-    }
-
-    public Flow.Publisher<RequestStatus> enrol(EnrolCardRequest request, String correlationId, Map<String, List<String>> customHeaders) {
-        return new MapOperator<>(baseClient.post(ENROLMENT_URL, new SinglePublisher<>(serialize(request), executor), correlationId, customHeaders),
-                httpResponse -> httpResponse.getStatus().toResponse());
-    }
-
-    public Flow.Publisher<RequestStatus> delete(String tokenId, String correlationId, Map<String, List<String>> customHeaders) {
-        return new MapOperator<>(baseClient.post(String.format(DELETION_URL, tokenId), new SinglePublisher<>("", executor), correlationId, customHeaders),
+        return new MapOperator<>(baseClient.post(ENROLMENT_URL, new SinglePublisher<>(serialize(request), executor), correlationId),
                 httpResponse -> httpResponse.getStatus().toResponse());
     }
 
     public Flow.Publisher<RequestStatus> delete(String tokenId, String correlationId) {
-        return delete(tokenId, correlationId, emptyMap());
+        return new MapOperator<>(baseClient.post(String.format(DELETION_URL, tokenId), new SinglePublisher<>("", executor), correlationId),
+                httpResponse -> httpResponse.getStatus().toResponse());
     }
 
     private <T> String serialize(T input) {
