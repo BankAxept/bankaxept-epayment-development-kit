@@ -1,4 +1,4 @@
-package no.bankaxept.epayment.client.merchant;
+package no.bankaxept.epayment.client.base;
 
 import java.util.List;
 

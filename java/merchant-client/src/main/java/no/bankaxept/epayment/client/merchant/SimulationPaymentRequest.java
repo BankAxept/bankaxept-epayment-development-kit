@@ -1,8 +1,8 @@
 package no.bankaxept.epayment.client.merchant;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import no.bankaxept.epayment.client.base.SimulationRequest;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

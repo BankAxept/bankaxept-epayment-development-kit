@@ -20,6 +20,8 @@ public class TokenRequestorClient {
     private final static String ENROLMENT_URL = "/payment-tokens";
     private final static String DELETION_URL = "/payment-tokens/%s/deletion"; //Token id in path
 
+    private final static String SIMULATION_HEADER = "X-Simulation";
+
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -35,13 +37,20 @@ public class TokenRequestorClient {
     }
 
     public Flow.Publisher<RequestStatus> enrol(EnrolCardRequest request, String correlationId) {
-        return new MapOperator<>(baseClient.post(ENROLMENT_URL, new SinglePublisher<>(serialize(request), executor), correlationId),
+        return new MapOperator<>(baseClient.post(ENROLMENT_URL, new SinglePublisher<>(serialize(request), executor), correlationId, findSimulationHeader(request)),
                 httpResponse -> httpResponse.getStatus().toResponse());
     }
 
     public Flow.Publisher<RequestStatus> delete(String tokenId, String correlationId) {
         return new MapOperator<>(baseClient.post(String.format(DELETION_URL, tokenId), new SinglePublisher<>("", executor), correlationId),
                 httpResponse -> httpResponse.getStatus().toResponse());
+    }
+
+    private static Map<String, List<String>> findSimulationHeader(Object request) {
+        if(request instanceof SimulationRequest) {
+            return Map.of(SIMULATION_HEADER, ((SimulationRequest) request).getSimulationValues());
+        }
+        return Map.of();
     }
 
     private <T> String serialize(T input) {
