@@ -29,19 +29,6 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
         stubFor(testEndpointMapping());
     }
 
-    @Test
-    public void should_be_possible_to_override_headers(WireMockRuntimeInfo wmRuntimeInfo) {
-        baseClient = BaseClient.withStaticToken("http://localhost:" + wmRuntimeInfo.getHttpPort(), "static-token");
-        stubFor(post("/test")
-                .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
-                .withHeader("X-Correlation-Id", new EqualToPattern("1"))
-                .willReturn(ok()));
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "2",
-                Map.of("Authorization", List.of("Bearer a-token"), "X-Correlation-Id", List.of("1")))))
-                .expectNext(new HttpResponse(200, ""))
-                .verifyComplete();
-    }
-
     @Nested
     @DisplayName("Scheduled token tests")
     public class WebfluxAccessTokenErrorTests {
