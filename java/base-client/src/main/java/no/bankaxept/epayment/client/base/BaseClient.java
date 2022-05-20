@@ -31,40 +31,24 @@ public class BaseClient {
         this.tokenPublisher = new ScheduledAccessTokenPublisher("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
     }
 
-    private BaseClient(String baseurl, String token) {
+    private BaseClient(String baseurl, AccessTokenPublisher tokenPublisher) {
         httpClient = ServiceLoader.load(HttpClientProvider.class)
                 .findFirst()
                 .map(httpClientProvider -> httpClientProvider.create(baseurl))
                 .orElseThrow();
-        this.tokenPublisher = new StaticAccessTokenPublisher(token);
-    }
-
-    private BaseClient(String baseurl) {
-        httpClient = ServiceLoader.load(HttpClientProvider.class)
-                .findFirst()
-                .map(httpClientProvider -> httpClientProvider.create(baseurl))
-                .orElseThrow();
-        this.tokenPublisher = new EmptyAccessTokenPublisher();
-    }
-
-    private BaseClient(String baseurl, Supplier<String> tokenSupplier) {
-        httpClient = ServiceLoader.load(HttpClientProvider.class)
-                .findFirst()
-                .map(httpClientProvider -> httpClientProvider.create(baseurl))
-                .orElseThrow();
-        this.tokenPublisher = new SuppliedAccessTokenPublisher(tokenSupplier);
+        this.tokenPublisher = tokenPublisher;
     }
 
     public static BaseClient withStaticToken(String baseurl, String token) {
-        return new BaseClient(baseurl, token);
+        return new BaseClient(baseurl, new StaticAccessTokenPublisher(token));
     }
 
     public static BaseClient withoutToken(String baseurl) {
-        return new BaseClient(baseurl);
+        return new BaseClient(baseurl, new EmptyAccessTokenPublisher());
     }
 
     public static BaseClient withSuppliedToken(String baseurl, Supplier<String> tokenSupplier) {
-        return new BaseClient(baseurl, tokenSupplier);
+        return new BaseClient(baseurl, new SuppliedAccessTokenPublisher(tokenSupplier));
     }
 
     public Flow.Publisher<HttpResponse> post(
