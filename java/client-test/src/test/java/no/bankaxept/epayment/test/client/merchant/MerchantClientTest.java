@@ -65,15 +65,8 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     }
 
     private PaymentRequest createSimulationRequest(OffsetDateTime transactionTime) {
-        return new SimulationPaymentRequest()
-                .simulationValue("test-value")
-                .amount(new Amount().currency("NOK").value(10000L))
-                .merchantId("10030005")
-                .merchantName("Corner shop")
-                .merchantReference("reference")
-                .messageId("74313af1-e2cc-403f-85f1-6050725b01b6")
-                .inStore(true)
-                .transactionTime(transactionTime);
+        return new SimulationPaymentRequest(createPaymentRequest(transactionTime))
+                .simulationValue("test-value");
     }
 
     private PaymentRequest createPaymentRequest(OffsetDateTime transactionTime) {
