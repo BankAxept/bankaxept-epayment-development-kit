@@ -1,6 +1,8 @@
-package no.bankaxept.epayment.client.base.accesstoken;
+package no.bankaxept.epayment.test.client.base;
 
 import no.bankaxept.epayment.client.base.AccessFailed;
+import no.bankaxept.epayment.client.base.accesstoken.AccessTokenProcessor;
+import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
 import no.bankaxept.epayment.client.base.http.HttpStatus;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
 import org.junit.jupiter.api.Test;
@@ -21,10 +23,10 @@ import static org.mockito.Mockito.doAnswer;
 @ExtendWith(MockitoExtension.class)
 public class AccessTokenSubscriberTest {
 
-    public AccessTokenSubscriber subscriber;
+    private AccessTokenSubscriber subscriber;
 
     @Mock
-    public AccessTokenProcessor processorMock;
+    private AccessTokenProcessor processorMock;
 
     @Test
     public void should_provide_token_from_processor() {

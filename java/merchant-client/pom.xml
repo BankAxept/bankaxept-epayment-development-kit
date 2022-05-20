@@ -5,7 +5,7 @@
     <parent>
         <artifactId>development-kit</artifactId>
         <groupId>no.bankaxept.epayment</groupId>
-        <version>${revision}</version>
+        <version>0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>merchant-client</artifactId>
@@ -18,28 +18,6 @@
         <dependency>
             <groupId>io.swagger.parser.v3</groupId>
             <artifactId>swagger-parser</artifactId>
-        </dependency>
-
-        <!-- Test -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.bankaxept.epayment</groupId>
-            <artifactId>webflux-client</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-jre8</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.bankaxept.epayment</groupId>
-            <artifactId>client-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
