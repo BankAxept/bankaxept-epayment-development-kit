@@ -63,7 +63,7 @@ public class MerchantClient {
 
     public Flow.Publisher<RequestStatus> capture(String paymentId, CaptureRequest request, String correlationId) {
         try {
-            return new MapOperator<>(baseClient.post(String.format(CAPTURE_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
+            return new MapOperator<>(baseClient.post(String.format(CAPTURE_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId, findSimulationHeader(request)), httpResponse -> httpResponse.getStatus().toResponse());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -79,7 +79,7 @@ public class MerchantClient {
 
     public Flow.Publisher<RequestStatus> refund(String paymentId, RefundRequest request, String correlationId) {
         try {
-            return new MapOperator<>(baseClient.post(String.format(REFUND_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
+            return new MapOperator<>(baseClient.post(String.format(REFUND_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId,  findSimulationHeader(request)), httpResponse -> httpResponse.getStatus().toResponse());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
