@@ -11,13 +11,6 @@ public class SimulationEnrolCardRequest extends EnrolCardRequest implements Simu
 
     private List<String> simulationValues = new ArrayList<>();
 
-    public SimulationEnrolCardRequest(EnrolCardRequest enrolCardRequest) {
-        this.tokenRequestorId(enrolCardRequest.getTokenRequestorId());
-        this.messageId(enrolCardRequest.getMessageId());
-        this.encryptedCardholderAuthenticationData(enrolCardRequest.getEncryptedCardholderAuthenticationData());
-
-    }
-
     public SimulationEnrolCardRequest simulationValue(String simulationValue) {
         this.simulationValues.add(simulationValue);
         return this;
