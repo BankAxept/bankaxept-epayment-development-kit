@@ -1,7 +1,6 @@
 package no.bankaxept.epayment.test.client.merchant;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -141,12 +140,10 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     public class CaptureTest {
 
         @Test
-        public void success() throws JsonProcessingException {
-            stubFor(CaptureEndpointMapping("payment-id", "1", created().withBody(
-                    om.writeValueAsString(new CaptureResponse().captureId("capture-id"))
-            )));
+        public void success() {
+            stubFor(CaptureEndpointMapping("payment-id", "1", created()));
             StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.capture("payment-id", new CaptureRequest().amount(new Amount().currency("NOK").value(10000L)).messageId("74313af1-e2cc-403f-85f1-6050725b01b6"), "1")))
-                    .expectNext(new CaptureResponse().captureId("capture-id"))
+                    .expectNext(RequestStatus.Accepted)
                     .verifyComplete();
         }
 
@@ -201,11 +198,10 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         @DisplayName("Refund")
         public class RefundTest {
             @Test
-            public void success() throws JsonProcessingException {
+            public void success() {
                 stubFor(RefundEndpointMapping("payment-id",
                         "1",
-                        created()
-                                .withBody(om.writeValueAsString(new RefundResponse().refundId("refund-id")))));
+                        created()));
                 StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.refund("payment-id",
                                 new RefundRequest()
                                         .amount(new Amount()
@@ -214,7 +210,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                                         .inStore(true)
                                         .messageId("74313af1-e2cc-403f-85f1-6050725b01b6"),
                                 "1")))
-                        .expectNext(new RefundResponse().refundId("refund-id"))
+                        .expectNext(RequestStatus.Accepted)
                         .verifyComplete();
             }
 

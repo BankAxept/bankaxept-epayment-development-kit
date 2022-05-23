@@ -5,14 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.bankaxept.epayment.client.base.*;
-import no.bankaxept.epayment.client.base.http.HttpResponse;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
-import java.util.function.Function;
 
 public class MerchantClient {
 
@@ -51,16 +49,6 @@ public class MerchantClient {
         return Map.of();
     }
 
-    private <T> Function<HttpResponse, T> mapResponse(Class<T> responseClass) {
-        return httpResponse -> {
-            try {
-                return objectMapper.readValue(httpResponse.getBody(), responseClass);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        };
-    }
-
     public Flow.Publisher<RequestStatus> payment(PaymentRequest request, String correlationId) {
         try {
             return new MapOperator<>(baseClient.post(PAYMENTS_URL, new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId, findSimulationHeader(request)), httpResponse -> httpResponse.getStatus().toResponse());
@@ -73,9 +61,9 @@ public class MerchantClient {
         return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_PAYMENT_URL, messageId), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
     }
 
-    public Flow.Publisher<CaptureResponse> capture(String paymentId, CaptureRequest request, String correlationId) {
+    public Flow.Publisher<RequestStatus> capture(String paymentId, CaptureRequest request, String correlationId) {
         try {
-            return new MapOperator<>(baseClient.post(String.format(CAPTURE_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), mapResponse(CaptureResponse.class));
+            return new MapOperator<>(baseClient.post(String.format(CAPTURE_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -89,9 +77,9 @@ public class MerchantClient {
         return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_CAPTURE_URL, paymentId, messageId), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
     }
 
-    public Flow.Publisher<RefundResponse> refund(String paymentId, RefundRequest request, String correlationId) {
+    public Flow.Publisher<RequestStatus> refund(String paymentId, RefundRequest request, String correlationId) {
         try {
-            return new MapOperator<>(baseClient.post(String.format(REFUND_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), mapResponse(RefundResponse.class));
+            return new MapOperator<>(baseClient.post(String.format(REFUND_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
