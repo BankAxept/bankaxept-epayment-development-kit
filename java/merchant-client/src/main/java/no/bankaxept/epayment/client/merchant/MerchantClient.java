@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.bankaxept.epayment.client.base.*;
+import no.bankaxept.epayment.client.base.http.HttpResponse;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
+import java.util.function.Function;
 
 public class MerchantClient {
 
@@ -43,10 +45,20 @@ public class MerchantClient {
     }
 
     private static Map<String, List<String>> findSimulationHeader(Object request) {
-        if(request instanceof SimulationRequest) {
+        if (request instanceof SimulationRequest) {
             return Map.of(SIMULATION_HEADER, ((SimulationRequest) request).getSimulationValues());
         }
         return Map.of();
+    }
+
+    private <T> Function<HttpResponse, T> mapResponse(Class<T> responseClass) {
+        return httpResponse -> {
+            try {
+                return objectMapper.readValue(httpResponse.getBody(), responseClass);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 
     public Flow.Publisher<RequestStatus> payment(PaymentRequest request, String correlationId) {
@@ -57,80 +69,39 @@ public class MerchantClient {
         }
     }
 
-    public Flow.Publisher<RequestStatus> rollbackPayment(String correlationId, String messageId, Map<String, List<String>> customHeaders) {
-        return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_PAYMENT_URL, messageId), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
-    }
-
-    public Flow.Publisher<CaptureResponse> capture(String paymentId, CaptureRequest request, String correlationId, Map<String, List<String>> customHeaders) {
-        try {
-            return new MapOperator<>(baseClient.post(String.format(CAPTURE_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId, customHeaders), httpResponse -> {
-                try {
-                    return objectMapper.readValue(httpResponse.getBody(), CaptureResponse.class);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Flow.Publisher<RequestStatus> cancel(String paymentId, String correlationId, Map<String, List<String>> customHeaders) {
-        return new MapOperator<>(baseClient.post(String.format(CANCEL_URL, paymentId), new SinglePublisher<>("", executor), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
-    }
-
-    public Flow.Publisher<RequestStatus> rollbackCapture(String paymentId, String messageId, String correlationId, Map<String, List<String>> customHeaders) {
-        return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_CAPTURE_URL, paymentId, messageId), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
-    }
-
-    public Flow.Publisher<RefundResponse> refund(String paymentId, RefundRequest request, String correlationId, Map<String, List<String>> customHeaders) {
-        try {
-            return new MapOperator<>(baseClient.post(String.format(REFUND_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId, customHeaders), httpResponse -> {
-                try {
-                    return objectMapper.readValue(httpResponse.getBody(), RefundResponse.class);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Flow.Publisher<RequestStatus> cutOffSettlementBatch(String merchantId, String batchNumber, String correlationId, Map<String, List<String>> customHeaders) {
-        return new MapOperator<>(baseClient.put(String.format(SETTLEMENT_CUTOFF_URL, merchantId, batchNumber), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
-    }
-
-    public Flow.Publisher<RequestStatus> rollbackRefund(String paymentId, String messageId, String correlationId, Map<String, List<String>> customHeaders) {
-        return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_REFUND_URL, paymentId, messageId), correlationId, customHeaders), httpResponse -> httpResponse.getStatus().toResponse());
-    }
-
-    public Flow.Publisher<RefundResponse> refund(String paymentId, RefundRequest request, String correlationId) {
-        return refund(paymentId, request, correlationId, Map.of());
-    }
-
-    public Flow.Publisher<RequestStatus> cutOffSettlementBatch(String merchantId, String batchNumber, String correlationId) {
-        return cutOffSettlementBatch(merchantId, batchNumber, correlationId, Map.of());
-    }
-
-    public Flow.Publisher<RequestStatus> cancel(String paymentId, String correlationId) {
-        return cancel(paymentId, correlationId, Map.of());
-    }
-
-    public Flow.Publisher<RequestStatus> rollbackCapture(String paymentId, String messageId, String correlationId) {
-        return rollbackCapture(paymentId, messageId, correlationId, Map.of());
-    }
-
-    public Flow.Publisher<RequestStatus> rollbackRefund(String paymentId, String messageId, String correlationId) {
-        return rollbackRefund(paymentId, messageId, correlationId, Map.of());
+    public Flow.Publisher<RequestStatus> rollbackPayment(String correlationId, String messageId) {
+        return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_PAYMENT_URL, messageId), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
     }
 
     public Flow.Publisher<CaptureResponse> capture(String paymentId, CaptureRequest request, String correlationId) {
-        return capture(paymentId, request, correlationId, emptyMap());
+        try {
+            return new MapOperator<>(baseClient.post(String.format(CAPTURE_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), mapResponse(CaptureResponse.class));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public Flow.Publisher<RequestStatus> rollbackPayment(String correlationId, String messageId) {
-        return rollbackPayment(correlationId, messageId, emptyMap());
+    public Flow.Publisher<RequestStatus> cancel(String paymentId, String correlationId) {
+        return new MapOperator<>(baseClient.post(String.format(CANCEL_URL, paymentId), new SinglePublisher<>("", executor), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
     }
 
+    public Flow.Publisher<RequestStatus> rollbackCapture(String paymentId, String messageId, String correlationId) {
+        return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_CAPTURE_URL, paymentId, messageId), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
+    }
+
+    public Flow.Publisher<RefundResponse> refund(String paymentId, RefundRequest request, String correlationId) {
+        try {
+            return new MapOperator<>(baseClient.post(String.format(REFUND_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId), mapResponse(RefundResponse.class));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Flow.Publisher<RequestStatus> cutOffSettlementBatch(String merchantId, String batchNumber, String correlationId) {
+        return new MapOperator<>(baseClient.put(String.format(SETTLEMENT_CUTOFF_URL, merchantId, batchNumber), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
+    }
+
+    public Flow.Publisher<RequestStatus> rollbackRefund(String paymentId, String messageId, String correlationId) {
+        return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_REFUND_URL, paymentId, messageId), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
+    }
 }

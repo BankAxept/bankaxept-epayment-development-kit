@@ -81,19 +81,17 @@ public class BaseClient {
 
     public Flow.Publisher<HttpResponse> delete(
             String uri,
-            String correlationId,
-            Map<String, List<String>> headers
+            String correlationId
     ) {
-        return httpClient.delete(uri, filterHeaders(headers, correlationId, false));
+        return httpClient.delete(uri, filterHeaders(Map.of(), correlationId, false));
     }
 
 
     public Flow.Publisher<HttpResponse> put(
             String uri,
-            String correlationId,
-            Map<String, List<String>> headers
+            String correlationId
     ) {
-        return httpClient.put(uri, filterHeaders(headers, correlationId, false));
+        return httpClient.put(uri, filterHeaders(Map.of(), correlationId, false));
     }
 
     public void shutDown() {
