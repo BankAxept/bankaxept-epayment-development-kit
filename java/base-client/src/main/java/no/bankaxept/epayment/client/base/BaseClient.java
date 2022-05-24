@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class BaseClient {
     private final AccessTokenPublisher tokenPublisher;
     private final HttpClient httpClient;
     private final Duration tokenTimeout = Duration.ofSeconds(10);
+    private String apimKey;
 
     public BaseClient(String baseurl, String apimKey, String username, String password) {
         this(baseurl, apimKey, username, password, Clock.systemDefaultZone());
@@ -29,6 +29,7 @@ public class BaseClient {
                 .findFirst()
                 .map(httpClientProvider -> httpClientProvider.create(baseurl))
                 .orElseThrow();
+        this.apimKey = apimKey;
         this.tokenPublisher = new ScheduledAccessTokenPublisher("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
     }
 
@@ -59,6 +60,8 @@ public class BaseClient {
             filteredHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
         if (hasBody && !headers.containsKey("Content-Type"))
             filteredHeaders.put("Content-Type", List.of("application/json"));
+        if(apimKey != null)
+            filteredHeaders.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
         return filteredHeaders;
     }
 
