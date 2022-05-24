@@ -1,15 +1,18 @@
 package no.bankaxept.epayment.test.client.merchant;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import no.bankaxept.epayment.client.merchant.SimulationPaymentRequest;
-import no.bankaxept.epayment.client.merchant.*;
-import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
 import no.bankaxept.epayment.client.base.RequestStatus;
+import no.bankaxept.epayment.client.merchant.Amount;
+import no.bankaxept.epayment.client.merchant.CaptureRequest;
+import no.bankaxept.epayment.client.merchant.MerchantClient;
+import no.bankaxept.epayment.client.merchant.PaymentRequest;
+import no.bankaxept.epayment.client.merchant.RefundRequest;
+import no.bankaxept.epayment.client.merchant.SimulationPaymentRequest;
+import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,13 +23,21 @@ import reactor.test.StepVerifier;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.created;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.forbidden;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.notMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 
 public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     private MerchantClient client;
     private final OffsetDateTime transactionTime = OffsetDateTime.now();
-
-    private ObjectMapper om = new ObjectMapper();
 
     @BeforeEach
     public void setup(WireMockRuntimeInfo wmRuntimeInfo) {

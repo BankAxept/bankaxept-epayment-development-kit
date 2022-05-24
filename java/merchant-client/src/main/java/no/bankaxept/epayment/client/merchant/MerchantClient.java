@@ -4,7 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import no.bankaxept.epayment.client.base.*;
+import no.bankaxept.epayment.client.base.BaseClient;
+import no.bankaxept.epayment.client.base.MapOperator;
+import no.bankaxept.epayment.client.base.RequestStatus;
+import no.bankaxept.epayment.client.base.SimulationRequest;
+import no.bankaxept.epayment.client.base.SinglePublisher;
 
 import java.util.List;
 import java.util.Map;
