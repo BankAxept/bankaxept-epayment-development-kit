@@ -1,8 +1,8 @@
 package no.bankaxept.epayment.test.client.base;
 
 import no.bankaxept.epayment.client.base.AccessFailed;
-import no.bankaxept.epayment.client.base.accesstoken.AccessTokenProcessor;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
+import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpStatus;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class AccessTokenSubscriberTest {
     private AccessTokenSubscriber subscriber;
 
     @Mock
-    private AccessTokenProcessor processorMock;
+    private ScheduledAccessTokenPublisher processorMock;
 
     @Test
     public void should_provide_token_from_processor() {
