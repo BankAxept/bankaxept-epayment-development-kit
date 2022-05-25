@@ -106,16 +106,8 @@ paths:
       responses:
         '200':
           description: Request already received successfully.
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                $ref: '#/components/schemas/CaptureResponse'
         '201':
           description: Request received successfully.
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                $ref: '#/components/schemas/CaptureResponse'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -210,16 +202,8 @@ paths:
       responses:
         '200':
           description: Request already received successfully.
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                $ref: '#/components/schemas/RefundResponse'
         '201':
           description: Request received successfully.
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                $ref: '#/components/schemas/RefundResponse'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -406,14 +390,6 @@ components:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
 
-    CaptureResponse:
-      type: object
-      required:
-        - captureId
-      properties:
-        captureId:
-          type: string
-
     RefundRequest:
       type: object
       required:
@@ -427,14 +403,6 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         inStore:
           $ref: '#/components/schemas/inStore'
-
-    RefundResponse:
-      type: object
-      required:
-        - refundId
-      properties:
-        refundId:
-          type: string
 
     encryptedPaymentCardholderAuthenticationData:
       type: string
