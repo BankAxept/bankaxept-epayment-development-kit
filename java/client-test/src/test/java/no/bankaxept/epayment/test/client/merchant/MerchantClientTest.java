@@ -57,6 +57,14 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                     .verifyComplete();
         }
 
+    @Test
+    public void success_with_simulation() {
+        stubFor(simulationPaymentEndpointMapping(transactionTime, created()));
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(createSimulationRequest(transactionTime), "1")))
+                .expectNext(RequestStatus.Accepted)
+                .verifyComplete();
+    }
+
         @Test
         public void success_with_simulation() {
             stubFor(simulationPaymentEndpointMapping(transactionTime, created()));
