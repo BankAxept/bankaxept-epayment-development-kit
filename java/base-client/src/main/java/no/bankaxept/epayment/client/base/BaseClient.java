@@ -1,7 +1,6 @@
 package no.bankaxept.epayment.client.base;
 
-import no.bankaxept.epayment.client.base.accesstoken.AccessTokenProcessor;
-import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
+import no.bankaxept.epayment.client.base.accesstoken.*;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
@@ -13,11 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 public class BaseClient {
-    private final AccessTokenProcessor tokenPublisher;
+    private final AccessTokenPublisher tokenPublisher;
     private final HttpClient httpClient;
     private final Duration tokenTimeout = Duration.ofSeconds(10);
+    private String apimKey;
 
     public BaseClient(String baseurl, String apimKey, String username, String password) {
         this(baseurl, apimKey, username, password, Clock.systemDefaultZone());
@@ -28,7 +29,40 @@ public class BaseClient {
                 .findFirst()
                 .map(httpClientProvider -> httpClientProvider.create(baseurl))
                 .orElseThrow();
-        this.tokenPublisher = new AccessTokenProcessor("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
+        this.apimKey = apimKey;
+        this.tokenPublisher = new ScheduledAccessTokenPublisher("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
+    }
+
+    private BaseClient(String baseurl, AccessTokenPublisher tokenPublisher) {
+        httpClient = ServiceLoader.load(HttpClientProvider.class)
+                .findFirst()
+                .map(httpClientProvider -> httpClientProvider.create(baseurl))
+                .orElseThrow();
+        this.tokenPublisher = tokenPublisher;
+    }
+
+    public static BaseClient withStaticToken(String baseurl, String token) {
+        return new BaseClient(baseurl, new StaticAccessTokenPublisher(token));
+    }
+
+    public static BaseClient withoutToken(String baseurl) {
+        return new BaseClient(baseurl, new EmptyAccessTokenPublisher());
+    }
+
+    public static BaseClient withSuppliedToken(String baseurl, Supplier<String> tokenSupplier) {
+        return new BaseClient(baseurl, new SuppliedAccessTokenPublisher(tokenSupplier));
+    }
+
+    private Map<String, List<String>> filterHeaders(Map<String, List<String>> headers, String correlationId, boolean hasBody) {
+        var filteredHeaders = new LinkedHashMap<>(headers);
+        filteredHeaders.put("X-Correlation-Id", List.of(correlationId));
+        if (!(tokenPublisher instanceof EmptyAccessTokenPublisher))
+            filteredHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
+        if (hasBody && !headers.containsKey("Content-Type"))
+            filteredHeaders.put("Content-Type", List.of("application/json"));
+        if(apimKey != null)
+            filteredHeaders.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
+        return filteredHeaders;
     }
 
     public Flow.Publisher<HttpResponse> post(
@@ -45,10 +79,22 @@ public class BaseClient {
             String correlationId,
             Map<String, List<String>> headers
     ) {
-        var allHeaders = new LinkedHashMap<>(headers);
-        allHeaders.put("X-Correlation-Id", List.of(correlationId));
-        allHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
-        return httpClient.post(uri, body, allHeaders);
+        return httpClient.post(uri, body, filterHeaders(headers, correlationId, true));
+    }
+
+    public Flow.Publisher<HttpResponse> delete(
+            String uri,
+            String correlationId
+    ) {
+        return httpClient.delete(uri, filterHeaders(Map.of(), correlationId, false));
+    }
+
+
+    public Flow.Publisher<HttpResponse> put(
+            String uri,
+            String correlationId
+    ) {
+        return httpClient.put(uri, filterHeaders(Map.of(), correlationId, false));
     }
 
     public void shutDown() {
