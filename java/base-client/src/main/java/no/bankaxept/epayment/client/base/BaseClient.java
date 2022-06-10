@@ -53,6 +53,11 @@ public class BaseClient {
         return new BaseClient(baseurl, new SuppliedAccessTokenPublisher(tokenSupplier));
     }
 
+    public BaseClient apimKey(String apimKey) {
+        this.apimKey = apimKey;
+        return this;
+    }
+
     private Map<String, List<String>> filterHeaders(Map<String, List<String>> headers, String correlationId, boolean hasBody) {
         var filteredHeaders = new LinkedHashMap<>(headers);
         filteredHeaders.put("X-Correlation-Id", List.of(correlationId));
