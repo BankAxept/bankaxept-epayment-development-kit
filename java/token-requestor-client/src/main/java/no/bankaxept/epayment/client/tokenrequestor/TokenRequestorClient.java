@@ -12,8 +12,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
 
-import static java.util.Collections.emptyMap;
-
 public class TokenRequestorClient {
     private final BaseClient baseClient;
 
@@ -33,7 +31,7 @@ public class TokenRequestorClient {
     }
 
     public TokenRequestorClient(String baseurl, String apimKey, String username, String password) {
-        this.baseClient = new BaseClient(baseurl, apimKey, username, password);
+        this.baseClient = new BaseClient.Builder(baseurl).apimKey(apimKey).withScheduledToken(username, password).build();
     }
 
     public Flow.Publisher<RequestStatus> enrol(EnrolCardRequest request, String correlationId) {

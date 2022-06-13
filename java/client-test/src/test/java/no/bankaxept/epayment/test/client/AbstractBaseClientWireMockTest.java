@@ -58,11 +58,11 @@ public abstract class AbstractBaseClientWireMockTest {
     }
 
     protected BaseClient createBaseClient(int port) {
-        return BaseClient.withStaticToken("http://localhost:" + port, aToken);
+        return new BaseClient.Builder("http://localhost:" + port).withStaticToken(aToken).build();
     }
 
     protected BaseClient createScheduledBaseClient(int port) {
-        return new BaseClient("http://localhost:" + port, "key", "username", "password", clock);
+        return new BaseClient.Builder("http://localhost:" + port).apimKey("key").withScheduledToken("username", "password", clock).build();
     }
 
     protected Flow.Publisher<String> emptyPublisher() {
