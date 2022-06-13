@@ -85,7 +85,7 @@ public class BaseClient {
         }
 
         public Builder(String baseurl) {
-            ServiceLoader.load(HttpClientProvider.class)
+            this.httpClient = ServiceLoader.load(HttpClientProvider.class)
                     .findFirst()
                     .map(httpClientProvider -> httpClientProvider.create(baseurl))
                     .orElseThrow();
