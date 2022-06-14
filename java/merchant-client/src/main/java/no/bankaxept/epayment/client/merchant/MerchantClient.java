@@ -43,7 +43,7 @@ public class MerchantClient {
     }
 
     public MerchantClient(String baseurl, String apimKey, String username, String password) {
-        this.baseClient = new BaseClient(baseurl, apimKey, username, password);
+        this.baseClient = new BaseClient.Builder(baseurl).apimKey(apimKey).withScheduledToken(username, password).build();
     }
 
     private static Map<String, List<String>> findSimulationHeader(Object request) {
