@@ -142,13 +142,6 @@ components:
       example: "99977512345"
       description: >-
         The payment card's bank account number.
-    paymentAccountReference:
-      description: |
-        The payment account reference (PAR). Unique reference linked to a card PAN and all its associated tokens
-      type: string
-      minLength: 29
-      maxLength: 29
-      example: "583B0123456789ABCDE0123456789"
     authenticationDateTime:
       type: string
       format: date-time

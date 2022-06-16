@@ -15,42 +15,16 @@ import java.util.concurrent.*;
 import java.util.function.Supplier;
 
 public class BaseClient {
-    private final AccessTokenPublisher tokenPublisher;
+    private final static Duration tokenTimeout = Duration.ofSeconds(10);
+
     private final HttpClient httpClient;
-    private final Duration tokenTimeout = Duration.ofSeconds(10);
+    private final AccessTokenPublisher tokenPublisher;
     private String apimKey;
 
-    public BaseClient(String baseurl, String apimKey, String username, String password) {
-        this(baseurl, apimKey, username, password, Clock.systemDefaultZone());
-    }
-
-    public BaseClient(String baseurl, String apimKey, String username, String password, Clock clock) {
-        httpClient = ServiceLoader.load(HttpClientProvider.class)
-                .findFirst()
-                .map(httpClientProvider -> httpClientProvider.create(baseurl))
-                .orElseThrow();
-        this.apimKey = apimKey;
-        this.tokenPublisher = new ScheduledAccessTokenPublisher("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
-    }
-
-    private BaseClient(String baseurl, AccessTokenPublisher tokenPublisher) {
-        httpClient = ServiceLoader.load(HttpClientProvider.class)
-                .findFirst()
-                .map(httpClientProvider -> httpClientProvider.create(baseurl))
-                .orElseThrow();
+    private BaseClient(HttpClient httpClient, AccessTokenPublisher tokenPublisher, String apimKey) {
+        this.httpClient = httpClient;
         this.tokenPublisher = tokenPublisher;
-    }
-
-    public static BaseClient withStaticToken(String baseurl, String token) {
-        return new BaseClient(baseurl, new StaticAccessTokenPublisher(token));
-    }
-
-    public static BaseClient withoutToken(String baseurl) {
-        return new BaseClient(baseurl, new EmptyAccessTokenPublisher());
-    }
-
-    public static BaseClient withSuppliedToken(String baseurl, Supplier<String> tokenSupplier) {
-        return new BaseClient(baseurl, new SuppliedAccessTokenPublisher(tokenSupplier));
+        this.apimKey = apimKey;
     }
 
     private Map<String, List<String>> filterHeaders(Map<String, List<String>> headers, String correlationId, boolean hasBody) {
@@ -60,7 +34,7 @@ public class BaseClient {
             filteredHeaders.put("Authorization", List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout)));
         if (hasBody && !headers.containsKey("Content-Type"))
             filteredHeaders.put("Content-Type", List.of("application/json"));
-        if(apimKey != null)
+        if (apimKey != null)
             filteredHeaders.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
         return filteredHeaders;
     }
@@ -100,4 +74,57 @@ public class BaseClient {
     public void shutDown() {
         tokenPublisher.shutDown();
     }
+
+    public static class Builder {
+
+        private HttpClient httpClient;
+        private String apimKey;
+        private AccessTokenPublisher tokenPublisher;
+
+        private Builder() {
+        }
+
+        public Builder(String baseurl) {
+            this.httpClient = ServiceLoader.load(HttpClientProvider.class)
+                    .findFirst()
+                    .map(httpClientProvider -> httpClientProvider.create(baseurl))
+                    .orElseThrow();
+        }
+
+        public Builder apimKey(String apimKey) {
+            this.apimKey = apimKey;
+            return this;
+        }
+
+        public Builder withStaticToken(String token) {
+            this.tokenPublisher = new StaticAccessTokenPublisher(token);
+            return this;
+        }
+
+        public Builder withoutToken() {
+            this.tokenPublisher = new EmptyAccessTokenPublisher();
+            return this;
+        }
+
+        public Builder withSuppliedToken(Supplier<String> tokenSupplier) {
+            this.tokenPublisher = new SuppliedAccessTokenPublisher(tokenSupplier);
+            return this;
+        }
+
+        public Builder withScheduledToken(String username, String password) {
+            this.tokenPublisher = new ScheduledAccessTokenPublisher("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, Clock.systemDefaultZone(), Executors.newScheduledThreadPool(1), httpClient);
+            return this;
+        }
+
+        public Builder withScheduledToken(String username, String password, Clock clock) {
+            this.tokenPublisher = new ScheduledAccessTokenPublisher("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
+            return this;
+        }
+
+        public BaseClient build() {
+            return new BaseClient(httpClient, tokenPublisher, apimKey);
+        }
+    }
+
+
 }
