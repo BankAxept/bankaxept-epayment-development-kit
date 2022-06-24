@@ -7,6 +7,9 @@ components:
   schemas:
     Amount:
       type: object
+      required:
+        - currency
+        - value
       description: >-
         The amount information for the transaction (in minor units).
       properties:
