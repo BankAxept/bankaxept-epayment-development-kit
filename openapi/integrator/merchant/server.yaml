@@ -448,6 +448,10 @@ components:
         However, it is not a requirement.
     merchantLocation:
       type: object
+      required:
+        - zipCode
+        - address
+        - city
       properties:
         zipCode:
           type: string
