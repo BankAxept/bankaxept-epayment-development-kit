@@ -314,6 +314,12 @@ components:
           example: "Airline ticket 912-783248767327476"
         merchantReference:
           $ref: '#/components/schemas/merchantReference'
+        merchantCategoryCode:
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: "5541"
+        merchantLocation:
+          $ref: '#/components/schemas/merchantLocation'
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
         inStore:
@@ -440,6 +446,23 @@ components:
         BankAxept uses this reference in all communication with the merchant about the payment status.
         It is recommended that a unique value per payment is used.
         However, it is not a requirement.
+    merchantLocation:
+      type: object
+      required:
+        - zipCode
+        - address
+        - city
+      properties:
+        zipCode:
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: "0154"
+        address:
+          type: string
+          example: 'Robert Levins Gate 5'
+        city:
+          type: string
+          example: 'Oslo'
     inStore:
       description: |
         True if the payment is performed in store. False if it is remote
