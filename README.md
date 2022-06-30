@@ -18,9 +18,9 @@ You need to implement [HttpClient](java/base-client/src/main/java/no/bankaxept/e
 and then create a configuration file (like [this](java/webflux-client/src/main/resources/META-INF/services/no.bankaxept.epayment.client.base.spi.HttpClientProvider)). The [webflux-client module](java/webflux-client) can be used for reference
 
 ### Starting clients
-The easiest way to create a client is to provide a baseclient.
+It's pretty simple to create a client.<br>
 You need a few values to get started
 * **Base url** of the ePayment service
-* **API-M key** (optional). Needed if you're routed through. If you're external, you probably always need this.
-* **Strategy and credentials for fetching tokens** . The scheduled way is the one you usually want, unless you are testing or fetching tokens yourself.
-> var merchantClient = new MerchantClient(new BaseClient.Builder(baseurl).apimKey(apimKey).withScheduledToken(username, password).build());
+* **API-M key** (optional). Needed if you're you're routed through Azure. If you're not working on ePayment you probably always need to set this.
+* **Credentials for fetching tokens** .
+> var merchantClient = new MerchantClient(baseurl, apimKey, username, password);
