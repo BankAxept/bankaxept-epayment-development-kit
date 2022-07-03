@@ -44,6 +44,11 @@ public class TokenRequestorClient {
                 httpResponse -> httpResponse.getStatus().toResponse());
     }
 
+    public Flow.Publisher<RequestStatus> delete(String tokenId, String correlationId, Map<String, List<String>> headers) {
+        return new MapOperator<>(baseClient.post(String.format(DELETION_URL, tokenId), new SinglePublisher<>("", executor), correlationId, headers),
+                httpResponse -> httpResponse.getStatus().toResponse());
+    }
+
     private static Map<String, List<String>> findSimulationHeader(Object request) {
         if(request instanceof SimulationRequest) {
             return Map.of(SIMULATION_HEADER, ((SimulationRequest) request).getSimulationValues());
