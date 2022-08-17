@@ -390,6 +390,7 @@ components:
       required:
         - amount
         - messageId
+        - transactionTime
       properties:
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
@@ -409,6 +410,11 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         inStore:
           $ref: '#/components/schemas/inStore'
+        transactionTime:
+          type: string
+          format: date-time
+          description: >-
+            The time of the transaction.
 
     encryptedPaymentCardholderAuthenticationData:
       type: string
