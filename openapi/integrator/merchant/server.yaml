@@ -390,7 +390,6 @@ components:
       required:
         - amount
         - messageId
-        - transactionTime
       properties:
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
@@ -403,6 +402,7 @@ components:
         - amount
         - messageId
         - inStore
+        - transactionTime
       properties:
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
