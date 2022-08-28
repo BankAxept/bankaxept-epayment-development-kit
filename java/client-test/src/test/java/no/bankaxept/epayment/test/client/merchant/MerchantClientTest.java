@@ -1,6 +1,5 @@
 package no.bankaxept.epayment.test.client.merchant;
 
-
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
@@ -227,7 +226,8 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                                                 .value(10000L)
                                                 .currency("NOK"))
                                         .inStore(true)
-                                        .messageId("74313af1-e2cc-403f-85f1-6050725b01b6"),
+                                        .messageId("74313af1-e2cc-403f-85f1-6050725b01b6")
+                                        .transactionTime(transactionTime),
                                 "1")))
                         .expectNext(RequestStatus.Accepted)
                         .verifyComplete();
