@@ -86,16 +86,10 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/{tokenId}/deletions:
+  /payment-tokens/{tokenId}:
     description: Payment token deletion notification
-    post:
+    delete:
       operationId: deleteToken
-      requestBody:
-        required: true
-        content:
-          application/json;charset=UTF-8:
-            schema:
-              $ref: '#/components/schemas/TokenUpdateData'
       parameters:
         - $ref: '../components.yaml#/components/parameters/tokenId'
       responses:
