@@ -8,7 +8,7 @@ paths:
   /payment-tokens:
     description: EnrolCard callback
     post:
-      operationId: enrolCardCallback
+      operationId: addToken
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
       requestBody:
@@ -32,10 +32,10 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/{tokenId}/updates:
-    description: Payment token status update notification
+  /payment-tokens/{tokenId}/suspensions:
+    description: Payment token suspension notification
     post:
-      operationId: tokenUpdateNotification
+      operationId: suspendToken
       parameters:
         - $ref: '../components.yaml#/components/parameters/tokenId'
       requestBody:
@@ -59,10 +59,58 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/{tokenId}/expiry-extensions:
+  /payment-tokens/{tokenId}/resumptions:
+    description: Payment token resumption notification
+    post:
+      operationId: resumeToken
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/tokenId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/TokenUpdateData'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+  /payment-tokens/{tokenId}:
+    description: Payment token deletion notification
+    delete:
+      operationId: deleteToken
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/tokenId'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+  /payment-tokens/{tokenId}/expirations:
     description: Payment token expiry date extension notification
     post:
-      operationId: tokenExpiryNotification
+      operationId: extendExpiration
       parameters:
         - $ref: '../components.yaml#/components/parameters/tokenId'
       requestBody:
@@ -146,25 +194,9 @@ components:
       type: object
       required:
         - messageId
-        - status
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
-        status:
-          $ref: '#/components/schemas/TokenUpdateStatus'
-
-    TokenUpdateStatus:
-      type: string
-      example: Active
-      description: |
-        Updated status of the token:
-        * Active - Token is active
-        * Suspended - Token is suspended
-        * Deleted - Token is deleted
-      enum:
-        - Active
-        - Suspended
-        - Deleted
 
     TokenExpiryExtensionData:
       type: object
