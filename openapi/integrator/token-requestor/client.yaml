@@ -194,25 +194,9 @@ components:
       type: object
       required:
         - messageId
-        - status
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
-        status:
-          $ref: '#/components/schemas/TokenUpdateStatus'
-
-    TokenUpdateStatus:
-      type: string
-      example: Active
-      description: |
-        Updated status of the token:
-        * Active - Token is active
-        * Suspended - Token is suspended
-        * Deleted - Token is deleted
-      enum:
-        - Active
-        - Suspended
-        - Deleted
 
     TokenExpiryExtensionData:
       type: object
