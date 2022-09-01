@@ -92,6 +92,7 @@ paths:
       operationId: deleteToken
       parameters:
         - $ref: '../components.yaml#/components/parameters/tokenId'
+        - $ref: '../components.yaml#/components/parameters/correlationId'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
