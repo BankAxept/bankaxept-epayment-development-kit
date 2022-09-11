@@ -251,6 +251,12 @@ paths:
         - $ref: '../components.yaml#/components/parameters/correlationId'
         - $ref: '#/components/parameters/merchantId'
         - $ref: '../components.yaml#/components/parameters/batchNumber'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CutOffRequest'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -415,6 +421,14 @@ components:
           format: date-time
           description: >-
             The time of the transaction.
+
+    CutOffRequest:
+      type: object
+      required:
+        - merchantAggregatorId
+      properties:
+        merchantAggregatorId:
+          $ref: '#/components/schemas/merchantAggregatorId'
 
     encryptedPaymentCardholderAuthenticationData:
       type: string
