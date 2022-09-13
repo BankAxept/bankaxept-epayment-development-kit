@@ -263,7 +263,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
             }
         }
 
-        @Nested
+        /*@Nested
         @DisplayName("Cut off Settlement Batch")
         public class CutOffSettlementBatchTest {
             @Test
@@ -280,6 +280,6 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                         .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
                         .willReturn(responseBuilder);
             }
-        }
+        }*/
     }
 }

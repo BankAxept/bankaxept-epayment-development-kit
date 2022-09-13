@@ -71,6 +71,14 @@ public class BaseClient {
         return httpClient.put(uri, filterHeaders(Map.of(), correlationId, false));
     }
 
+    public Flow.Publisher<HttpResponse> put(
+        String uri,
+        Flow.Publisher<String> body,
+        String correlationId
+    ) {
+      return httpClient.post(uri, body, filterHeaders(Map.of(), correlationId, true));
+    }
+
     public void shutDown() {
         tokenPublisher.shutDown();
     }

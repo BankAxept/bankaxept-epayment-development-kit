@@ -37,6 +37,11 @@ public class WebFluxClient implements HttpClient {
         return sendRequest(uri, headers, HttpMethod.PUT);
     }
 
+    @Override
+    public Publisher<HttpResponse> put(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
+      return sendRequest(uri, bodyPublisher, headers, HttpMethod.PUT);
+    }
+
     private Publisher<HttpResponse> sendRequest(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers, HttpMethod method) {
         return JdkFlowAdapter.publisherToFlowPublisher(
                 setupRequest(uri, headers, method)
