@@ -76,7 +76,7 @@ public class BaseClient {
         Flow.Publisher<String> body,
         String correlationId
     ) {
-      return httpClient.post(uri, body, filterHeaders(Map.of(), correlationId, true));
+      return httpClient.put(uri, body, filterHeaders(Map.of(), correlationId, true));
     }
 
     public void shutDown() {
