@@ -1,18 +1,23 @@
 package no.bankaxept.epayment.client.base;
 
-import no.bankaxept.epayment.client.base.accesstoken.*;
-import no.bankaxept.epayment.client.base.http.HttpClient;
-import no.bankaxept.epayment.client.base.http.HttpResponse;
-import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
-
 import java.time.Clock;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Flow;
 import java.util.function.Supplier;
+import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
+import no.bankaxept.epayment.client.base.accesstoken.EmptyAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.SuppliedAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.http.HttpClient;
+import no.bankaxept.epayment.client.base.http.HttpResponse;
+import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
 
 public class BaseClient {
     private final static Duration tokenTimeout = Duration.ofSeconds(10);
@@ -61,14 +66,6 @@ public class BaseClient {
             String correlationId
     ) {
         return httpClient.delete(uri, filterHeaders(Map.of(), correlationId, false));
-    }
-
-
-    public Flow.Publisher<HttpResponse> put(
-            String uri,
-            String correlationId
-    ) {
-        return httpClient.put(uri, filterHeaders(Map.of(), correlationId, false));
     }
 
     public Flow.Publisher<HttpResponse> put(

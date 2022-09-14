@@ -54,24 +54,19 @@ public class MerchantClient {
 
   public Flow.Publisher<RequestStatus> payment(PaymentRequest request, String correlationId) {
     try {
-      return new MapOperator<>(
-          baseClient.post(PAYMENTS_URL, new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
-              correlationId, findSimulationHeader(request)), httpResponse -> httpResponse.getStatus().toResponse());
+      return new MapOperator<>(baseClient.post(PAYMENTS_URL, new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId, findSimulationHeader(request)), httpResponse -> httpResponse.getStatus().toResponse());
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }
   }
 
   public Flow.Publisher<RequestStatus> rollbackPayment(String correlationId, String messageId) {
-    return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_PAYMENT_URL, messageId), correlationId),
-        httpResponse -> httpResponse.getStatus().toResponse());
+    return new MapOperator<>(baseClient.delete(String.format(ROLLBACK_PAYMENT_URL, messageId), correlationId), httpResponse -> httpResponse.getStatus().toResponse());
   }
 
   public Flow.Publisher<RequestStatus> capture(String paymentId, CaptureRequest request, String correlationId) {
     try {
-      return new MapOperator<>(baseClient.post(String.format(CAPTURE_URL, paymentId),
-          new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId,
-          findSimulationHeader(request)), httpResponse -> httpResponse.getStatus().toResponse());
+      return new MapOperator<>(baseClient.post(String.format(CAPTURE_URL, paymentId), new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId, findSimulationHeader(request)), httpResponse -> httpResponse.getStatus().toResponse());
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }
@@ -96,9 +91,14 @@ public class MerchantClient {
   public Flow.Publisher<RequestStatus> cutOffSettlementBatch(String merchantId, CutOffRequest request,
       String batchNumber, String correlationId) {
     try {
-      return new MapOperator<>(baseClient.put(String.format(SETTLEMENT_CUTOFF_URL, merchantId, batchNumber),
-          new SinglePublisher<>(objectMapper.writeValueAsString(request), executor), correlationId),
-          httpResponse -> httpResponse.getStatus().toResponse());
+      return new MapOperator<>(
+          baseClient.put(
+              String.format(SETTLEMENT_CUTOFF_URL, merchantId, batchNumber),
+              new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
+              correlationId
+          ),
+          httpResponse -> httpResponse.getStatus().toResponse()
+      );
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }

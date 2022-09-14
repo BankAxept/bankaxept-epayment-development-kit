@@ -90,11 +90,10 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /settlements/{batchNumber}:
+  /settlements:
     description: Cut-off settlement batch request callback
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
-      - $ref: '../components.yaml#/components/parameters/batchNumber'
     post:
       operationId: cutOffSettlementBatchCallback
       requestBody:
@@ -203,6 +202,12 @@ components:
     CutOffCallbackData:
       type: object
       properties:
+        batchNumber:
+          $ref: '../components.yaml#/components/schemas/batchNumber'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        merchantId:
+          $ref: '../components.yaml#/components/schemas/merchantId'
         creditAmount:
           type: integer
           format: int64

@@ -249,7 +249,7 @@ paths:
       operationId: cutOffSettlementBatch
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
-        - $ref: '#/components/parameters/merchantId'
+        - $ref: '../components.yaml#/components/parameters/merchantId'
         - $ref: '../components.yaml#/components/parameters/batchNumber'
       requestBody:
         required: true
@@ -303,7 +303,7 @@ components:
         merchantAggregatorId:
           $ref: '#/components/schemas/merchantAggregatorId'
         merchantId:
-          $ref: '#/components/schemas/merchantId'
+          $ref: '../components.yaml#/components/schemas/merchantId'
         merchantName:
           $ref: '#/components/schemas/merchantName'
         merchantDisplayName:
@@ -426,9 +426,12 @@ components:
       type: object
       required:
         - merchantAggregatorId
+        - messageId
       properties:
         merchantAggregatorId:
           $ref: '#/components/schemas/merchantAggregatorId'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
 
     encryptedPaymentCardholderAuthenticationData:
       type: string
@@ -441,12 +444,6 @@ components:
       maxLength: 36
       description: >-
         The merchant aggregator's unique identifier.
-    merchantId:
-      type: string
-      maxLength: 36
-      example: "10030005"
-      description: >-
-        The merchant's unique identifier.
     merchantName:
       type: string
       maxLength: 100
@@ -490,10 +487,3 @@ components:
       default: false
       example: true
 
-  parameters:
-    merchantId:
-      name: merchantId
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/merchantId'
