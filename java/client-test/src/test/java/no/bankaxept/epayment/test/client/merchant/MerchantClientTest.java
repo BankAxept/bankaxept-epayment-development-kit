@@ -1,27 +1,5 @@
 package no.bankaxept.epayment.test.client.merchant;
 
-import com.github.tomakehurst.wiremock.client.MappingBuilder;
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import no.bankaxept.epayment.client.base.RequestStatus;
-import no.bankaxept.epayment.client.merchant.Amount;
-import no.bankaxept.epayment.client.merchant.CaptureRequest;
-import no.bankaxept.epayment.client.merchant.MerchantClient;
-import no.bankaxept.epayment.client.merchant.PaymentRequest;
-import no.bankaxept.epayment.client.merchant.RefundRequest;
-import no.bankaxept.epayment.client.merchant.SimulationPaymentRequest;
-import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import reactor.adapter.JdkFlowAdapter;
-import reactor.test.StepVerifier;
-
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.created;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
@@ -33,6 +11,28 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import no.bankaxept.epayment.client.base.RequestStatus;
+import no.bankaxept.epayment.client.merchant.Amount;
+import no.bankaxept.epayment.client.merchant.CaptureRequest;
+import no.bankaxept.epayment.client.merchant.CutOffRequest;
+import no.bankaxept.epayment.client.merchant.MerchantClient;
+import no.bankaxept.epayment.client.merchant.PaymentRequest;
+import no.bankaxept.epayment.client.merchant.RefundRequest;
+import no.bankaxept.epayment.client.merchant.SimulationPaymentRequest;
+import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import reactor.adapter.JdkFlowAdapter;
+import reactor.test.StepVerifier;
 
 public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     private MerchantClient client;
@@ -266,13 +266,16 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         @Nested
         @DisplayName("Cut off Settlement Batch")
         public class CutOffSettlementBatchTest {
-            @Test
-            public void success() {
-                stubFor(cutOffSettlementBatchEndpointMapping("merchant-id", "batch-number", "1", created()));
-                StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cutOffSettlementBatch("merchant-id", "batch-number", "1")))
-                        .expectNext(RequestStatus.Accepted)
-                        .verifyComplete();
-            }
+
+          @Test
+          public void success() {
+            CutOffRequest cutOffRequest = new CutOffRequest().messageId("message-id").merchantAggregatorId("1");
+            stubFor(cutOffSettlementBatchEndpointMapping("merchant-id", "batch-number", "1", created()));
+            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(
+                    client.cutOffSettlementBatch("merchant-id", cutOffRequest, "batch-number", "1")))
+                .expectNext(RequestStatus.Accepted)
+                .verifyComplete();
+          }
 
             private MappingBuilder cutOffSettlementBatchEndpointMapping(String merchantId, String batchNumber, String correlationId, ResponseDefinitionBuilder responseBuilder) {
                 return put(String.format("/settlements/%s/%s", merchantId, batchNumber))
