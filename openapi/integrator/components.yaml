@@ -88,6 +88,12 @@ components:
       example: 1032
       description: >-
         The batch number identifying a specific settlement batch for a merchant.
+    merchantId:
+      type: string
+      maxLength: 36
+      example: "10030005"
+      description: >-
+        The merchant's unique identifier.
     correlationId:
       type: string
       maxLength: 36
@@ -158,6 +164,12 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/paymentId'
+    merchantId:
+      name: merchantId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/merchantId'
     batchNumber:
       name: batchNumber
       in: path
