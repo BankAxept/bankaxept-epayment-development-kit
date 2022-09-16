@@ -90,33 +90,6 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /settlements:
-    description: Cut-off settlement batch request callback
-    parameters:
-      - $ref: '../components.yaml#/components/parameters/correlationId'
-    post:
-      operationId: cutOffSettlementBatchCallback
-      requestBody:
-        required: true
-        content:
-          application/json;charset=UTF-8:
-            schema:
-              $ref: '#/components/schemas/CutOffCallbackData'
-      responses:
-        '200':
-          $ref: '../components.yaml#/components/responses/200Ok'
-        '201':
-          $ref: '../components.yaml#/components/responses/201Ok'
-        '400':
-          $ref: '../components.yaml#/components/responses/400Error'
-        '409':
-          $ref: '../components.yaml#/components/responses/409Error'
-        '422':
-          $ref: '../components.yaml#/components/responses/422Error'
-        '500':
-          $ref: '../components.yaml#/components/responses/500Error'
-        '503':
-          $ref: '../components.yaml#/components/responses/503Error'
 
 components:
   schemas:
@@ -198,40 +171,6 @@ components:
             The /refund request id. This is ePayment platform's reference associated with this /refund request.
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
-
-    CutOffCallbackData:
-      type: object
-      properties:
-        batchNumber:
-          $ref: '../components.yaml#/components/schemas/batchNumber'
-        messageId:
-          $ref: '../components.yaml#/components/schemas/messageId'
-        merchantId:
-          $ref: '../components.yaml#/components/schemas/merchantId'
-        creditAmount:
-          type: integer
-          format: int64
-        creditCount:
-          type: integer
-          format: int64
-        debitAmount:
-          type: integer
-          format: int64
-        debitCount:
-          type: integer
-          format: int64
-        creditReversalAmount:
-          type: integer
-          format: int64
-        creditReversalCount:
-          type: integer
-          format: int64
-        debitReversalAmount:
-          type: integer
-          format: int64
-        debitReversalCount:
-          type: integer
-          format: int64
 
     CaptureCode:
       type: string
