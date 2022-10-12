@@ -33,8 +33,8 @@ public class WebFluxClient implements HttpClient {
     }
 
     @Override
-    public Publisher<HttpResponse> put(String uri, Map<String, List<String>> headers) {
-        return sendRequest(uri, headers, HttpMethod.PUT);
+    public Publisher<HttpResponse> put(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
+      return sendRequest(uri, bodyPublisher, headers, HttpMethod.PUT);
     }
 
     private Publisher<HttpResponse> sendRequest(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers, HttpMethod method) {
