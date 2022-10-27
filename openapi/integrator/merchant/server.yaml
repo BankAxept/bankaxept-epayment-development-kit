@@ -279,7 +279,6 @@ components:
       type: object
       required:
         - amount
-        - encryptedCardholderAuthenticationData
         - merchantAggregatorId
         - merchantId
         - merchantName
@@ -300,6 +299,8 @@ components:
           example: false
         encryptedCardholderAuthenticationData:
           $ref: '#/components/schemas/encryptedPaymentCardholderAuthenticationData'
+        paymentTokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
         merchantAggregatorId:
           $ref: '#/components/schemas/merchantAggregatorId'
         merchantId:
