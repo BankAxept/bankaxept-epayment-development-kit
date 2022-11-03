@@ -299,8 +299,8 @@ components:
           example: false
         encryptedCardholderAuthenticationData:
           $ref: '#/components/schemas/encryptedPaymentCardholderAuthenticationData'
-        paymentTokenId:
-          $ref: '../components.yaml#/components/schemas/tokenId'
+        cardholderData:
+          $ref: '#/components/schemas/cardholderData'
         merchantAggregatorId:
           $ref: '#/components/schemas/merchantAggregatorId'
         merchantId:
@@ -440,6 +440,16 @@ components:
       description: >-
         The Payment and Cardholder Authentication Data is encrypted according to the Java Web Encryption specification defined in RFC-7516.
         See schema PaymentCardholderAuthenticationData for decrypted data format
+    cardholderData:
+      type: object
+      required:
+        - tokenRequestorId
+        - tokenId
+      properties:
+        tokenRequestorId:
+          $ref: '../components.yaml#/components/schemas/tokenRequestorId'
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
     merchantAggregatorId:
       type: string
       maxLength: 36
