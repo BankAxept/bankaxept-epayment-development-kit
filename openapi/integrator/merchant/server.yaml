@@ -445,11 +445,14 @@ components:
       required:
         - tokenRequestorId
         - tokenId
+        - nin
       properties:
         tokenRequestorId:
           $ref: '../components.yaml#/components/schemas/tokenRequestorId'
         tokenId:
           $ref: '../components.yaml#/components/schemas/tokenId'
+        nin:
+          $ref: '../components.yaml#/components/schemas/nin'
     merchantAggregatorId:
       type: string
       maxLength: 36
