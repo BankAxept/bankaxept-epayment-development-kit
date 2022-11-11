@@ -68,6 +68,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <jackson-bom.version>2.13.4.20221013</jackson-bom.version>
         <swagger.parser.version>2.1.8</swagger.parser.version>
         <!-- Override the netty version spring boot uses with the version used by com.azure packages -->
         <netty.version>4.1.82.Final</netty.version>
