@@ -169,7 +169,7 @@ components:
         tokenRequestorId:
           $ref: '../components.yaml#/components/schemas/tokenRequestorId'
         paymentToken:
-          $ref: '../components.yaml#/components/schemas/TokenPaymentData'
+          $ref: '../components.yaml#/components/schemas/PaymentToken'
         accountNumberLastFourDigits:
           type: string
           pattern: '^[0-9]{4}$'
@@ -210,4 +210,4 @@ components:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
         tokenExpiryDate:
-          $ref: '../components.yaml#/components/schemas/tokenExpiryDate'
+          $ref: '../components.yaml#/components/schemas/expiryDate'
