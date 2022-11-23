@@ -6,11 +6,11 @@ info:
 
 paths:
   /payments:
-    description: Payment request callback
+    description: Response to a payment request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
-      operationId: paymentRequestCallback
+      operationId: paymentResponse
       requestBody:
         required: true
         content:
@@ -34,11 +34,11 @@ paths:
           $ref: '../components.yaml#/components/responses/503Error'
 
   /payments/captures:
-    description: Payment capture callback
+    description: Response to a capture request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
-      operationId: captureCallback
+      operationId: captureResponse
       requestBody:
         required: true
         content:
@@ -62,12 +62,12 @@ paths:
           $ref: '../components.yaml#/components/responses/503Error'
 
   /payments/{paymentId}/refunds:
-    description: Payment refund callback
+    description: Response to a refund request
     parameters:
       - $ref: '../components.yaml#/components/parameters/paymentId'
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
-      operationId: refundCallback
+      operationId: refundResponse
       requestBody:
         required: true
         content:
@@ -90,17 +90,17 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
   /settlements:
-    description: Cut-off settlement batch request callback
+    description: Response to a cut-off request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
-      operationId: cutOffSettlementBatchCallback
+      operationId: cutOffResponse
       requestBody:
         required: true
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/CutOffCallbackData'
+              $ref: '#/components/schemas/CutOffResponse'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -135,8 +135,14 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         status:
           $ref: '#/components/schemas/PaymentStatus'
+        authenticationBindingMessage:
+          type: string
+          maxLength: 80
+          description: >-
+            Binding message for the cardholder authentication.
         authorisationCode:
           type: string
+          maxLength: 6
           description: >-
             Authorisation code: When the payment is authorised successfully, this field holds the authorisation code for the payment. When the payment is not authorised, this field is empty.
         batchNumber:
@@ -147,6 +153,7 @@ components:
       example: Accepted
       description: |
         Status code specifying the result of the operation:
+        * Authenticating - Cardholder authentication in progress.
         * AuthorisationApproved - Payment was authorised.
         * Rejected - Payment request was rejected.
         * RolledBack - Payment request was rolled back.
@@ -155,6 +162,7 @@ components:
         * AuthorisationFailed - Payment authorisation failed.
         * AuthorisationDeclined - Payment authorisation was declined.
       enum:
+        - Authenticating
         - AuthorisationApproved
         - Rejected
         - RolledBack
@@ -211,7 +219,7 @@ components:
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
 
-    CutOffCallbackData:
+    CutOffResponse:
       type: object
       properties:
         batchNumber:
