@@ -6,17 +6,17 @@ info:
 
 paths:
   /payments:
-    description: Payment request callback
+    description: Response to a payment request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
-      operationId: paymentRequestCallback
+      operationId: paymentResponse
       requestBody:
         required: true
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/PaymentRequestCallbackData'
+              $ref: '#/components/schemas/PaymentResponse'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -33,19 +33,18 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/{paymentId}/captures:
-    description: Payment capture callback
+  /payments/captures:
+    description: Response to a capture request
     parameters:
-      - $ref: '../components.yaml#/components/parameters/paymentId'
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
-      operationId: captureCallback
+      operationId: captureResponse
       requestBody:
         required: true
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/CaptureCallbackData'
+              $ref: '#/components/schemas/CaptureResponse'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -62,19 +61,18 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/{paymentId}/refunds:
-    description: Payment refund callback
+  /payments/refunds:
+    description: Response to a refund request
     parameters:
-      - $ref: '../components.yaml#/components/parameters/paymentId'
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
-      operationId: refundCallback
+      operationId: refundResponse
       requestBody:
         required: true
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/RefundCallbackData'
+              $ref: '#/components/schemas/RefundResponse'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -91,17 +89,17 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
   /settlements:
-    description: Cut-off settlement batch request callback
+    description: Response to a cut-off request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
-      operationId: cutOffSettlementBatchCallback
+      operationId: cutOffResponse
       requestBody:
         required: true
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/CutOffCallbackData'
+              $ref: '#/components/schemas/CutOffResponse'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -120,31 +118,41 @@ paths:
 
 components:
   schemas:
-    PaymentRequestCallbackData:
+    PaymentResponse:
       type: object
       required:
-        - paymentId
         - messageId
-        - code
+        - paymentId
+        - merchantReference
+        - status
       properties:
-        paymentId:
-          $ref: '../components.yaml#/components/schemas/paymentId'
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
-        code:
-          $ref: '#/components/schemas/PaymentRequestCode'
+        paymentId:
+          $ref: '../components.yaml#/components/schemas/paymentId'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        authenticationBindingMessage:
+          type: string
+          maxLength: 80
+          description: >-
+            Binding message for the cardholder authentication.
         authorisationCode:
           type: string
+          maxLength: 6
           description: >-
             Authorisation code: When the payment is authorised successfully, this field holds the authorisation code for the payment. When the payment is not authorised, this field is empty.
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
 
-    PaymentRequestCode:
+    PaymentStatus:
       type: string
       example: Accepted
       description: |
-        Code specifying the result of the operation:
+        Status code specifying the result of the operation:
+        * Authenticating - Cardholder authentication in progress.
         * AuthorisationApproved - Payment was authorised.
         * Rejected - Payment request was rejected.
         * RolledBack - Payment request was rolled back.
@@ -153,6 +161,7 @@ components:
         * AuthorisationFailed - Payment authorisation failed.
         * AuthorisationDeclined - Payment authorisation was declined.
       enum:
+        - Authenticating
         - AuthorisationApproved
         - Rejected
         - RolledBack
@@ -161,45 +170,55 @@ components:
         - AuthorisationFailed
         - AuthorisationDeclined
 
-    CaptureCallbackData:
+    CaptureResponse:
       type: object
       required:
-        - code
+        - messageId
+        - paymentId
+        - merchantReference
+        - status
       properties:
-        code:
-          $ref: '#/components/schemas/CaptureCode'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        paymentId:
+          $ref: '../components.yaml#/components/schemas/paymentId'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        status:
+          $ref: '#/components/schemas/CaptureStatus'
         timeCreated:
           type: string
           format: date-time
           description: >-
             The time and date the request was created. The date fields use the YYYY-MM-DDThh:mm:ss.sssZ date ISO 8601 format. Times are returned in the UTC time zone.
-        captureId:
-          type: string
-          description: >-
-            The /capture request id. This is ePayment platform's reference associated with this /capture request.
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
 
-    RefundCallbackData:
+    RefundResponse:
       type: object
       required:
-        - code
+        - messageId
+        - paymentId
+        - merchantReference
+        - status
       properties:
-        code:
-          $ref: '#/components/schemas/RefundCode'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        paymentId:
+          $ref: '../components.yaml#/components/schemas/paymentId'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        status:
+          $ref: '#/components/schemas/RefundStatus'
         timeCreated:
           type: string
           format: date-time
           description: >-
             The time and date the request was created. The date fields use the YYYY-MM-DDThh:mm:ss.sssZ date ISO 8601 format. Times are returned in the UTC time zone.
-        refundId:
-          type: string
-          description: >-
-            The /refund request id. This is ePayment platform's reference associated with this /refund request.
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
 
-    CutOffCallbackData:
+    CutOffResponse:
       type: object
       properties:
         batchNumber:
@@ -233,7 +252,7 @@ components:
           type: integer
           format: int64
 
-    CaptureCode:
+    CaptureStatus:
       type: string
       example: Approved
       description: |
@@ -244,7 +263,7 @@ components:
         - Approved
         - Declined
 
-    RefundCode:
+    RefundStatus:
       type: string
       example: Approved
       description: |

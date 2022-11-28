@@ -82,6 +82,13 @@ components:
       example: "7f60d761-f27d-43d3-8ee9-53881b3c868d"
       description: >-
         The identifier for a specific payment.
+    merchantReference:
+      type: string
+      maxLength: 80
+      description: >-
+        A reference set by the merchant to uniquely identify a payment request.
+        BankAxept uses this reference in all communication with the merchant about the payment status.
+        It is recommended that a unique value per payment is used. However, it is not a requirement.
     batchNumber:
       type: integer
       format: int64
