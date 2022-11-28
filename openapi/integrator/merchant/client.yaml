@@ -61,10 +61,9 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/{paymentId}/refunds:
+  /payments/refunds:
     description: Response to a refund request
     parameters:
-      - $ref: '../components.yaml#/components/parameters/paymentId'
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
       operationId: refundResponse
