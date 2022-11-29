@@ -320,7 +320,7 @@ components:
             A merchant-supplied message about the payment/order. The maximum length is 50 characters. Allowed characters are the letters a-å, A-Å, the numbers 0-9 and the special characters :;.,?!()".
           example: "Airline ticket 912-783248767327476"
         merchantReference:
-          $ref: '#/components/schemas/merchantReference'
+          $ref: '../components.yaml#/components/schemas/merchantReference'
         merchantCategoryCode:
           type: string
           pattern: '^[0-9]{4}$'
@@ -466,14 +466,6 @@ components:
       description: >-
         The merchant's name, as shown to the cardholder, on receipts and on bank statements.
         This must be the exact string that was entered with the merchant enrollment.
-    merchantReference:
-      type: string
-      maxLength: 80
-      description: >-
-        A reference set by the merchant to uniquely identify a request.
-        BankAxept uses this reference in all communication with the merchant about the payment status.
-        It is recommended that a unique value per payment is used.
-        However, it is not a requirement.
     merchantLocation:
       type: object
       required:
