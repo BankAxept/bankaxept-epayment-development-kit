@@ -152,6 +152,8 @@ components:
           $ref: '../components.yaml#/components/schemas/tokenRequestorReference'
         status:
           $ref: '#/components/schemas/EnrolmentStatus'
+        authenticationBindingMessage:
+          $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
         result:
           $ref: '#/components/schemas/EnrolCardCallbackResult'
 
@@ -182,10 +184,12 @@ components:
       example: Accepted
       description: |
         Code specifying the result of the operation:
+        * Authenticating - Cardholder authentication in progress.
         * Accepted - Enrolment was accepted.
         * Rejected - Enrolment was rejected.
         * Failed - Enrolment failed.
       enum:
+        - Authenticating
         - Accepted
         - Rejected
         - Failed

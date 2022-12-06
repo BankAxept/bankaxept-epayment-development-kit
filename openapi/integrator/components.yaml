@@ -170,6 +170,11 @@ components:
       format: date-time
     authenticationReference:
       type: string
+    authenticationBindingMessage:
+      type: string
+      maxLength: 80
+      description: >-
+        Binding message for the cardholder authentication.
 
   parameters:
     paymentId:

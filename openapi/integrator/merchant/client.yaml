@@ -135,10 +135,7 @@ components:
         status:
           $ref: '#/components/schemas/PaymentStatus'
         authenticationBindingMessage:
-          type: string
-          maxLength: 80
-          description: >-
-            Binding message for the cardholder authentication.
+          $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
         authorisationCode:
           type: string
           maxLength: 6
