@@ -211,6 +211,12 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/tokenId'
+    tokenRequestorReference:
+      name: tokenRequestorReference
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/tokenRequestorReference'
 
   responses:
     200Ok:

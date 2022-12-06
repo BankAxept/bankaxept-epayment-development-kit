@@ -32,7 +32,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/{tokenId}/suspensions:
+  /payment-tokens/suspensions:
     description: Payment token suspension notification
     post:
       operationId: suspendToken
@@ -88,12 +88,12 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/{tokenId}:
+  /payment-tokens/{tokenRequestorReference}:
     description: Payment token deletion notification
     delete:
       operationId: deleteToken
       parameters:
-        - $ref: '../components.yaml#/components/parameters/tokenId'
+        - $ref: '../components.yaml#/components/parameters/tokenRequestorReference'
         - $ref: '../components.yaml#/components/parameters/correlationId'
       responses:
         '200':
@@ -110,12 +110,10 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/{tokenId}/expirations:
+  /payment-tokens/expirations:
     description: Payment token expiry date extension notification
     post:
       operationId: extendExpiration
-      parameters:
-        - $ref: '../components.yaml#/components/parameters/tokenId'
       requestBody:
         required: true
         content:
@@ -198,6 +196,7 @@ components:
       type: object
       required:
         - messageId
+        - tokenId
         - tokenRequestorReference
       properties:
         messageId:
@@ -211,9 +210,15 @@ components:
       type: object
       required:
         - messageId
+        - tokenId
+        - tokenRequestorReference
         - tokenExpiryDate
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
+        tokenRequestorReference:
+          $ref: '../components.yaml#/components/schemas/tokenRequestorReference'
         tokenExpiryDate:
           $ref: '../components.yaml#/components/schemas/expiryDate'
