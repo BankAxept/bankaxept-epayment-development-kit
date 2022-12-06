@@ -198,9 +198,14 @@ components:
       type: object
       required:
         - messageId
+        - tokenRequestorReference
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
+        tokenRequestorReference:
+          $ref: '../components.yaml#/components/schemas/tokenRequestorReference'
 
     TokenExpiryExtensionData:
       type: object
