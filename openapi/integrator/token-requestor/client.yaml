@@ -143,20 +143,21 @@ components:
     EnrolCardCallbackData:
       type: object
       required:
-        - code
-        - tokenId
         - messageId
+        - tokenId
+        - tokenRequestorReference
+        - status
       properties:
-        code:
-          $ref: '#/components/schemas/EnrolCardCode'
-        tokenId:
-          $ref: '../components.yaml#/components/schemas/tokenId'
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
+        tokenRequestorReference:
+          $ref: '../components.yaml#/components/schemas/tokenRequestorReference'
+        status:
+          $ref: '#/components/schemas/EnrolmentStatus'
         result:
           $ref: '#/components/schemas/EnrolCardCallbackResult'
-        errorMessage:
-          type: string
 
     EnrolCardCallbackResult:
       type: object
@@ -180,7 +181,7 @@ components:
           pattern: '^[0-9]{4}$'
           example: "7001"
 
-    EnrolCardCode:
+    EnrolmentStatus:
       type: string
       example: Accepted
       description: |

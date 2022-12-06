@@ -89,6 +89,13 @@ components:
         A reference set by the merchant to uniquely identify a payment request.
         BankAxept uses this reference in all communication with the merchant about the payment status.
         It is recommended that a unique value per payment is used. However, it is not a requirement.
+    tokenRequestorReference:
+      type: string
+      maxLength: 80
+      description: >-
+        A reference set by the token requestor to uniquely identify an enrolment request.
+        BankAxept uses this reference in all communication with the token requestor about the enrolment status.
+        It is recommended that a unique value per enrolment is used. However, it is not a requirement.
     batchNumber:
       type: integer
       format: int64
