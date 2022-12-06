@@ -37,7 +37,6 @@ paths:
     post:
       operationId: suspendToken
       parameters:
-        - $ref: '../components.yaml#/components/parameters/tokenId'
         - $ref: '../components.yaml#/components/parameters/correlationId'
       requestBody:
         required: true
@@ -60,12 +59,11 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/{tokenId}/resumptions:
+  /payment-tokens/resumptions:
     description: Payment token resumption notification
     post:
       operationId: resumeToken
       parameters:
-        - $ref: '../components.yaml#/components/parameters/tokenId'
         - $ref: '../components.yaml#/components/parameters/correlationId'
       requestBody:
         required: true
