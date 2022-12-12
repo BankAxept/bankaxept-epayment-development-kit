@@ -16,7 +16,7 @@ paths:
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/EnrolCardCallbackData'
+              $ref: '#/components/schemas/CardEnrolmentResponse'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -136,7 +136,7 @@ paths:
 
 components:
   schemas:
-    EnrolCardCallbackData:
+    CardEnrolmentResponse:
       type: object
       required:
         - messageId
@@ -148,25 +148,16 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         tokenId:
           $ref: '../components.yaml#/components/schemas/tokenId'
+        tokenRequestorId:
+          $ref: '../components.yaml#/components/schemas/tokenRequestorId'
         tokenRequestorReference:
           $ref: '../components.yaml#/components/schemas/tokenRequestorReference'
+        nin:
+          $ref: '../components.yaml#/components/schemas/nin'
         status:
           $ref: '#/components/schemas/EnrolmentStatus'
         authenticationBindingMessage:
           $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
-        result:
-          $ref: '#/components/schemas/EnrolCardCallbackResult'
-
-    EnrolCardCallbackResult:
-      type: object
-      required:
-        - tokenRequestorId
-        - paymentToken
-        - accountNumberLastFourDigits
-        - issuerId
-      properties:
-        tokenRequestorId:
-          $ref: '../components.yaml#/components/schemas/tokenRequestorId'
         paymentToken:
           $ref: '../components.yaml#/components/schemas/PaymentToken'
         accountNumberLastFourDigits:
