@@ -29,6 +29,9 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
 
     private final Queue<Flow.Subscriber<? super String>> subscribers = new LinkedBlockingQueue<>();
 
+    private String grantType;
+    private String scope;
+
     public ScheduledAccessTokenPublisher(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
         this.headers = createHeaders(apimKey, username, password);
@@ -38,10 +41,23 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         scheduleFetch(0);
     }
 
-    private static LinkedHashMap<String, List<String>> createHeaders(String apimKey, String username, String password) {
+    public ScheduledAccessTokenPublisher(String uri, String id, String secret, String scope, String grantType, HttpClient httpClient, Clock clock) {
+        this.uri = uri;
+        this.headers = createHeaders(null, id, secret);
+        this.clock = clock;
+        this.scheduler = Executors.newScheduledThreadPool(1);
+        this.httpClient = httpClient;
+        this.scope = scope;
+        this.grantType = grantType;
+        scheduleFetch(0);
+    }
+
+    private static LinkedHashMap<String, List<String>> createHeaders(String apimKey, String id, String secret) {
         var headers = new LinkedHashMap<String, List<String>>();
-        headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
-        headers.put("Authorization", List.of("Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8))));
+        if (apimKey != null) {
+            headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
+        }
+        headers.put("Authorization", List.of("Basic " + Base64.getEncoder().encodeToString((id + ":" + secret).getBytes(StandardCharsets.UTF_8))));
         return headers;
     }
 
@@ -52,7 +68,17 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
 
     private void fetchNewToken() {
         if (shutDown) return;
-        httpClient.post(uri, new SinglePublisher<>("", fetchExecutor), headers).subscribe(this);
+        String body = createBody();
+        httpClient.post(uri, new SinglePublisher<>(body, fetchExecutor), headers).subscribe(this);
+    }
+
+    private String createBody() {
+        if (scope == null && grantType == null) return "";
+        return String.format("grant_type=%s\n" +
+                        "scopes=%s",
+                grantType,
+                scope
+        );
     }
 
     @Override
