@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.ContentPattern;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
+import no.bankaxept.epayment.client.accesstoken.AccessTokenRetriever;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
 import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
@@ -27,24 +28,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AccessTokenWireMockTest extends AbstractWireMockTest {
 
-    private AccessTokenPublisher accessTokenProcessor;
+    private AccessTokenRetriever tokenRetriever;
 
-    @AfterEach
-    public void tearDown() {
-        accessTokenProcessor.shutDown();
-    }
+    //@AfterEach public void tearDown() {tokenRetriever.shutDown();}
 
     @Test
     public void should_schedule_on_startup_then_new_on_success(WireMockRuntimeInfo wmRuntimeInfo) throws IOException {
         stubFor(tokenEndpointMapping(validTokenResponse()).withRequestBody(new EqualToPattern(readFromFile("authentication.request"))));
-        accessTokenProcessor = new ScheduledAccessTokenPublisher("bankaxept-epayment/access-token-api/v1/accesstoken",
+        tokenRetriever = new AccessTokenRetriever (
+                "http://localhost:" + wmRuntimeInfo.getHttpPort() + "/bankaxept-epayment/access-token-api/v1/accesstoken",
                 "username",
                 "password",
                 "read",
-                "grant",
-                new WebFluxClient("http://localhost:" + wmRuntimeInfo.getHttpPort()),
-                clock);
-        assertEquals("a-token", new AccessTokenSubscriber(accessTokenProcessor).get(Duration.of(10, ChronoUnit.SECONDS)));
+                "grant");
+        assertEquals("a-token", tokenRetriever.get(Duration.of(10, ChronoUnit.SECONDS)));
 
     }
 

@@ -41,10 +41,10 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         scheduleFetch(0);
     }
 
-    public ScheduledAccessTokenPublisher(String uri, String id, String secret, String scope, String grantType, HttpClient httpClient, Clock clock) {
+    public ScheduledAccessTokenPublisher(String uri, String id, String secret, String scope, String grantType, HttpClient httpClient) {
         this.uri = uri;
         this.headers = createHeaders(null, id, secret);
-        this.clock = clock;
+        this.clock = Clock.systemDefaultZone();
         this.scheduler = Executors.newScheduledThreadPool(1);
         this.httpClient = httpClient;
         this.scope = scope;
