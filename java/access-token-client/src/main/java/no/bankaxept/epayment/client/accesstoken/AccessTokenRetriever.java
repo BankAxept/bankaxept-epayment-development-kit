@@ -15,7 +15,7 @@ public class AccessTokenRetriever {
         publisher = new ScheduledAccessTokenPublisher(uri, id, secret, scope, grantType, new WebFluxClient(null));
     }
 
-    public String get(Duration timeout) {
-        return new AccessTokenSubscriber(publisher).get(timeout);
+    public String get() {
+        return new AccessTokenSubscriber(publisher).get(Duration.ofSeconds(2));
     }
 }
