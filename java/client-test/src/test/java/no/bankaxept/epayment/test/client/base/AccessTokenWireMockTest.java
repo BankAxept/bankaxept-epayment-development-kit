@@ -41,7 +41,7 @@ class AccessTokenWireMockTest extends AbstractWireMockTest {
                 "password",
                 "read",
                 "grant");
-        assertEquals("a-token", tokenRetriever.get(Duration.of(10, ChronoUnit.SECONDS)));
+        assertEquals("a-token", tokenRetriever.get());
 
     }
 
