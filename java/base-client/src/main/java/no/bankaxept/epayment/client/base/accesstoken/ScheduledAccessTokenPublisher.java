@@ -77,8 +77,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
 
     private String createBody() {
         if (scope == null && grantType == null) return "";
-        return String.format("grant_type=%s\n" +
-                        "scopes=%s",
+        return String.format("grant_type=%s&scopes=%s",
                 grantType,
                 scope
         );
