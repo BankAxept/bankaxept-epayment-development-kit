@@ -16,6 +16,6 @@ public class AccessTokenRetriever {
     }
 
     public String get() {
-        return new AccessTokenSubscriber(publisher).get(Duration.ofSeconds(5));
+        return new AccessTokenSubscriber(publisher).get(Duration.ofSeconds(2));
     }
 }
