@@ -34,7 +34,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
 
     public ScheduledAccessTokenPublisher(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
-        this.headers = createHeaders(apimKey, username, password);
+        this.headers = createHeaders(apimKey, username, password, false);
         this.clock = clock;
         this.scheduler = scheduler;
         this.httpClient = httpClient;
@@ -43,7 +43,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
 
     public ScheduledAccessTokenPublisher(String uri, String id, String secret, String scope, String grantType, HttpClient httpClient) {
         this.uri = uri;
-        this.headers = createHeaders(null, id, secret);
+        this.headers = createHeaders(null, id, secret, scope != null || grantType != null);
         this.clock = Clock.systemDefaultZone();
         this.scheduler = Executors.newScheduledThreadPool(1);
         this.httpClient = httpClient;
@@ -52,12 +52,12 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         scheduleFetch(0);
     }
 
-    private static LinkedHashMap<String, List<String>> createHeaders(String apimKey, String id, String secret) {
+    private static LinkedHashMap<String, List<String>> createHeaders(String apimKey, String id, String secret, boolean body) {
         var headers = new LinkedHashMap<String, List<String>>();
         if (apimKey != null) {
             headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
         }
-        if (true) {
+        if (body) {
             headers.put("Content-type", List.of("application/x-www-form-urlencoded"));
         }
         headers.put("Authorization", List.of("Basic " + Base64.getEncoder().encodeToString((id + ":" + secret).getBytes(StandardCharsets.UTF_8))));
