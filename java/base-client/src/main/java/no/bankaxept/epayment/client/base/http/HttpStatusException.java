@@ -4,7 +4,7 @@ public class HttpStatusException extends RuntimeException {
     private final HttpStatus httpStatus;
 
     public HttpStatusException(HttpStatus httpStatus, String message) {
-        super(message);
+        super(message +  " " + httpStatus);
         this.httpStatus = httpStatus;
     }
 
