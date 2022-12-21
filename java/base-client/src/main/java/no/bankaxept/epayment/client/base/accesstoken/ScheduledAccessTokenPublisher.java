@@ -57,6 +57,9 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         if (apimKey != null) {
             headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
         }
+        if (true) {
+            headers.put("Content-type", List.of("application/x-www-form-urlencoded"));
+        }
         headers.put("Authorization", List.of("Basic " + Base64.getEncoder().encodeToString((id + ":" + secret).getBytes(StandardCharsets.UTF_8))));
         return headers;
     }
