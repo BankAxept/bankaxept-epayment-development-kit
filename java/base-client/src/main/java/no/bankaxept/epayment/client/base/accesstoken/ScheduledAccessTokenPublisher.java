@@ -106,7 +106,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
             subscribers.forEach(subscriber -> subscriber.onNext(token.getToken()));
             subscribers.clear();
         }
-        scheduleFetch(token.millisUntilTenMinutesBeforeExpiry(clock));
+        scheduleFetch(token.millisUntilSecondsBeforeExpiry(clock));
     }
 
     @Override

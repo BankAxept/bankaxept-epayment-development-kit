@@ -27,19 +27,19 @@ class AccessToken {
         return expiry;
     }
 
-    public long millisUntilTenMinutesBeforeExpiry(Clock clock) {
-        return Duration.between(clock.instant().plusSeconds(600), expiry).toMillis();
+    public long millisUntilSecondsBeforeExpiry(Clock clock) {
+        return Duration.between(clock.instant().plusSeconds(10), expiry).toMillis();
     }
 
     private static class Parser {
-        private static final Pattern tokenPattern = Pattern.compile("\"accessToken\"\\s*:\\s*\"(.*)\"");
-        private static final Pattern expiryPattern = Pattern.compile("\"expiresOn\"\\s*:\\s*(\\d+)");
+        private static final Pattern tokenPattern = Pattern.compile("\"access_token\"\\s*:\\s*\"(.*)\"");
+        private static final Pattern expiryPattern = Pattern.compile("\"expires_on\"\\s*:\\s*(\\d+)");
 
         static AccessToken parse(String input) {
             var tokenMatcher = tokenPattern.matcher(input);
             var expiryMatcher = expiryPattern.matcher(input);
             if (!tokenMatcher.find() || !expiryMatcher.find()) {
-                throw new IllegalArgumentException("Could not parse token or expiry"); //onError
+                throw new IllegalArgumentException("Could not parse token or expiry: " + input); //onError
             }
             return new AccessToken(tokenMatcher.group(1), Instant.ofEpochMilli(Long.parseLong(expiryMatcher.group(1))));
         }
