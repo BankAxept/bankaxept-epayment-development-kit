@@ -1,6 +1,7 @@
 package no.bankaxept.epayment.test.client.base;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.ContentPattern;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
@@ -29,8 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AccessTokenWireMockTest extends AbstractWireMockTest {
 
     private AccessTokenRetriever tokenRetriever;
-
-    //@AfterEach public void tearDown() {tokenRetriever.shutDown();}
 
     @Test
     public void should_schedule_on_startup_then_new_on_success(WireMockRuntimeInfo wmRuntimeInfo) throws IOException {
