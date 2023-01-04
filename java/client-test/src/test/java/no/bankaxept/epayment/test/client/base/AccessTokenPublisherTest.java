@@ -60,6 +60,17 @@ class AccessTokenPublisherTest {
         verify(subscriberMock).onNext("a-token");
     }
 
+
+    @Test
+    public void some_test_x_y() throws IOException {
+        doReturn(new SinglePublisher<>(new HttpResponse(200, tokenResponseExpiresIn20Minutes()), executor)).when(httpClientMock).post(eq("uri"), any(), any());
+        accessTokenProcessor = new ScheduledAccessTokenPublisher("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
+        accessTokenProcessor.subscribe(subscriberMock);
+        verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
+        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(1189999L), eq(TimeUnit.MILLISECONDS));
+        verify(subscriberMock).onNext("a-token");
+    }
+
     @Test
     public void should_schedule_on_startup_then_again_on_error() {
         doReturn(new SinglePublisher<>(new HttpResponse(500, "error"), executor)).when(httpClientMock).post(eq("uri"), any(), any());
@@ -75,6 +86,11 @@ class AccessTokenPublisherTest {
         accessTokenProcessor = new StaticAccessTokenPublisher("static-token");
         accessTokenProcessor.subscribe(subscriberMock);
         verify(subscriberMock).onNext("static-token");
+    }
+
+
+    private String someDifferentToken() throws IOException {
+        return readJsonFromFile("token-response3.json");
     }
 
     private String tokenResponseExpiresIn20Minutes() throws IOException {

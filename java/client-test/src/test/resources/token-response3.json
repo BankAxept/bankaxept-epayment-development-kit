@@ -1,0 +1,9 @@
+{
+  "access_token": "access_token",
+  "expires_in": 300000,
+  "refresh_expires_in": 0,
+  "token_type": "bearer",
+  "id_token": "id_token",
+  "not_before_policy": "",
+  "scope": ""
+}

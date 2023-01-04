@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 class AccessToken {
     private final String token;
-    private final Instant expiry;
+    private Instant expiry;
     private Integer expirySecondsFromStart;
 
     public AccessToken(String token, Instant expiry) {
@@ -15,9 +15,8 @@ class AccessToken {
         this.expiry = expiry;
     }
 
-    public AccessToken(String token, Instant expiry, Integer expirySecondsFromStart) {
+    public AccessToken(String token, Integer expirySecondsFromStart) {
         this.token = token;
-        this.expiry = expiry;
         this.expirySecondsFromStart = expirySecondsFromStart;
     }
 
@@ -51,14 +50,14 @@ class AccessToken {
             var tokenMatcher = tokenPattern.matcher(input);
             var expiryMatcher = expiryPattern.matcher(input);
             var expirySecondsFromStartMatcher = expirySecondsFromStartPattern.matcher(input);
-            if (!tokenMatcher.find() || !expiryMatcher.find()) {
+            if ( !tokenMatcher.find()  || ( !expiryMatcher.find() && !expirySecondsFromStartMatcher.find()) ) {
                 throw new IllegalArgumentException("Could not parse token or expiry: " + input); //onError
             }
-            if (!expirySecondsFromStartMatcher.find()) {
 
+            if (!expirySecondsFromStartMatcher.find()) {
                 return new AccessToken(tokenMatcher.group(1), Instant.ofEpochMilli(Long.parseLong(expiryMatcher.group(1))));
             }
-            return new AccessToken(tokenMatcher.group(1), Instant.ofEpochMilli(Long.parseLong(expiryMatcher.group(1))), Integer.parseInt(expirySecondsFromStartMatcher.group(1)));
+            return new AccessToken(tokenMatcher.group(1), Integer.parseInt(expirySecondsFromStartMatcher.group(1)));
         }
 
     }
