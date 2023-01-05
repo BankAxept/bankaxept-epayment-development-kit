@@ -137,7 +137,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     public void subscribe(Flow.Subscriber<? super String> subscriber) {
         var token = atomicToken.get();
         if (token != null){
-            if(!token.getExpiry().isBefore(clock.instant())) {
+            if(token.getExpiry().isBefore(clock.instant())) {
                 var exception = new IllegalStateException("Current time: " + clock.instant().toString() + ", Token is expired at: " + token.getExpiry().toString() + ", from start: " + token.getExpirySecondsFromStart() + ", input: " + token.getInput());
                 subscriber.onError(exception);
                 onError(exception);
