@@ -17,6 +17,7 @@ class AccessToken {
 
     public AccessToken(String token, Integer expirySecondsFromStart) {
         this.token = token;
+        this.expiry = Instant.now().plusSeconds(expirySecondsFromStart);
         this.expirySecondsFromStart = expirySecondsFromStart;
     }
 
