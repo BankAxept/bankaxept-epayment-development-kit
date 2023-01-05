@@ -17,15 +17,15 @@ class AccessToken {
         this.input = input;
     }
 
-    public AccessToken(String token, Integer expirySecondsFromStart, String input) {
+    public AccessToken(String token, Integer expirySecondsFromStart, String input, Clock clock) {
         this.token = token;
-        this.expiry = Instant.now().plusSeconds(expirySecondsFromStart);
+        this.expiry = clock.instant().plusSeconds(expirySecondsFromStart);
         this.expirySecondsFromStart = expirySecondsFromStart;
         this.input = input;
     }
 
-    static AccessToken parse(String input) {
-        return Parser.parse(input);
+    static AccessToken parse(String input, Clock clock) {
+        return Parser.parse(input, clock);
     }
 
     public String getToken() {
@@ -57,7 +57,7 @@ class AccessToken {
         private static final Pattern expiryPattern = Pattern.compile("\"expires_on\"\\s*:\\s*(\\d+)");
         private static final Pattern expirySecondsFromStartPattern = Pattern.compile("\"expires_in\"\\s*:\\s*(\\d+)");
 
-        static AccessToken parse(String input) {
+        static AccessToken parse(String input, Clock clock) {
             var tokenMatcher = tokenPattern.matcher(input);
             var expiryMatcher = expiryPattern.matcher(input);
             var expirySecondsFromStartMatcher = expirySecondsFromStartPattern.matcher(input);
@@ -65,7 +65,7 @@ class AccessToken {
                 throw new IllegalArgumentException("Could not parse token: " + input); //onError
             }
             if (expirySecondsFromStartMatcher.find()) {
-                return new AccessToken(tokenMatcher.group(1), Integer.parseInt(expirySecondsFromStartMatcher.group(1)), input);
+                return new AccessToken(tokenMatcher.group(1), Integer.parseInt(expirySecondsFromStartMatcher.group(1)), input, clock);
             }
             if(expiryMatcher.find()) {
                 return new AccessToken(tokenMatcher.group(1), Instant.ofEpochMilli(Long.parseLong(expiryMatcher.group(1))), input);

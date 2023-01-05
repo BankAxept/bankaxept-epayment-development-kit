@@ -15,14 +15,14 @@ public class AccessTokenTest {
 
     @Test
     public void should_parse_json() throws IOException {
-        var parsedToken = AccessToken.parse(readJsonFromFile("token-response.json"));
+        var parsedToken = AccessToken.parse(readJsonFromFile("token-response.json"), null);
         assertThat(parsedToken.getToken()).isEqualTo("a-token");
         assertThat(parsedToken.getExpiry()).isEqualTo(Instant.ofEpochMilli(1645437609741L));
     }
 
     @Test
     public void should_parse_json_different_order_other_fields() throws IOException {
-        var parsedToken = AccessToken.parse(readJsonFromFile("token-response2.json"));
+        var parsedToken = AccessToken.parse(readJsonFromFile("token-response2.json"), null);
         assertThat(parsedToken.getToken()).isEqualTo("a-token");
         assertThat(parsedToken.getExpiry()).isEqualTo(Instant.ofEpochMilli(123L));
     }
@@ -30,7 +30,7 @@ public class AccessTokenTest {
 
     @Test
     public void should_throw_if_unparsable() {
-        assertThatThrownBy(() -> AccessToken.parse("garbage")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> AccessToken.parse("garbage", null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     private String readJsonFromFile(String filename) throws IOException {
