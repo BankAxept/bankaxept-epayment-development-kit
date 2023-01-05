@@ -50,14 +50,16 @@ class AccessToken {
             var tokenMatcher = tokenPattern.matcher(input);
             var expiryMatcher = expiryPattern.matcher(input);
             var expirySecondsFromStartMatcher = expirySecondsFromStartPattern.matcher(input);
-            if ( !tokenMatcher.find()  || ( !expiryMatcher.find() && !expirySecondsFromStartMatcher.find()) ) {
-                throw new IllegalArgumentException("Could not parse token or expiry: " + input); //onError
+            if ( !tokenMatcher.find()) {
+                throw new IllegalArgumentException("Could not parse token: " + input); //onError
             }
-
-            if (!expirySecondsFromStartMatcher.find()) {
+            if (expirySecondsFromStartMatcher.find()) {
+                return new AccessToken(tokenMatcher.group(1), Integer.parseInt(expirySecondsFromStartMatcher.group(1)));
+            }
+            if(expiryMatcher.find()) {
                 return new AccessToken(tokenMatcher.group(1), Instant.ofEpochMilli(Long.parseLong(expiryMatcher.group(1))));
             }
-            return new AccessToken(tokenMatcher.group(1), Integer.parseInt(expirySecondsFromStartMatcher.group(1)));
+            throw new IllegalArgumentException("Could not parse expiry: " + input); //onError
         }
 
     }
