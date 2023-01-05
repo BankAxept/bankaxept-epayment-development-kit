@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 class AccessToken {
     private final String token;
-    private Instant expiry;
+    private final Instant expiry;
     private Integer expirySecondsFromStart;
 
     public AccessToken(String token, Instant expiry) {
