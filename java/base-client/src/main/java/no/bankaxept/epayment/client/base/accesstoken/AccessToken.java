@@ -68,7 +68,7 @@ class AccessToken {
                 return new AccessToken(tokenMatcher.group(1), Integer.parseInt(expirySecondsFromStartMatcher.group(1)), input, clock);
             }
             if(expiryMatcher.find()) {
-                return new AccessToken(tokenMatcher.group(1), Instant.ofEpochMilli(Long.parseLong(expiryMatcher.group(1))), input);
+                return new AccessToken(tokenMatcher.group(1), Instant.ofEpochSecond(Long.parseLong(expiryMatcher.group(1))), input);
             }
             throw new IllegalArgumentException("Could not parse expiry: " + input); //onError
         }
