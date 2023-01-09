@@ -21,7 +21,7 @@ public abstract class AbstractWireMockTest {
     protected final static String aToken = "a-token";
 
     private final String validTokenResponseTemplate = "{\n" +
-            "\"expires_on\": " + clock.instant().plus(2, ChronoUnit.HOURS).toEpochMilli() + ",\n" +
+            "\"expires_on\": " + clock.instant().plus(2, ChronoUnit.HOURS).getEpochSecond() + ",\n" +
             "\"access_token\": \"%s\"\n" +
             "}";
 
@@ -34,10 +34,8 @@ public abstract class AbstractWireMockTest {
     }
 
     protected MappingBuilder tokenEndpointMapping(ResponseDefinitionBuilder responseBuilder) {
-        return WireMock.post("/bankaxept-epayment/access-token-api/v1/accesstoken")
-                .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
-                .withBasicAuth("username", "password")
-                .willReturn(responseBuilder);
+        return tokenEndpointWithoutApimMapping(responseBuilder)
+                .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"));
     }
 
     protected ResponseDefinitionBuilder validTokenResponse() {
