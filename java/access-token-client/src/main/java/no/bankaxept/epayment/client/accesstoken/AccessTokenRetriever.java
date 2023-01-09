@@ -11,8 +11,8 @@ public class AccessTokenRetriever {
 
     private final AccessTokenPublisher publisher;
 
-    public AccessTokenRetriever(String uri, String id, String secret, String scope, String grantType) {
-        publisher = new ScheduledAccessTokenPublisher(uri, id, secret, scope, grantType, new WebFluxClient(null));
+    public AccessTokenRetriever(String uri, String id, String secret, String scopes, String grantType) {
+        publisher = new ScheduledAccessTokenPublisher(uri, id, secret, scopes, grantType, new WebFluxClient(null));
     }
 
     public String get() {

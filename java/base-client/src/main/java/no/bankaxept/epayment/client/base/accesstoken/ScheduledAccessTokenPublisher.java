@@ -30,7 +30,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     private final Queue<Flow.Subscriber<? super String>> subscribers = new LinkedBlockingQueue<>();
 
     private String grantType;
-    private String scope;
+    private String scopes;
 
     public ScheduledAccessTokenPublisher(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
@@ -41,13 +41,13 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         scheduleFetch(0);
     }
 
-    public ScheduledAccessTokenPublisher(String uri, String id, String secret, String scope, String grantType, HttpClient httpClient) {
+    public ScheduledAccessTokenPublisher(String uri, String id, String secret, String scopes, String grantType, HttpClient httpClient) {
         this.uri = uri;
-        this.headers = createHeaders(null, id, secret, scope != null || grantType != null);
+        this.headers = createHeaders(null, id, secret, scopes != null || grantType != null);
         this.clock = Clock.systemDefaultZone();
         this.scheduler = Executors.newScheduledThreadPool(1);
         this.httpClient = httpClient;
-        this.scope = scope;
+        this.scopes = scopes;
         this.grantType = grantType;
         scheduleFetch(0);
     }
@@ -76,10 +76,10 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     }
 
     private String createBody() {
-        if (scope == null && grantType == null) return "";
+        if (scopes == null && grantType == null) return "";
         return String.format("grant_type=%s&scopes=%s",
                 grantType,
-                scope
+                scopes
         );
     }
 
