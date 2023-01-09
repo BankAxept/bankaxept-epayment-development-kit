@@ -29,8 +29,6 @@ import static org.mockito.AdditionalMatchers.gt;
 import static org.mockito.AdditionalMatchers.lt;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.longThat;
-import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -81,7 +79,6 @@ class AccessTokenPublisherTest {
         accessTokenProcessor.subscribe(subscriberMock);
         verify(subscriberMock).onNext("static-token");
     }
-
 
 
     private String tokenResponseExpiresIn20Minutes() throws IOException {
