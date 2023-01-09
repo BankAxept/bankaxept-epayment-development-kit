@@ -18,4 +18,8 @@ public class AccessTokenRetriever {
     public String get() {
         return new AccessTokenSubscriber(publisher).get(Duration.ofSeconds(4));
     }
+
+    public String get(Duration timeout) {
+        return new AccessTokenSubscriber(publisher).get(timeout);
+    }
 }
