@@ -6,9 +6,11 @@ import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublish
 import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
@@ -24,8 +26,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.concurrent.*;
 
+import static org.mockito.AdditionalMatchers.and;
+import static org.mockito.AdditionalMatchers.gt;
+import static org.mockito.AdditionalMatchers.lt;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.longThat;
+import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -56,18 +63,7 @@ class AccessTokenPublisherTest {
         accessTokenProcessor = new ScheduledAccessTokenPublisher("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
         accessTokenProcessor.subscribe(subscriberMock);
         verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
-        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(1189999L), eq(TimeUnit.MILLISECONDS));
-        verify(subscriberMock).onNext("a-token");
-    }
-
-
-    @Test
-    public void some_test_x_y() throws IOException {
-        doReturn(new SinglePublisher<>(new HttpResponse(200, tokenResponseExpiresIn20Minutes()), executor)).when(httpClientMock).post(eq("uri"), any(), any());
-        accessTokenProcessor = new ScheduledAccessTokenPublisher("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
-        accessTokenProcessor.subscribe(subscriberMock);
-        verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
-        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(1189999L), eq(TimeUnit.MILLISECONDS));
+        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), and(gt(1189000L), lt(1190000L)) , eq(TimeUnit.MILLISECONDS));
         verify(subscriberMock).onNext("a-token");
     }
 
@@ -89,12 +85,9 @@ class AccessTokenPublisherTest {
     }
 
 
-    private String someDifferentToken() throws IOException {
-        return readJsonFromFile("token-response3.json");
-    }
 
     private String tokenResponseExpiresIn20Minutes() throws IOException {
-        return readJsonFromFile("token-response2.json").replace("123", Long.toString(clock.instant().plus(20, ChronoUnit.MINUTES).toEpochMilli()));
+        return readJsonFromFile("token-response2.json").replace("123", Long.toString(clock.instant().plus(20, ChronoUnit.MINUTES).getEpochSecond()));
     }
 
     private String readJsonFromFile(@SuppressWarnings("SameParameterValue") String filename) throws IOException {
