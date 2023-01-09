@@ -33,7 +33,7 @@ class AccessTokenWireMockTest extends AbstractWireMockTest {
 
     @Test
     public void should_schedule_on_startup_then_new_on_success(WireMockRuntimeInfo wmRuntimeInfo) throws IOException {
-        stubFor(tokenEndpointMapping(validTokenResponse()).withRequestBody(new EqualToPattern(readFromFile("authentication.request"))));
+        stubFor(tokenEndpointWithoutApimMapping(validTokenResponse()).withRequestBody(new EqualToPattern(readFromFile("authentication.request"))));
         tokenRetriever = new AccessTokenRetriever (
                 "http://localhost:" + wmRuntimeInfo.getHttpPort() + "/bankaxept-epayment/access-token-api/v1/accesstoken",
                 "username",

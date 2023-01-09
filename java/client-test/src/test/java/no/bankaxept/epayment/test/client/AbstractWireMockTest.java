@@ -27,9 +27,15 @@ public abstract class AbstractWireMockTest {
 
     private final Executor executor = Executors.newSingleThreadExecutor();
 
+    protected MappingBuilder tokenEndpointWithoutApimMapping(ResponseDefinitionBuilder responseBuilder) {
+        return WireMock.post("/bankaxept-epayment/access-token-api/v1/accesstoken")
+                .withBasicAuth("username", "password")
+                .willReturn(responseBuilder);
+    }
+
     protected MappingBuilder tokenEndpointMapping(ResponseDefinitionBuilder responseBuilder) {
         return WireMock.post("/bankaxept-epayment/access-token-api/v1/accesstoken")
-                //.withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
+                .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
                 .withBasicAuth("username", "password")
                 .willReturn(responseBuilder);
     }
