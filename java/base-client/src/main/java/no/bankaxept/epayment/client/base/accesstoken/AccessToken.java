@@ -6,22 +6,19 @@ import java.time.Instant;
 import java.util.regex.Pattern;
 
 class AccessToken {
-    private String input;
     private final String token;
     private final Instant expiry;
     private Integer expirySecondsFromStart;
 
-    public AccessToken(String token, Instant expiry, String input) {
+    public AccessToken(String token, Instant expiry) {
         this.token = token;
         this.expiry = expiry;
-        this.input = input;
     }
 
-    public AccessToken(String token, Integer expirySecondsFromStart, String input, Clock clock) {
+    public AccessToken(String token, Integer expirySecondsFromStart, Clock clock) {
         this.token = token;
         this.expiry = clock.instant().plusSeconds(expirySecondsFromStart);
         this.expirySecondsFromStart = expirySecondsFromStart;
-        this.input = input;
     }
 
     static AccessToken parse(String input, Clock clock) {
@@ -38,10 +35,6 @@ class AccessToken {
 
     public Integer getExpirySecondsFromStart() {
         return expirySecondsFromStart;
-    }
-
-    public String getInput() {
-        return input;
     }
 
 
@@ -62,15 +55,15 @@ class AccessToken {
             var expiryMatcher = expiryPattern.matcher(input);
             var expirySecondsFromStartMatcher = expirySecondsFromStartPattern.matcher(input);
             if ( !tokenMatcher.find()) {
-                throw new IllegalArgumentException("Could not parse token: " + input);
+                throw new IllegalArgumentException("Could not parse token");
             }
             if (expirySecondsFromStartMatcher.find()) {
-                return new AccessToken(tokenMatcher.group(1), Integer.parseInt(expirySecondsFromStartMatcher.group(1)), input, clock);
+                return new AccessToken(tokenMatcher.group(1), Integer.parseInt(expirySecondsFromStartMatcher.group(1)), clock);
             }
             if(expiryMatcher.find()) {
-                return new AccessToken(tokenMatcher.group(1), Instant.ofEpochSecond(Long.parseLong(expiryMatcher.group(1))), input);
+                return new AccessToken(tokenMatcher.group(1), Instant.ofEpochSecond(Long.parseLong(expiryMatcher.group(1))));
             }
-            throw new IllegalArgumentException("Could not parse expiry: " + input);
+            throw new IllegalArgumentException("Could not parse expiry");
         }
 
     }
