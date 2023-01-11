@@ -25,6 +25,10 @@
                     <artifactId>openapi-generator-maven-plugin</artifactId>
                     <version>6.2.1</version>
                 </plugin>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M5</version>
+                    </plugin>
             </plugins>
         </pluginManagement>
     </build>
