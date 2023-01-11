@@ -30,7 +30,6 @@ class AccessTokenWireMockTest extends AbstractWireMockTest {
                 "password",
                 GrantType.client_credentials,
                 Scope.BankIDScope.openid);
-        System.out.println(WireMock.findNearMissesForAllUnmatched());
         assertEquals("a-token", tokenRetriever.get());
 
     }
