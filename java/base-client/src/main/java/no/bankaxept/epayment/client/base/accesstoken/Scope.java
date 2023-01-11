@@ -5,10 +5,7 @@ public interface Scope {
     String getValue();
 
     enum BankIDScope implements Scope {
-        openid,
-        ciba("permissions/ciba"),
-        client("permissions/client"),
-        approve_card("permissions/approve_card");
+        openid, ciba("permissions/ciba"), client("permissions/client"), approve_card("permissions/approve_card");
 
         private final String value;
 
@@ -25,5 +22,4 @@ public interface Scope {
             return value;
         }
     }
-
 }
