@@ -1,6 +1,5 @@
 package no.bankaxept.epayment.test.client.base;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.bankaxept.epayment.client.accesstoken.AccessTokenRetriever;
@@ -21,6 +20,14 @@ class AccessTokenWireMockTest extends AbstractWireMockTest {
 
     private AccessTokenRetriever tokenRetriever;
 
+    private enum MockScope implements Scope {
+        openid;
+        @Override
+        public String getValue() {
+            return this.name();
+        }
+    }
+
     @Test
     public void should_schedule_on_startup_then_new_on_success(WireMockRuntimeInfo wmRuntimeInfo) throws IOException {
         stubFor(tokenEndpointWithoutApimMapping(validTokenResponse()).withRequestBody( new EqualToPattern(readFromFile("authentication.request"))));
@@ -29,7 +36,7 @@ class AccessTokenWireMockTest extends AbstractWireMockTest {
                 "username",
                 "password",
                 GrantType.client_credentials,
-                Scope.BankIDScope.openid);
+                MockScope.openid);
         assertEquals("a-token", tokenRetriever.get());
 
     }
