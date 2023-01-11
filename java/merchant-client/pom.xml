@@ -19,6 +19,10 @@
             <groupId>io.swagger.parser.v3</groupId>
             <artifactId>swagger-parser</artifactId>
         </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -33,6 +37,7 @@
                         </goals>
                         <configuration>
                             <configOptions>
+                                <useJakartaEe>true</useJakartaEe>
                                 <booleanGetterPrefix>is</booleanGetterPrefix>
                                 <dateLibrary>java8</dateLibrary>
                                 <hideGenerationTimestamp>true</hideGenerationTimestamp>

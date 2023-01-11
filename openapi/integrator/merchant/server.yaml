@@ -356,13 +356,13 @@ components:
           type: string
           pattern: '^[0-9]{4}$'
         amount:
-          $ref: '#/components/schemas/Amount'
+          $ref: '../components.yaml#/components/schemas/Amount'
         merchantName:
           $ref: '#/components/schemas/merchantName'
         merchantDisplayName:
           $ref: '#/components/schemas/merchantDisplayName'
         merchantReference:
-          $ref: '#/components/schemas/merchantReference'
+          $ref: '../components.yaml#/components/schemas/merchantReference'
 
     CaptureRequest:
       type: object
