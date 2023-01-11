@@ -45,28 +45,28 @@ class AccessTokenPublisherTest {
     private Flow.Subscriber<String> subscriberMock;
 
     private AccessTokenPublisher accessTokenProcessor;
-    private final Clock clock  = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+    private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @AfterEach
-    public void tearDown(){
+    public void tearDown() {
         accessTokenProcessor.shutDown();
     }
 
     @Test
     public void should_schedule_on_startup_then_new_on_success() throws IOException {
         doReturn(new SinglePublisher<>(new HttpResponse(200, tokenResponseExpiresIn20Minutes()), executor)).when(httpClientMock).post(eq("uri"), any(), any());
-        accessTokenProcessor = new ScheduledAccessTokenPublisher("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
+        accessTokenProcessor = createPublisher();
         accessTokenProcessor.subscribe(subscriberMock);
         verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
-        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), and(gt(1189000L), lt(1190000L)) , eq(TimeUnit.MILLISECONDS));
+        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), and(gt(1189000L), lt(1190000L)), eq(TimeUnit.MILLISECONDS));
         verify(subscriberMock).onNext("a-token");
     }
 
     @Test
     public void should_schedule_on_startup_then_again_on_error() {
         doReturn(new SinglePublisher<>(new HttpResponse(500, "error"), executor)).when(httpClientMock).post(eq("uri"), any(), any());
-        accessTokenProcessor = new ScheduledAccessTokenPublisher("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
+        accessTokenProcessor = createPublisher();
         accessTokenProcessor.subscribe(subscriberMock);
         verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
         verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(5000L), eq(TimeUnit.MILLISECONDS));
@@ -78,6 +78,17 @@ class AccessTokenPublisherTest {
         accessTokenProcessor = new StaticAccessTokenPublisher("static-token");
         accessTokenProcessor.subscribe(subscriberMock);
         verify(subscriberMock).onNext("static-token");
+    }
+
+    private ScheduledAccessTokenPublisher createPublisher() {
+        return new ScheduledAccessTokenPublisher.Builder()
+                .httpClient(httpClientMock)
+                .uri("uri")
+                .credentials("username", "password")
+                .clock(clock)
+                .scheduler(schedulerMock)
+                .apimKey("key")
+                .build();
     }
 
 

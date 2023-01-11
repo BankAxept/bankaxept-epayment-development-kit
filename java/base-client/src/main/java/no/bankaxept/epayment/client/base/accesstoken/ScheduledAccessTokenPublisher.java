@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow.Subscriber<HttpResponse> {
     private final ScheduledExecutorService scheduler;
@@ -24,45 +25,22 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     private final HttpClient httpClient;
     private final String uri;
     private final LinkedHashMap<String, List<String>> headers;
+    private final String body;
 
     private final AtomicReference<AccessToken> atomicToken = new AtomicReference<>();
 
     private final Queue<Flow.Subscriber<? super String>> subscribers = new LinkedBlockingQueue<>();
 
-    private String grantType;
-    private String scopes;
-
-    public ScheduledAccessTokenPublisher(String uri, String apimKey, String username, String password, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
+    private ScheduledAccessTokenPublisher(String uri, LinkedHashMap<String, List<String>> headers, String body, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
-        this.headers = createHeaders(apimKey, username, password, false);
+        this.headers = headers;
+        this.body = body;
         this.clock = clock;
         this.scheduler = scheduler;
         this.httpClient = httpClient;
         scheduleFetch(0);
     }
 
-    public ScheduledAccessTokenPublisher(String uri, String id, String secret, String scopes, String grantType, HttpClient httpClient) {
-        this.uri = uri;
-        this.headers = createHeaders(null, id, secret, scopes != null || grantType != null);
-        this.clock = Clock.systemDefaultZone();
-        this.scheduler = Executors.newScheduledThreadPool(1);
-        this.httpClient = httpClient;
-        this.scopes = scopes;
-        this.grantType = grantType;
-        scheduleFetch(0);
-    }
-
-    private static LinkedHashMap<String, List<String>> createHeaders(String apimKey, String id, String secret, boolean body) {
-        var headers = new LinkedHashMap<String, List<String>>();
-        if (apimKey != null) {
-            headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
-        }
-        if (body) {
-            headers.put("Content-type", List.of("application/x-www-form-urlencoded"));
-        }
-        headers.put("Authorization", List.of("Basic " + Base64.getEncoder().encodeToString((id + ":" + secret).getBytes(StandardCharsets.UTF_8))));
-        return headers;
-    }
 
     private void scheduleFetch(long millis) {
         if (shutDown) return;
@@ -71,16 +49,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
 
     private void fetchNewToken() {
         if (shutDown) return;
-        String body = createBody();
         httpClient.post(uri, new SinglePublisher<>(body, fetchExecutor), headers).subscribe(this);
-    }
-
-    private String createBody() {
-        if (scopes == null && grantType == null) return "";
-        return String.format("grant_type=%s&scopes=%s",
-                grantType,
-                scopes
-        );
     }
 
     @Override
@@ -91,7 +60,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     @Override
     public void onNext(HttpResponse item) {
         if (!item.getStatus().is2xxOk()) {
-            onError(new HttpStatusException(item.getStatus(), "Error when fetching token"));
+            onError(new HttpStatusException(item.getStatus(), "Error when fetching token:"));
             return;
         }
         AccessToken token;
@@ -150,5 +119,68 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
                 subscribers.add(subscriber);
             }
         }
+    }
+
+    public static class Builder {
+        private String uri;
+        private HttpClient httpClient;
+        private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        private Clock clock = Clock.systemDefaultZone();
+
+        private final LinkedHashMap<String, List<String>> headers = new LinkedHashMap<>();
+        private final StringBuilder body = new StringBuilder();
+
+        public Builder httpClient(HttpClient httpClient) {
+            this.httpClient = httpClient;
+            return this;
+        }
+
+        public Builder uri(String uri) {
+            this.uri = uri;
+            return this;
+        }
+
+        public Builder apimKey(String apimKey) {
+            headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
+            return this;
+        }
+
+        public Builder credentials(String id, String secret) {
+            headers.put("Authorization", List.of("Basic " + Base64.getEncoder().encodeToString((id + ":" + secret).getBytes(StandardCharsets.UTF_8))));
+            return this;
+        }
+
+        public Builder grantType(GrantType grantType) {
+            prefix().append("grant_type=").append(grantType);
+            return this;
+        }
+
+        public Builder scopes(List<Scope> scopes) {
+            prefix().append("scopes=").append(scopes.stream().map(Scope::getValue).collect(Collectors.joining(",")));
+            return this;
+        }
+
+        public Builder clock(Clock clock) {
+            this.clock = clock;
+            return this;
+        }
+
+        public Builder scheduler(ScheduledExecutorService scheduler) {
+            this.scheduler = scheduler;
+            return this;
+        }
+
+        private StringBuilder prefix(){
+            return body.length() > 0 ? body.append("&") : body;
+        }
+
+        public ScheduledAccessTokenPublisher build() {
+            if(body.length() > 0) {
+                headers.put("Content-type", List.of("application/x-www-form-urlencoded"));
+            }
+            return new ScheduledAccessTokenPublisher(uri, headers, body.toString(), clock, scheduler, httpClient);
+        }
+
+
     }
 }

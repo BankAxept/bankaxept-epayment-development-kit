@@ -2,17 +2,31 @@ package no.bankaxept.epayment.client.accesstoken;
 
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
+import no.bankaxept.epayment.client.base.accesstoken.GrantType;
 import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.Scope;
 import no.bankaxept.epayment.client.webflux.WebFluxClient;
 
 import java.time.Duration;
+import java.util.List;
 
 public class AccessTokenRetriever {
 
     private final AccessTokenPublisher publisher;
 
-    public AccessTokenRetriever(String uri, String id, String secret, String scopes, String grantType) {
-        publisher = new ScheduledAccessTokenPublisher(uri, id, secret, scopes, grantType, new WebFluxClient(null));
+    public AccessTokenRetriever(String uri, String id, String secret, GrantType grantType, List<Scope> scopes) {
+        publisher = new ScheduledAccessTokenPublisher.Builder()
+                .httpClient(new WebFluxClient())
+                .uri(uri)
+                .credentials(id, secret)
+                .grantType(grantType)
+                .scopes(scopes)
+                .build();
+    }
+
+
+    public AccessTokenRetriever(String uri, String id, String secret, GrantType grantType, Scope scope) {
+        this(uri, id, secret, grantType, List.of(scope));
     }
 
     public String get() {

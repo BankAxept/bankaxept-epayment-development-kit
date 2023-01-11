@@ -37,7 +37,6 @@ class AccessToken {
         return expirySecondsFromStart;
     }
 
-
     public long tenSecondsBeforeExpiry(Clock clock) {
         if(expirySecondsFromStart != null) {
             return (expirySecondsFromStart * 1000) - 1000;
