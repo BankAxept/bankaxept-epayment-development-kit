@@ -25,6 +25,20 @@
                     <artifactId>openapi-generator-maven-plugin</artifactId>
                     <version>6.2.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm</artifactId>
+                            <version>9.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -66,8 +80,6 @@
         </dependencies>
     </dependencyManagement>
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
         <swagger.parser.version>2.0.30</swagger.parser.version>
         <!-- Override the netty version spring boot uses with the version used by com.azure packages -->
         <netty.version>4.1.82.Final</netty.version>
