@@ -19,10 +19,6 @@
             <groupId>io.swagger.parser.v3</groupId>
             <artifactId>swagger-parser</artifactId>
         </dependency>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
