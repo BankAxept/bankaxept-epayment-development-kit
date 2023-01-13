@@ -16,7 +16,6 @@
         <module>merchant-client</module>
         <module>token-requestor-client</module>
         <module>client-test</module>
-        <module>access-token-client</module>
     </modules>
     <build>
         <pluginManagement>
@@ -56,11 +55,6 @@
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>token-requestor-client</artifactId>
-                <version>0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>no.bankaxept.epayment</groupId>
-                <artifactId>access-token-client</artifactId>
                 <version>0.1-SNAPSHOT</version>
             </dependency>
             <!-- openapi generation -->

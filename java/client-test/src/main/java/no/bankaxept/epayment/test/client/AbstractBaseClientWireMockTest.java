@@ -21,7 +21,7 @@ public abstract class AbstractBaseClientWireMockTest extends AbstractWireMockTes
 
 
     protected BaseClient createBaseClient(int port) {
-        return new BaseClient.Builder("http://localhost:" + port).withStaticToken(aToken).build();
+        return new BaseClient.Builder("http://localhost:" + port).withStaticToken(AbstractWireMockTest.aToken).build();
     }
 
     protected BaseClient createScheduledBaseClient(int port) {
