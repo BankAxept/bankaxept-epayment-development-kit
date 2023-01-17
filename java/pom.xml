@@ -16,7 +16,6 @@
         <module>merchant-client</module>
         <module>token-requestor-client</module>
         <module>client-test</module>
-        <module>access-token-client</module>
     </modules>
     <build>
         <pluginManagement>
