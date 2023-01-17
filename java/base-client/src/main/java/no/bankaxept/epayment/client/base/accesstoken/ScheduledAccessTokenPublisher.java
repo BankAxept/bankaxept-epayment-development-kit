@@ -45,9 +45,9 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         return headers;
     }
 
-    private void scheduleFetch(long millis) {
+    private void scheduleFetch(long seconds) {
         if (shutDown) return;
-        scheduler.schedule(this::fetchNewToken, millis, TimeUnit.MILLISECONDS);
+        scheduler.schedule(this::fetchNewToken, seconds, TimeUnit.SECONDS);
     }
 
     private void fetchNewToken() {
@@ -78,12 +78,12 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
             subscribers.forEach(subscriber -> subscriber.onNext(token.getToken()));
             subscribers.clear();
         }
-        scheduleFetch(token.millisUntilTenMinutesBeforeExpiry(clock));
+        scheduleFetch(token.secondsUntilTenMinutesBeforeExpiry(clock));
     }
 
     @Override
     public void onError(Throwable throwable) {
-        scheduleFetch(5 * 1000);
+        scheduleFetch(5);
         synchronized (subscribers) {
             subscribers.forEach(subscriber -> subscriber.onError(throwable));
             subscribers.clear();
@@ -99,7 +99,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         scheduler.shutdown();
         fetchExecutor.shutdown();
         try {
-            while (!scheduler.awaitTermination(500, TimeUnit.MILLISECONDS) && !fetchExecutor.awaitTermination(500, TimeUnit.MILLISECONDS)) {
+            while (!scheduler.awaitTermination(5, TimeUnit.SECONDS) && !fetchExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
             }
         } catch (InterruptedException ignored) {
         }

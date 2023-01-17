@@ -26,8 +26,8 @@ public abstract class AbstractBaseClientWireMockTest {
     private final static String aToken = "a-token";
 
     private final String validTokenResponseTemplate = "{\n" +
-            "\"expiresOn\": " + clock.instant().plus(2, ChronoUnit.HOURS).toEpochMilli() + ",\n" +
-            "\"accessToken\": \"%s\"\n" +
+            "\"expires_in\": " + 7200 + ",\n" +
+            "\"access_token\": \"%s\"\n" +
             "}";
 
     private final Executor executor = Executors.newSingleThreadExecutor();

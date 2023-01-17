@@ -52,12 +52,13 @@ components:
     AccessTokenResponse:
       type: object
       required:
+        - access_token
         - token_type
         - expires_in
-        - expires_on
-        - not_before
-        - access_token
       properties:
+        access_token:
+          type: string
+          example: eyJ0eXAiOiJKV1QiL.CJhbGciOiJSUzI1NiDU34hd.23jtiFJjeXdq
         token_type:
           type: string
           description: String containing the type for the Access Token.
@@ -66,19 +67,7 @@ components:
           type: integer
           description: Token expiry time in seconds.
           example: 3600
-        expires_on:
-          type: integer
-          format: int64
-          description: Token expiry time in epoch time format.
-          example: 1547823408
-        not_before:
-          type: integer
-          format: int64
-          description: Token creation time in epoch time format.
-          example: 1547819508
-        access_token:
-          type: string
-          example: eyJ0eXAiOiJKV1QiL.CJhbGciOiJSUzI1NiDU34hd.23jtiFJjeXdq
+
   securitySchemes:
     ocpApimSubscriptionKey:
       type: apiKey
