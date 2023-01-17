@@ -55,7 +55,7 @@ class AccessTokenPublisherTest {
         accessTokenProcessor = new ScheduledAccessTokenPublisher("uri", "key", "username", "password", clock, schedulerMock, httpClientMock);
         accessTokenProcessor.subscribe(subscriberMock);
         verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.SECONDS));
-        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(3001L), eq(TimeUnit.SECONDS));
+        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(3000L), eq(TimeUnit.SECONDS));
         verify(subscriberMock).onNext("a-token");
     }
 

@@ -3,6 +3,7 @@ package no.bankaxept.epayment.client.base.accesstoken;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.regex.Pattern;
 
 class AccessToken {
@@ -36,7 +37,8 @@ class AccessToken {
     }
 
     public long secondsUntilTenMinutesBeforeExpiry(Clock clock) {
-        return Duration.between(clock.instant().plusSeconds(600), expiry).toSeconds();
+        Instant tenMinutesBeforeExpiry = expiry.minus(10, ChronoUnit.MINUTES);
+        return Duration.between(clock.instant(), tenMinutesBeforeExpiry).toSeconds();
     }
 
     private static class Parser {

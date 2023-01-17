@@ -68,7 +68,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         }
         AccessToken token;
         try {
-            token = AccessToken.parse(item.getBody());
+            token = AccessToken.parse(item.getBody(), clock);
         } catch (Exception e) {
             onError(e);
             return;
