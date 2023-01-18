@@ -25,6 +25,22 @@
                     <artifactId>openapi-generator-maven-plugin</artifactId>
                     <version>6.2.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                    </configuration>
+                    <!--As of surefire v.2.22.2, its plexus-java dependency was transitively pulling an older
+                    version of asm 6.2 that did not support Java 17, requiring us to manually provide the version.-->
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm</artifactId>
+                            <version>9.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -66,9 +82,7 @@
         </dependencies>
     </dependencyManagement>
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <swagger.parser.version>2.1.6</swagger.parser.version>
+        <swagger.parser.version>2.0.30</swagger.parser.version>
         <!-- Override the netty version spring boot uses with the version used by com.azure packages -->
         <netty.version>4.1.82.Final</netty.version>
     </properties>
