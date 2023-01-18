@@ -43,10 +43,22 @@ paths:
                 $ref: '#/components/schemas/AccessTokenResponse'
         '400':
           description: Bad request
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/AccessTokenErrorResponse'
         '401':
           description: Unauthorized
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/AccessTokenErrorResponse'
         '500':
           description: Something went wrong from BankAxept ePayment side
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/AccessTokenErrorResponse'
 components:
   schemas:
     AccessTokenResponse:
@@ -67,6 +79,19 @@ components:
           type: integer
           description: Token expiry time in seconds.
           example: 3600
+    AccessTokenErrorResponse:
+      type: object
+      required:
+        - error
+        - error_description
+      properties:
+        error:
+          type: string
+          example: "invalid_request"
+        error_description:
+          type: string
+          example: "Request was missing the 'redirect_uri' parameter."
+
 
   securitySchemes:
     ocpApimSubscriptionKey:
