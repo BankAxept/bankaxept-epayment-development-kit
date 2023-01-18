@@ -85,7 +85,6 @@ components:
       type: object
       required:
         - error
-        - error_description
       properties:
         error:
           type: string
