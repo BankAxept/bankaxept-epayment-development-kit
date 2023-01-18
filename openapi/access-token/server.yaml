@@ -17,7 +17,7 @@ paths:
         - Client Authorization Service
       summary: Authenticate with the BankAxept ePayment system and receive an Authorization token.
       requestBody:
-        required: false
+        required: true
         content:
           application/x-www-form-urlencoded:
             schema:
