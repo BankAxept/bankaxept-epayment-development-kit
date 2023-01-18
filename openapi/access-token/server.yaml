@@ -22,6 +22,8 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               type: object
+              required:
+                - grant_type
               properties:
                 grant_type:
                   description: The authorization grant type. Only 'client_credentials' is supported.
