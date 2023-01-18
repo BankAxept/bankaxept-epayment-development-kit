@@ -1,25 +1,30 @@
 package no.bankaxept.epayment.test.client.webflux;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.forbidden;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.removeStub;
+import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import no.bankaxept.epayment.client.base.BaseClient;
-import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
 import no.bankaxept.epayment.client.base.AccessFailed;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.http.HttpStatus;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
-import org.junit.jupiter.api.*;
+import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
-
-import java.util.List;
-import java.util.Map;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
 
@@ -52,7 +57,7 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
             stubFor(tokenEndpointMapping(forbidden()));
             baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
             assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
-                    .getCause().isInstanceOf(HttpStatusException.class)
+                    .cause().isInstanceOf(HttpStatusException.class)
                     .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(403));
         }
 
@@ -68,7 +73,7 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
             stubFor(tokenEndpointMapping(serverError()));
             baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
             assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
-                    .getCause().isInstanceOf(HttpStatusException.class)
+                    .cause().isInstanceOf(HttpStatusException.class)
                     .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(500));
             removeStub(tokenEndpointMapping(serverError()));
             stubFor(tokenEndpointMapping(validTokenResponse()));
