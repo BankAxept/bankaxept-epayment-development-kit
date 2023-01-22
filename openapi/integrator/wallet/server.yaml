@@ -1,0 +1,144 @@
+openapi: 3.0.0
+info:
+  version: 0.3.0
+  title: BankAxept ePayment Wallet API - ePayment Platform
+
+servers:
+  - url: /bankaxept-epayment/token-requestor-api/v1
+
+security:
+  - ocpApimSubscriptionKey: [ ]
+  - bearerAuth: [ ]
+
+paths:
+
+  /payment-tokens:
+    post:
+      summary: Request a card enrolment
+      operationId: enrolCard
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/EnrolCardRequest'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payment-tokens/{tokenId}:
+    delete:
+      summary: Delete a token
+      operationId: deleteToken
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/tokenId'
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payments:
+    post:
+      summary: Request a new payment
+      operationId: requestPayment
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+components:
+  schemas:
+
+    EnrolCardRequest:
+      type: object
+      required:
+        - messageId
+        - merchantAggregatorId
+        - nin
+        - accountNumber
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        merchantAggregatorId:
+          $ref: '../components.yaml#/components/schemas/merchantAggregatorId'
+        nin:
+          $ref: '../components.yaml#/components/schemas/nin'
+        accountNumber:
+          $ref: '../components.yaml#/components/schemas/accountNumber'
+
+    PaymentRequest:
+      type: object
+      required:
+        - messageId
+        - merchantAggregatorId
+        - paymentData
+        - tokenId
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        merchantAggregatorId:
+          $ref: '../components.yaml#/components/schemas/merchantAggregatorId'
+        paymentData:
+          $ref: '#/components/schemas/PaymentData'
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
+
+    PaymentData:
+      type: object
+      required:
+        - amount
+        - merchantName
+      properties:
+        amount:
+          $ref: '../components.yaml#/components/schemas/Amount'
+        merchantName:
+          $ref: '../components.yaml#/components/schemas/merchantName'
+        merchantDisplayName:
+          $ref: '../components.yaml#/components/schemas/merchantDisplayName'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'

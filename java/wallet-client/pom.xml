@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>development-kit</artifactId>
+        <groupId>no.bankaxept.epayment</groupId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>wallet-client</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>no.bankaxept.epayment</groupId>
+            <artifactId>base-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.parser.v3</groupId>
+            <artifactId>swagger-parser</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>wallet-api-epp</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <configOptions>
+                                <booleanGetterPrefix>is</booleanGetterPrefix>
+                                <dateLibrary>java8</dateLibrary>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <library>native</library>
+                            </configOptions>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <inputSpec>${project.basedir}/../../openapi/integrator/wallet/server.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <generateModels>true</generateModels>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateModelTests>false</generateModelTests>
+                            <generateApis>false</generateApis>
+                            <modelPackage>no.bankaxept.epayment.client.wallet</modelPackage>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

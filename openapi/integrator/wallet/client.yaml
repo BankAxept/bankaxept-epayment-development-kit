@@ -1,0 +1,235 @@
+openapi: 3.0.0
+info:
+  version: 0.4.0
+  title: BankAxept ePayment Wallet API - ePayment Platform
+
+paths:
+  /payment-tokens:
+    description: EnrolCard callback
+    post:
+      operationId: addToken
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CardEnrolmentResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+  /payment-tokens/suspensions:
+    description: Payment token suspension notification
+    post:
+      operationId: suspendToken
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/TokenUpdateData'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+  /payment-tokens/resumptions:
+    description: Payment token resumption notification
+    post:
+      operationId: resumeToken
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/TokenUpdateData'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+  /payment-tokens/{tokenId}:
+    description: Payment token deletion notification
+    delete:
+      operationId: deleteToken
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/tokenId'
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+  /payment-tokens/expirations:
+    description: Payment token expiry date extension notification
+    post:
+      operationId: extendExpiration
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/TokenExpiryExtensionData'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /payments:
+    post:
+      description: Response to a payment request
+      operationId: addPayment
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/PaymentResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+components:
+  schemas:
+    CardEnrolmentResponse:
+      type: object
+      required:
+        - messageId
+        - status
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
+        status:
+          $ref: '#/components/schemas/EnrolmentStatus'
+        authenticationBindingMessage:
+          $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
+        issuerId:
+          description: |
+            An identifier for the issuer of the payment card. "Company Bankreg number" (konsern bankreg.nummer) of issuer.
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: "7001"
+
+    EnrolmentStatus:
+      type: string
+      example: Accepted
+      description: |
+        Code specifying the status of the operation:
+        * Authenticating - Cardholder authentication in progress.
+        * Accepted - Enrolment was accepted.
+        * Rejected - Enrolment was rejected.
+        * Failed - Enrolment failed.
+      enum:
+        - Authenticating
+        - Accepted
+        - Rejected
+        - Failed
+
+    TokenUpdateData:
+      type: object
+      required:
+        - messageId
+        - tokenId
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
+
+    TokenExpiryExtensionData:
+      type: object
+      required:
+        - messageId
+        - tokenId
+        - tokenExpiryDate
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
+        tokenExpiryDate:
+          $ref: '../components.yaml#/components/schemas/expiryDate'
+
+    PaymentResponse:
+      type: object
+      required:
+        - messageId
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        encryptedCardholderAuthenticationData:
+          $ref: '../components.yaml#/components/schemas/encryptedPaymentCardholderAuthenticationData'
