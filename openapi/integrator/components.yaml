@@ -67,9 +67,9 @@ components:
         - verifiedCardholderAuthenticationSignedData
       properties:
         paymentToken:
-          $ref: '../components.yaml#/components/schemas/PaymentToken'
+          $ref: '#/components/schemas/PaymentToken'
         verifiedCardholderAuthenticationSignedData:
-          $ref: '../components.yaml#/components/schemas/verifiedCardholderAuthenticationSignedData'
+          $ref: '#/components/schemas/verifiedCardholderAuthenticationSignedData'
 
     VerifiedCardholderPaymentAuthenticationData:
       type: object

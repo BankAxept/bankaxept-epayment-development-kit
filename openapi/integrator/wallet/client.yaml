@@ -15,7 +15,34 @@ paths:
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/CardEnrolmentResponse'
+              $ref: '#/components/schemas/CardEnrolmentResult'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+  /payment-tokens/authentication:
+    description: Enrolment authentication
+    post:
+      operationId: authenticateEnrolment
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CardEnrolmentAuthentication'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -144,7 +171,7 @@ paths:
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/PaymentResponse'
+              $ref: '#/components/schemas/PaymentResult'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -163,7 +190,7 @@ paths:
 
 components:
   schemas:
-    CardEnrolmentResponse:
+    CardEnrolmentResult:
       type: object
       required:
         - messageId
@@ -175,8 +202,6 @@ components:
           $ref: '../components.yaml#/components/schemas/tokenId'
         status:
           $ref: '#/components/schemas/EnrolmentStatus'
-        authenticationBindingMessage:
-          $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
         issuerId:
           description: |
             An identifier for the issuer of the payment card. "Company Bankreg number" (konsern bankreg.nummer) of issuer.
@@ -189,15 +214,23 @@ components:
       example: Accepted
       description: |
         Code specifying the status of the operation:
-        * Authenticating - Cardholder authentication in progress.
         * Accepted - Enrolment was accepted.
         * Rejected - Enrolment was rejected.
         * Failed - Enrolment failed.
+        * AuthenticationFailed - Cardholder authentication of the enrolment request failed.
       enum:
-        - Authenticating
         - Accepted
         - Rejected
         - Failed
+        - AuthenticationFailed
+
+    CardEnrolmentAuthentication:
+      type: object
+      required:
+        - bindingMessage
+      properties:
+        bindingMessage:
+          $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
 
     TokenUpdateData:
       type: object
@@ -224,7 +257,15 @@ components:
         tokenExpiryDate:
           $ref: '../components.yaml#/components/schemas/expiryDate'
 
-    PaymentResponse:
+    PaymentAuthentication:
+      type: object
+      required:
+        - bindingMessage
+      properties:
+        bindingMessage:
+          $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
+
+    PaymentResult:
       type: object
       required:
         - messageId
