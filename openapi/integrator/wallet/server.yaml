@@ -4,7 +4,7 @@ info:
   title: BankAxept ePayment Wallet API - ePayment Platform
 
 servers:
-  - url: /bankaxept-epayment/token-requestor-api/v1
+  - url: /bankaxept-epayment/wallet-api/v1
 
 security:
   - ocpApimSubscriptionKey: [ ]
