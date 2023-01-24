@@ -27,7 +27,7 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>token-requestor-api-epp</id>
+                        <id>token-requestor-api-send</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -48,6 +48,30 @@
                             <generateModelTests>false</generateModelTests>
                             <generateApis>false</generateApis>
                             <modelPackage>no.bankaxept.epayment.client.tokenrequestor</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>token-requestor-api-receive</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <configOptions>
+                                <useJakartaEe>true</useJakartaEe>
+                                <booleanGetterPrefix>is</booleanGetterPrefix>
+                                <dateLibrary>java8</dateLibrary>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <library>native</library>
+                            </configOptions>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <inputSpec>${project.basedir}/../../openapi/integrator/token-requestor/client.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <generateModels>true</generateModels>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateModelTests>false</generateModelTests>
+                            <generateApis>false</generateApis>
+                            <modelPackage>no.bankaxept.epayment.client.tokenrequestor.incoming</modelPackage>
                         </configuration>
                     </execution>
                 </executions>

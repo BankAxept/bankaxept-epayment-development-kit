@@ -33,6 +33,7 @@
                         </goals>
                         <configuration>
                             <configOptions>
+                                <useJakartaEe>true</useJakartaEe>
                                 <booleanGetterPrefix>is</booleanGetterPrefix>
                                 <dateLibrary>java8</dateLibrary>
                                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
@@ -56,6 +57,7 @@
                         </goals>
                         <configuration>
                             <configOptions>
+                                <useJakartaEe>true</useJakartaEe>
                                 <booleanGetterPrefix>is</booleanGetterPrefix>
                                 <dateLibrary>java8</dateLibrary>
                                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
