@@ -99,7 +99,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         scheduler.shutdown();
         fetchExecutor.shutdown();
         try {
-            while (!scheduler.awaitTermination(5, TimeUnit.SECONDS) && !fetchExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+            while (!scheduler.awaitTermination(500, TimeUnit.MILLISECONDS) && !fetchExecutor.awaitTermination(500, TimeUnit.MILLISECONDS)) {
             }
         } catch (InterruptedException ignored) {
         }
