@@ -81,7 +81,7 @@ components:
         - verificationDateTime
       properties:
         authenticatedData:
-          $ref: '#/components/schemas/PaymentAuthenticationData'
+          $ref: '#/components/schemas/PaymentAuthenticatedData'
         nin:
           $ref: '#/components/schemas/nin'
         authenticationReference:
@@ -96,7 +96,7 @@ components:
         mostRecentTrustAnchorAuthentication:
           $ref: '#/components/schemas/MostRecentTrustAnchorAuthentication'
 
-    PaymentAuthenticationData:
+    PaymentAuthenticatedData:
       type: object
       required:
         - accountNumberLastFourDigits

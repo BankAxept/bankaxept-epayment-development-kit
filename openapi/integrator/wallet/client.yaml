@@ -301,3 +301,9 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         encryptedCardholderAuthenticationData:
           $ref: '../components.yaml#/components/schemas/encryptedPaymentCardholderAuthenticationData'
+
+    PaymentCardholderAuthenticationData:
+      $ref: '../components.yaml#/components/schemas/PaymentCardholderAuthenticationData'
+
+    VerifiedCardholderPaymentAuthenticationData:
+      $ref: '../components.yaml#/components/schemas/VerifiedCardholderPaymentAuthenticationData'
