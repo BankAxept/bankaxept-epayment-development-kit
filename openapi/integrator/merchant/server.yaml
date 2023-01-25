@@ -309,6 +309,12 @@ components:
           description: >-
             The time of the transaction.
 
+    PaymentCardholderAuthenticationData:
+      $ref: '../components.yaml#/components/schemas/PaymentCardholderAuthenticationData'
+
+    VerifiedCardholderPaymentAuthenticationData:
+      $ref: '../components.yaml#/components/schemas/VerifiedCardholderPaymentAuthenticationData'
+
     CaptureRequest:
       type: object
       required:
