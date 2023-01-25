@@ -14,6 +14,7 @@
         <module>base-client</module>
         <module>webflux-client</module>
         <module>merchant-client</module>
+        <module>wallet-client</module>
         <module>token-requestor-client</module>
         <module>client-test</module>
     </modules>
