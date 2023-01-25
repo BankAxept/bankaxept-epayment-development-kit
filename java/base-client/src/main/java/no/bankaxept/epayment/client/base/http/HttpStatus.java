@@ -57,11 +57,4 @@ public class HttpStatus {
     public int hashCode() {
         return Objects.hash(status);
     }
-
-    @Override
-    public String toString() {
-        return "HttpStatus{" +
-                "status=" + status +
-                '}';
-    }
 }
