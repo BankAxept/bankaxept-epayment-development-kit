@@ -53,6 +53,68 @@ components:
         authenticationCredentialsSet:
           $ref: '#/components/schemas/AuthenticationCredentialsSet'
 
+    encryptedPaymentCardholderAuthenticationData:
+      type: string
+      example: "eyJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiYWxnIjoiUlNBLU9BRVAtMjU2In0.f5nkE6FuGYkoa4usRQ1MhUJY34pYi31xgSiApiR1uP4tSXV3DNnY3N5Zq9Bnt1OucN2nJxAqCcND4G8TpGw9kofFcLcs5kXHg7nmIgjI8ZXTYx7GuZ_w6YxVTzCmjT5dpSlOQFkuCfJn2VdKnF4PjaqiKW9fWluOKorUZdsjsDl5PjIjf3ndqCtGEma6TBpKxLX0FnCZzvsVATCBcxqwKLvkAYFdFFtLfxe5OvW0PFsy4OjasODW3Kk55e58v5xXB8bP9hzr5S7sXFlzX2TG583MLLXG3K1E3XG0R262vs2cGgSA1B6zmujvmkpR4lLofwgahpO-ZrhGZtXE0-wFJw.NDB8Ln7XCf1q1p6ddRvnSw.PTBsKUkN5stmSQwrQ-jQLA.ece3W1q3AiMdg5QQbAd1tq_nQWLRkyNnk2mL1TP8fpQ"
+      description: >-
+        The Payment and Cardholder Authentication Data is encrypted according to the Java Web Encryption specification defined in RFC-7516.
+        See schema PaymentCardholderAuthenticationData for decrypted data format
+
+    PaymentCardholderAuthenticationData:
+      type: object
+      required:
+        - paymentToken
+        - verifiedCardholderAuthenticationSignedData
+      properties:
+        paymentToken:
+          $ref: '#/components/schemas/PaymentToken'
+        verifiedCardholderAuthenticationSignedData:
+          $ref: '#/components/schemas/verifiedCardholderAuthenticationSignedData'
+
+    VerifiedCardholderPaymentAuthenticationData:
+      type: object
+      required:
+        - authenticatedData
+        - nin
+        - authenticationReference
+        - authenticationCredentialsSet
+        - verificationDateTime
+      properties:
+        authenticatedData:
+          $ref: '#/components/schemas/PaymentAuthenticatedData'
+        nin:
+          $ref: '#/components/schemas/nin'
+        authenticationReference:
+          $ref: '#/components/schemas/authenticationReference'
+        authenticationCredentialsSet:
+          $ref: '#/components/schemas/AuthenticationCredentialsSet'
+        authenticationDateTime:
+          $ref: '#/components/schemas/authenticationDateTime'
+        verificationDateTime:
+          type: string
+          format: date-time
+        mostRecentTrustAnchorAuthentication:
+          $ref: '#/components/schemas/MostRecentTrustAnchorAuthentication'
+
+    PaymentAuthenticatedData:
+      type: object
+      required:
+        - accountNumberLastFourDigits
+        - amount
+        - merchantName
+      properties:
+        accountNumberLastFourDigits:
+          type: string
+          pattern: '^[0-9]{4}$'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        merchantName:
+          $ref: '#/components/schemas/merchantName'
+        merchantDisplayName:
+          $ref: '#/components/schemas/merchantDisplayName'
+        merchantReference:
+          $ref: '#/components/schemas/merchantReference'
+
     AuthenticationCredentialsSet:
       type: object
       properties:
@@ -82,6 +144,17 @@ components:
       example: "7f60d761-f27d-43d3-8ee9-53881b3c868d"
       description: >-
         The identifier for a specific payment.
+    merchantName:
+      type: string
+      maxLength: 100
+      description: >-
+        The merchant name as registered in the Central Coordinating Register for Legal Entities (Enhetsregisteret).
+    merchantDisplayName:
+      type: string
+      maxLength: 100
+      description: >-
+        The merchant's name, as shown to the cardholder, on receipts and on bank statements.
+        This must be the exact string that was entered with the merchant enrollment.
     merchantReference:
       type: string
       maxLength: 80
@@ -108,6 +181,11 @@ components:
       example: "10030005"
       description: >-
         The merchant's unique identifier.
+    merchantAggregatorId:
+      type: string
+      maxLength: 36
+      description: >-
+        The merchant aggregator's unique identifier.
     correlationId:
       type: string
       maxLength: 36

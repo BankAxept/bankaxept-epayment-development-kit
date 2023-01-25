@@ -42,9 +42,9 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     }
 
 
-    private void scheduleFetch(long millis) {
+    private void scheduleFetch(long seconds) {
         if (shutDown) return;
-        scheduler.schedule(this::fetchNewToken, millis, TimeUnit.MILLISECONDS);
+        scheduler.schedule(this::fetchNewToken, seconds, TimeUnit.SECONDS);
     }
 
     private void fetchNewToken() {
@@ -80,7 +80,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
 
     @Override
     public void onError(Throwable throwable) {
-        scheduleFetch(5 * 1000);
+        scheduleFetch(5);
         synchronized (subscribers) {
             subscribers.forEach(subscriber -> subscriber.onError(throwable));
             subscribers.clear();

@@ -17,7 +17,6 @@ paths:
         - Client Authorization Service
       summary: Authenticate with the BankAxept ePayment system and receive an Authorization token.
       requestBody:
-        required: false
         content:
           application/x-www-form-urlencoded:
             schema:
@@ -43,21 +42,34 @@ paths:
                 $ref: '#/components/schemas/AccessTokenResponse'
         '400':
           description: Bad request
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/AccessTokenErrorResponse'
         '401':
           description: Unauthorized
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/AccessTokenErrorResponse'
         '500':
           description: Something went wrong from BankAxept ePayment side
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/AccessTokenErrorResponse'
 components:
   schemas:
     AccessTokenResponse:
       type: object
       required:
+        - access_token
         - token_type
         - expires_in
-        - expires_on
-        - not_before
-        - access_token
       properties:
+        access_token:
+          type: string
+          example: eyJ0eXAiOiJKV1QiL.CJhbGciOiJSUzI1NiDU34hd.23jtiFJjeXdq
         token_type:
           type: string
           description: String containing the type for the Access Token.
@@ -66,19 +78,19 @@ components:
           type: integer
           description: Token expiry time in seconds.
           example: 3600
-        expires_on:
-          type: integer
-          format: int64
-          description: Token expiry time in epoch time format.
-          example: 1547823408
-        not_before:
-          type: integer
-          format: int64
-          description: Token creation time in epoch time format.
-          example: 1547819508
-        access_token:
+    AccessTokenErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
           type: string
-          example: eyJ0eXAiOiJKV1QiL.CJhbGciOiJSUzI1NiDU34hd.23jtiFJjeXdq
+          example: "invalid_request"
+        error_description:
+          type: string
+          example: "Request was missing the 'redirect_uri' parameter."
+
+
   securitySchemes:
     ocpApimSubscriptionKey:
       type: apiKey
