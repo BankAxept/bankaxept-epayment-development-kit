@@ -10,12 +10,12 @@ class AccessToken {
     private final String token;
     private final Instant expiry;
 
-    public AccessToken(String token, int expiresIn, Clock clock) {
+    public AccessToken(String token, long expiresIn, Clock clock) {
         this.token = token;
         this.expiry = clock.instant().plusSeconds(expiresIn);
     }
 
-    public AccessToken(String token, int expiresIn) {
+    public AccessToken(String token, long expiresIn) {
         this(token, expiresIn, Clock.systemDefaultZone());
     }
 
@@ -55,7 +55,7 @@ class AccessToken {
             if (!tokenMatcher.find() || !expiryMatcher.find()) {
                 throw new IllegalArgumentException("Could not parse token or expiry");
             }
-            return new AccessToken(tokenMatcher.group(1), Integer.parseInt(expiryMatcher.group(1)), clock);
+            return new AccessToken(tokenMatcher.group(1), Long.parseLong(expiryMatcher.group(1)), clock);
         }
     }
 }
