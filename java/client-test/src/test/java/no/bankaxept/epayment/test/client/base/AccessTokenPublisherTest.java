@@ -20,13 +20,9 @@ import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.concurrent.*;
 
-import static org.mockito.AdditionalMatchers.and;
-import static org.mockito.AdditionalMatchers.gt;
-import static org.mockito.AdditionalMatchers.lt;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -45,21 +41,21 @@ class AccessTokenPublisherTest {
     private Flow.Subscriber<String> subscriberMock;
 
     private AccessTokenPublisher accessTokenProcessor;
-    private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+    private final Clock clock  = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown(){
         accessTokenProcessor.shutDown();
     }
 
     @Test
     public void should_schedule_on_startup_then_new_on_success() throws IOException {
-        doReturn(new SinglePublisher<>(new HttpResponse(200, tokenResponseExpiresIn20Minutes()), executor)).when(httpClientMock).post(eq("uri"), any(), any());
+        doReturn(new SinglePublisher<>(new HttpResponse(200, tokenResponse()), executor)).when(httpClientMock).post(eq("uri"), any(), any());
         accessTokenProcessor = createPublisher();
         accessTokenProcessor.subscribe(subscriberMock);
-        verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
-        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), and(gt(1189000L), lt(1190000L)), eq(TimeUnit.MILLISECONDS));
+        verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.SECONDS));
+        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(3590L), eq(TimeUnit.SECONDS));
         verify(subscriberMock).onNext("a-token");
     }
 
@@ -68,10 +64,11 @@ class AccessTokenPublisherTest {
         doReturn(new SinglePublisher<>(new HttpResponse(500, "error"), executor)).when(httpClientMock).post(eq("uri"), any(), any());
         accessTokenProcessor = createPublisher();
         accessTokenProcessor.subscribe(subscriberMock);
-        verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.MILLISECONDS));
-        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(5000L), eq(TimeUnit.MILLISECONDS));
+        verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.SECONDS));
+        verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(5L), eq(TimeUnit.SECONDS));
         verify(subscriberMock).onError(any());
     }
+
 
     @Test
     public void should_provide_static_token() {
@@ -91,9 +88,8 @@ class AccessTokenPublisherTest {
                 .build();
     }
 
-
-    private String tokenResponseExpiresIn20Minutes() throws IOException {
-        return readJsonFromFile("token-response2.json").replace("123", Long.toString(clock.instant().plus(20, ChronoUnit.MINUTES).getEpochSecond()));
+    private String tokenResponse() throws IOException {
+        return readJsonFromFile("token-response.json");
     }
 
     private String readJsonFromFile(@SuppressWarnings("SameParameterValue") String filename) throws IOException {
