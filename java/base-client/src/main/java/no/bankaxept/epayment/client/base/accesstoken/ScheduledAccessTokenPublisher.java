@@ -9,12 +9,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow.Subscriber<HttpResponse> {
     private final ScheduledExecutorService scheduler;
@@ -25,14 +25,14 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
 
     private final HttpClient httpClient;
     private final String uri;
-    private final LinkedHashMap<String, List<String>> headers;
+    private final Map<String, List<String>> headers;
     private final String body;
 
     private final AtomicReference<AccessToken> atomicToken = new AtomicReference<>();
 
     private final Queue<Flow.Subscriber<? super String>> subscribers = new LinkedBlockingQueue<>();
 
-    private ScheduledAccessTokenPublisher(String uri, LinkedHashMap<String, List<String>> headers, String body, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
+    private ScheduledAccessTokenPublisher(String uri, Map<String, List<String>> headers, String body, Clock clock, ScheduledExecutorService scheduler, HttpClient httpClient) {
         this.uri = uri;
         this.headers = headers;
         this.body = body;
@@ -118,12 +118,12 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     public static class Builder {
         private String uri;
         private HttpClient httpClient;
-        private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        private ScheduledExecutorService scheduler;
         private Clock clock = Clock.systemDefaultZone();
 
-        private final LinkedHashMap<String, List<String>> headers = new LinkedHashMap<>();
+        private final Map<String, List<String>> headers = new HashMap<>(Map.of("Content-type", List.of("application/x-www-form-urlencoded")));
         private GrantType grantType;
-        private List<Scope> scopes = new ArrayList<>();
+        private List<String> scopes = new ArrayList<>();
 
         public Builder httpClient(HttpClient httpClient) {
             this.httpClient = httpClient;
@@ -140,17 +140,17 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
             return this;
         }
 
-        public Builder credentials(String id, String secret) {
+        public Builder clientCredentials(String id, String secret) {
             headers.put("Authorization", List.of("Basic " + Base64.getEncoder().encodeToString((id + ":" + secret).getBytes(StandardCharsets.UTF_8))));
-            return this;
+            return grantType(GrantType.client_credentials);
         }
 
-        public Builder grantType(GrantType grantType) {
+        private Builder grantType(GrantType grantType) {
             this.grantType = grantType;
             return this;
         }
 
-        public Builder scopes(List<Scope> scopes) {
+        public Builder scopes(List<String> scopes) {
             this.scopes.addAll(scopes);
             return this;
         }
@@ -160,18 +160,28 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
             return this;
         }
 
+        public Builder scheduler(ScheduledExecutorService scheduler) {
+            this.scheduler = scheduler;
+            return this;
+        }
+
         public ScheduledAccessTokenPublisher build() {
             if (grantType == null) {
                 throw new IllegalArgumentException("Grant type is not set");
             }
-            var body = new StringBuilder("grant_type=").append(grantType);
-            if (!scopes.isEmpty()) {
-                body.append("&").append("scopes=").append(scopes.stream().map(Scope::getValue).collect(Collectors.joining(",")));
-            }
-            headers.put("Content-type", List.of("application/x-www-form-urlencoded"));
-            return new ScheduledAccessTokenPublisher(uri, headers, body.toString(), clock, scheduler, httpClient);
+            return new ScheduledAccessTokenPublisher(uri, headers, createBody(), clock, getSchedulerOrDefault(), httpClient);
         }
 
+        private ScheduledExecutorService getSchedulerOrDefault() {
+            return scheduler == null ? Executors.newScheduledThreadPool(1) : scheduler;
+        }
 
+        private String createBody() {
+            var body = new StringBuilder("grant_type=").append(grantType);
+            if (!scopes.isEmpty()) {
+                body.append("&").append("scopes=").append(String.join(",", scopes));
+            }
+            return body.toString();
+        }
     }
 }

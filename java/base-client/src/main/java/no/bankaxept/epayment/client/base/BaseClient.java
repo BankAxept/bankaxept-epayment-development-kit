@@ -11,7 +11,6 @@ import java.util.function.Supplier;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
 import no.bankaxept.epayment.client.base.accesstoken.EmptyAccessTokenPublisher;
-import no.bankaxept.epayment.client.base.accesstoken.GrantType;
 import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.SuppliedAccessTokenPublisher;
@@ -120,7 +119,7 @@ public class BaseClient {
             this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
                     .httpClient(httpClient)
                     .uri("/bankaxept-epayment/access-token-api/v1/accesstoken")
-                    .credentials(id, secret)
+                    .clientCredentials(id, secret)
                     .apimKey(apimKey)
                     .build();
             return this;
@@ -130,8 +129,7 @@ public class BaseClient {
             this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
                     .httpClient(httpClient)
                     .uri("/bankaxept-epayment/access-token-api/v1/accesstoken")
-                    .grantType(GrantType.client_credentials)
-                    .credentials(id, secret)
+                    .clientCredentials(id, secret)
                     .apimKey(apimKey)
                     .clock(clock)
                     .build();
