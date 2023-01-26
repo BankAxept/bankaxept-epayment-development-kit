@@ -61,7 +61,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     @Override
     public void onNext(HttpResponse item) {
         if (!item.getStatus().is2xxOk()) {
-            onError(new HttpStatusException(item.getStatus(), "Error when fetching token:"));
+            onError(new HttpStatusException(item.getStatus(), "Error when fetching token"));
             return;
         }
         AccessToken token;
