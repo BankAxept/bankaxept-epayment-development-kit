@@ -7,6 +7,7 @@ import no.bankaxept.epayment.client.base.http.HttpStatusException;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -105,16 +106,15 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     @Override
     public void subscribe(Flow.Subscriber<? super String> subscriber) {
         var token = atomicToken.get();
-        if (token != null){
-            if(token.getExpiry().isBefore(clock.instant())) {
+        if (token != null) {
+            if (token.getExpiry().isBefore(clock.instant())) {
                 var exception = new IllegalStateException("Token already expired at: " + token.getExpiry());
                 subscriber.onError(exception);
                 onError(exception);
 
             }
             subscriber.onNext(token.getToken());
-        }
-        else {
+        } else {
             synchronized (subscribers) {
                 subscribers.add(subscriber);
             }
@@ -128,7 +128,8 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         private Clock clock = Clock.systemDefaultZone();
 
         private final LinkedHashMap<String, List<String>> headers = new LinkedHashMap<>();
-        private final StringBuilder body = new StringBuilder();
+        private GrantType grantType = GrantType.client_credentials;
+        private List<Scope> scopes = new ArrayList<>();
 
         public Builder httpClient(HttpClient httpClient) {
             this.httpClient = httpClient;
@@ -151,12 +152,12 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         }
 
         public Builder grantType(GrantType grantType) {
-            prefix().append("grant_type=").append(grantType);
+            this.grantType = grantType;
             return this;
         }
 
         public Builder scopes(List<Scope> scopes) {
-            prefix().append("scopes=").append(scopes.stream().map(Scope::getValue).collect(Collectors.joining(",")));
+            this.scopes.addAll(scopes);
             return this;
         }
 
@@ -170,14 +171,12 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
             return this;
         }
 
-        private StringBuilder prefix(){
-            return body.length() > 0 ? body.append("&") : body;
-        }
-
         public ScheduledAccessTokenPublisher build() {
-            if(body.length() > 0) {
-                headers.put("Content-type", List.of("application/x-www-form-urlencoded"));
+            var body = new StringBuilder("grant_type=").append(grantType);
+            if (!scopes.isEmpty()) {
+                body.append("&").append("scopes=").append(scopes.stream().map(Scope::getValue).collect(Collectors.joining(",")));
             }
+            headers.put("Content-type", List.of("application/x-www-form-urlencoded"));
             return new ScheduledAccessTokenPublisher(uri, headers, body.toString(), clock, scheduler, httpClient);
         }
 
