@@ -160,11 +160,6 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
             return this;
         }
 
-        public Builder scheduler(ScheduledExecutorService scheduler) {
-            this.scheduler = scheduler;
-            return this;
-        }
-
         public ScheduledAccessTokenPublisher build() {
             if (grantType == null) {
                 throw new IllegalArgumentException("Grant type is not set");
