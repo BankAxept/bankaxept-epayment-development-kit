@@ -35,7 +35,7 @@ class AccessToken {
         return expiry;
     }
 
-    public long tenSecondsBeforeExpiry(Clock clock) {
+    public long secondsUntilTenSecondsBeforeExpiry(Clock clock) {
         return Duration.between(clock.instant(), expiry.minusSeconds(10)).toSeconds();
     }
 
