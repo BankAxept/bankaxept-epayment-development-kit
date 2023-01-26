@@ -2,6 +2,7 @@ package no.bankaxept.epayment.test.client.base;
 
 import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.GrantType;
 import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
@@ -81,6 +82,7 @@ class AccessTokenPublisherTest {
         return new ScheduledAccessTokenPublisher.Builder()
                 .httpClient(httpClientMock)
                 .uri("uri")
+                .grantType(GrantType.client_credentials)
                 .credentials("username", "password")
                 .clock(clock)
                 .scheduler(schedulerMock)
