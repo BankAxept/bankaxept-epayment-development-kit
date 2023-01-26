@@ -106,15 +106,9 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     @Override
     public void subscribe(Flow.Subscriber<? super String> subscriber) {
         var token = atomicToken.get();
-        if (token != null) {
-            if (token.getExpiry().isBefore(clock.instant())) {
-                var exception = new IllegalStateException("Token already expired at: " + token.getExpiry());
-                subscriber.onError(exception);
-                onError(exception);
-
-            }
+        if (token != null && token.getExpiry().isBefore(clock.instant()))
             subscriber.onNext(token.getToken());
-        } else {
+        else {
             synchronized (subscribers) {
                 subscribers.add(subscriber);
             }
@@ -172,7 +166,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         }
 
         public ScheduledAccessTokenPublisher build() {
-            if(grantType == null) {
+            if (grantType == null) {
                 throw new IllegalArgumentException("Grant type is not set");
             }
             var body = new StringBuilder("grant_type=").append(grantType);
