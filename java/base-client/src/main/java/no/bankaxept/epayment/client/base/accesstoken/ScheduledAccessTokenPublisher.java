@@ -128,7 +128,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         private Clock clock = Clock.systemDefaultZone();
 
         private final LinkedHashMap<String, List<String>> headers = new LinkedHashMap<>();
-        private GrantType grantType = GrantType.client_credentials;
+        private GrantType grantType;
         private List<Scope> scopes = new ArrayList<>();
 
         public Builder httpClient(HttpClient httpClient) {
@@ -172,6 +172,9 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
         }
 
         public ScheduledAccessTokenPublisher build() {
+            if(grantType == null) {
+                throw new IllegalArgumentException("Grant type is not set");
+            }
             var body = new StringBuilder("grant_type=").append(grantType);
             if (!scopes.isEmpty()) {
                 body.append("&").append("scopes=").append(scopes.stream().map(Scope::getValue).collect(Collectors.joining(",")));
