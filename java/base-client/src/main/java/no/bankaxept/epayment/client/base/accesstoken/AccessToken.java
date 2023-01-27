@@ -40,7 +40,7 @@ class AccessToken {
     }
 
     private static class Parser {
-        private static final Pattern tokenPattern = Pattern.compile("\"access_token\"\\s*:\\s*\"(.*)\"");
+        private static final Pattern tokenPattern = Pattern.compile("\"access_token\"\\s*:\\s*\"(.*?)\"");
         private static final Pattern expiryPattern = Pattern.compile("\"expires_in\"\\s*:\\s*(\\d+)");
 
         static AccessToken parse(String input) {
