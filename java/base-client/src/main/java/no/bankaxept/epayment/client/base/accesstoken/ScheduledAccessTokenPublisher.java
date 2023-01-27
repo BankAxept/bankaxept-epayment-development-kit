@@ -106,7 +106,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     @Override
     public void subscribe(Flow.Subscriber<? super String> subscriber) {
         var token = atomicToken.get();
-        if (token != null && token.getExpiry().isBefore(clock.instant()))
+        if (token != null && token.getExpiry().isAfter(clock.instant()))
             subscriber.onNext(token.getToken());
         else {
             synchronized (subscribers) {
