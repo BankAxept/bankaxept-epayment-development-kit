@@ -2,7 +2,6 @@ package no.bankaxept.epayment.test.client.base;
 
 import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
-import no.bankaxept.epayment.client.base.accesstoken.GrantType;
 import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
@@ -41,6 +40,9 @@ class AccessTokenPublisherTest {
     @Mock
     private Flow.Subscriber<String> subscriberMock;
 
+    @Mock
+    private Flow.Subscriber<String> anotherSubscriberMock;
+
     private AccessTokenPublisher accessTokenProcessor;
     private final Clock clock  = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -58,6 +60,8 @@ class AccessTokenPublisherTest {
         verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.SECONDS));
         verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(3590L), eq(TimeUnit.SECONDS));
         verify(subscriberMock).onNext("a-token");
+        accessTokenProcessor.subscribe(anotherSubscriberMock);
+        verify(anotherSubscriberMock).onNext("a-token");
     }
 
     @Test
