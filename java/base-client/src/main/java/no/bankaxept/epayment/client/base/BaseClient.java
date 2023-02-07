@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
 import java.util.function.Supplier;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
@@ -116,13 +115,24 @@ public class BaseClient {
             return this;
         }
 
-        public Builder withScheduledToken(String username, String password) {
-            this.tokenPublisher = new ScheduledAccessTokenPublisher("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, Clock.systemDefaultZone(), Executors.newScheduledThreadPool(1), httpClient);
+        public Builder withScheduledToken(String id, String secret) {
+            this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
+                    .httpClient(httpClient)
+                    .uri("/bankaxept-epayment/access-token-api/v1/accesstoken")
+                    .clientCredentials(id, secret)
+                    .apimKey(apimKey)
+                    .build();
             return this;
         }
 
-        public Builder withScheduledToken(String username, String password, Clock clock) {
-            this.tokenPublisher = new ScheduledAccessTokenPublisher("/bankaxept-epayment/access-token-api/v1/accesstoken", apimKey, username, password, clock, Executors.newScheduledThreadPool(1), httpClient);
+        public Builder withScheduledToken(String id, String secret, Clock clock) {
+            this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
+                    .httpClient(httpClient)
+                    .uri("/bankaxept-epayment/access-token-api/v1/accesstoken")
+                    .clientCredentials(id, secret)
+                    .apimKey(apimKey)
+                    .clock(clock)
+                    .build();
             return this;
         }
 
