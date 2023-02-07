@@ -4,5 +4,5 @@ import java.util.concurrent.Flow;
 
 public interface AccessTokenPublisher extends Flow.Publisher<String> {
 
-    default void shutDown() { }
+  default void shutDown() {}
 }

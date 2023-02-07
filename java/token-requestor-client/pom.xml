@@ -41,7 +41,8 @@
                             </configOptions>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <inputSpec>${project.basedir}/../../openapi/integrator/token-requestor/server.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../../openapi/integrator/token-requestor/server.yaml
+                            </inputSpec>
                             <generatorName>java</generatorName>
                             <generateModels>true</generateModels>
                             <generateModelDocumentation>false</generateModelDocumentation>
@@ -65,7 +66,8 @@
                             </configOptions>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <inputSpec>${project.basedir}/../../openapi/integrator/token-requestor/client.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../../openapi/integrator/token-requestor/client.yaml
+                            </inputSpec>
                             <generatorName>java</generatorName>
                             <generateModels>true</generateModels>
                             <generateModelDocumentation>false</generateModelDocumentation>
