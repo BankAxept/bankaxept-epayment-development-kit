@@ -60,6 +60,7 @@ class AccessTokenPublisherTest {
         verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.SECONDS));
         verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(3590L), eq(TimeUnit.SECONDS));
         verify(subscriberMock).onNext("a-token");
+        //To make sure we test the logic for "cached" tokens, we subscribe again after already getting a token
         accessTokenProcessor.subscribe(anotherSubscriberMock);
         verify(anotherSubscriberMock).onNext("a-token");
     }
