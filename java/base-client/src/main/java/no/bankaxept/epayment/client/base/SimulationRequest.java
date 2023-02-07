@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface SimulationRequest {
 
-    List<String> getSimulationValues();
+  List<String> getSimulationValues();
 }

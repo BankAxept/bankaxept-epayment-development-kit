@@ -28,71 +28,71 @@ import reactor.test.StepVerifier;
 
 public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
 
+  @BeforeEach
+  public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+    super.setup(wmRuntimeInfo);
+    stubFor(testEndpointMapping());
+  }
+
+  @Nested
+  @DisplayName("Scheduled token tests")
+  public class WebfluxAccessTokenErrorTests {
+
     @BeforeEach
     public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
-        super.setup(wmRuntimeInfo);
-        stubFor(testEndpointMapping());
+      WireMock.stubFor(tokenEndpointMapping(validTokenResponse("scheduled-token")));
+      baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
+      stubFor(testEndpointMapping("scheduled-token"));
     }
 
-    @Nested
-    @DisplayName("Scheduled token tests")
-    public class WebfluxAccessTokenErrorTests {
-
-        @BeforeEach
-        public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
-            WireMock.stubFor(tokenEndpointMapping(validTokenResponse("scheduled-token")));
-            baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
-            stubFor(testEndpointMapping("scheduled-token"));
-        }
-
-        @Test
-        public void should_add_all_relevant_headers_with_scheduled_token() {
-            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
-                    .expectNext(new HttpResponse(200, ""))
-                    .verifyComplete();
-        }
-
-        @Test
-        public void should_fail_if_client_error_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) {
-            stubFor(tokenEndpointMapping(forbidden()));
-            baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
-            assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
-                    .cause().isInstanceOf(HttpStatusException.class)
-                    .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(403));
-        }
-
-        @Test
-        public void should_fail_if_connection_reset_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) {
-            stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
-            baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
-            assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class);
-        }
-
-        @Test
-        public void new_token_is_fetched_after_error(WireMockRuntimeInfo wmRuntimeInfo) {
-            stubFor(tokenEndpointMapping(serverError()));
-            baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
-            assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
-                    .cause().isInstanceOf(HttpStatusException.class)
-                    .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(500));
-            removeStub(tokenEndpointMapping(serverError()));
-            stubFor(tokenEndpointMapping(validTokenResponse()));
-            StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
-                    .expectNext(new HttpResponse(200, ""))
-                    .verifyComplete();        //Added delay for consistency
-        }
+    @Test
+    public void should_add_all_relevant_headers_with_scheduled_token() {
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
+          .expectNext(new HttpResponse(200, ""))
+          .verifyComplete();
     }
 
-    private MappingBuilder testEndpointMapping() {
-        return testEndpointMapping("a-token");
+    @Test
+    public void should_fail_if_client_error_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) {
+      stubFor(tokenEndpointMapping(forbidden()));
+      baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
+      assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
+          .cause().isInstanceOf(HttpStatusException.class)
+          .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(403));
     }
 
-
-    private MappingBuilder testEndpointMapping(String token) {
-        return post("/test")
-                .withHeader("Authorization", new EqualToPattern("Bearer " + token))
-                .withHeader("X-Correlation-Id", new EqualToPattern("1"))
-                .willReturn(ok());
+    @Test
+    public void should_fail_if_connection_reset_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) {
+      stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
+      baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
+      assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class);
     }
+
+    @Test
+    public void new_token_is_fetched_after_error(WireMockRuntimeInfo wmRuntimeInfo) {
+      stubFor(tokenEndpointMapping(serverError()));
+      baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
+      assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
+          .cause().isInstanceOf(HttpStatusException.class)
+          .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(500));
+      removeStub(tokenEndpointMapping(serverError()));
+      stubFor(tokenEndpointMapping(validTokenResponse()));
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
+          .expectNext(new HttpResponse(200, ""))
+          .verifyComplete();        //Added delay for consistency
+    }
+  }
+
+  private MappingBuilder testEndpointMapping() {
+    return testEndpointMapping("a-token");
+  }
+
+
+  private MappingBuilder testEndpointMapping(String token) {
+    return post("/test")
+        .withHeader("Authorization", new EqualToPattern("Bearer " + token))
+        .withHeader("X-Correlation-Id", new EqualToPattern("1"))
+        .willReturn(ok());
+  }
 
 }
