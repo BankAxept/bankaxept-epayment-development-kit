@@ -7,6 +7,7 @@ import no.bankaxept.epayment.client.base.SimulationRequest;
 
 @JsonIgnoreProperties(value = {"simulationValues"})
 public class SimulationCutOffRequest extends CutOffRequest implements SimulationRequest {
+
   private final List<String> simulationValues = new ArrayList<>();
 
   public List<String> getSimulationValues() {
