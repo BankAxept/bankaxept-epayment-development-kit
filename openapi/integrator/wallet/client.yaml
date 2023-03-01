@@ -254,11 +254,12 @@ components:
     CardEnrolmentAuthentication:
       type: object
       required:
-        - authorizationURL
+        - authenticationURL
         - tokenId
       properties:
-        authorizationURL:
-          $ref: '../components.yaml#/components/schemas/authorizationURL'
+        authenticationURL:
+          type: string
+          description: URL to redirect the user to for completing authentication.
         tokenId:
           $ref: '../components.yaml#/components/schemas/tokenId'
 

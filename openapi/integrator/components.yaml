@@ -253,10 +253,6 @@ components:
       maxLength: 80
       description: >-
         Binding message for the cardholder authentication.
-    authorizationURL:
-      type: string
-      description: >-
-        URL to redirect the user to for completing authorization.
 
   parameters:
     paymentId:
