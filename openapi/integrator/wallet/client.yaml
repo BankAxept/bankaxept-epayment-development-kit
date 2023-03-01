@@ -254,10 +254,13 @@ components:
     CardEnrolmentAuthentication:
       type: object
       required:
-        - bindingMessage
+        - authorizationURL
+        - tokenId
       properties:
-        bindingMessage:
-          $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
+        authorizationURL:
+          $ref: '../components.yaml#/components/schemas/authorizationURL'
+        tokenId:
+          $ref: '../components.yaml#/components/schemas/tokenId'
 
     TokenUpdateData:
       type: object
