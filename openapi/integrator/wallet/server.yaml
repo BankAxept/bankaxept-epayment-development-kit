@@ -63,22 +63,6 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payment-tokens/enrolment-status/{tokenId}:
-    get:
-      summary: Get status of token enrolment
-      operationId: enrolmentStatus
-      parameters:
-        - $ref: '../components.yaml#/components/parameters/tokenId'
-      responses:
-        '200':
-          description: Token enrolment status is resolved.
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                  $ref: '#/components/schemas/StatusResponse'
-        '204':
-          description: Token enrolment status not yet available.
-
   /payments:
     post:
       summary: Request a new payment
@@ -158,12 +142,3 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantDisplayName'
         merchantReference:
           $ref: '../components.yaml#/components/schemas/merchantReference'
-
-    StatusResponse:
-      properties:
-        enrolmentStatus:
-          type: string
-          enum:
-            - Accepted
-            - Rejected
-            - Failed
