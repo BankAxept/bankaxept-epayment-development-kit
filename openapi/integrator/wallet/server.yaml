@@ -91,6 +91,19 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
+  /payment-tokens/authentication-response:
+    get:
+      summary: Endpoint used by the authentication provider to provide the authentication response.
+      operationId: completeAuthentication
+      parameters:
+        - $ref: '#/components/parameters/oauth2Code'
+        - $ref: '#/components/parameters/oauth2State'
+        - $ref: '#/components/parameters/oauth2Error'
+        - $ref: '#/components/parameters/oauth2ErrorDescription'
+      responses:
+        '303':
+          description: Redirect to a callback url registered to a merchant aggregator.
+
 components:
   schemas:
 
@@ -142,3 +155,29 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantDisplayName'
         merchantReference:
           $ref: '../components.yaml#/components/schemas/merchantReference'
+
+  parameters:
+    oauth2Code:
+      name: code
+      in: query
+      required: false
+      schema:
+        type: string
+    oauth2State:
+      name: state
+      in: query
+      required: true
+      schema:
+        type: string
+    oauth2Error:
+      name: error
+      in: query
+      required: false
+      schema:
+        type: string
+    oauth2ErrorDescription:
+      name: error_description
+      in: query
+      required: false
+      schema:
+        type: string
