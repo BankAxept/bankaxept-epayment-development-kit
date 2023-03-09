@@ -96,31 +96,6 @@ components:
         cardholderAuthenticationData:
           $ref: '#/components/schemas/CardholderAuthenticationData'
 
-    VerifiedCardholderEnrolmentAuthenticationData:
-      type: object
-      required:
-        - authenticatedData
-        - nin
-        - authenticationReference
-        - authenticationCredentialsSet
-        - verificationDateTime
-      properties:
-        authenticatedData:
-          $ref: '#/components/schemas/EnrolmentAuthenticatedData'
-        nin:
-          $ref: '../components.yaml#/components/schemas/nin'
-        authenticationReference:
-          $ref: '../components.yaml#/components/schemas/authenticationReference'
-        authenticationCredentialsSet:
-          $ref: '../components.yaml#/components/schemas/AuthenticationCredentialsSet'
-        authenticationDateTime:
-          $ref: '../components.yaml#/components/schemas/authenticationDateTime'
-        verificationDateTime:
-          type: string
-          format: date-time
-        mostRecentTrustAnchorAuthentication:
-          $ref: '../components.yaml#/components/schemas/MostRecentTrustAnchorAuthentication'
-
     EnrolmentData:
       type: object
       required:
@@ -141,18 +116,7 @@ components:
         nin:
           $ref: '../components.yaml#/components/schemas/nin'
         mostRecentTrustAnchorAuthentication:
-          $ref: '../components.yaml#/components/schemas/MostRecentTrustAnchorAuthentication'
-
-    EnrolmentAuthenticatedData:
-      type: object
-      required:
-        - accountNumber
-        - tokenRequestorName
-      properties:
-        accountNumber:
-          $ref: '../components.yaml#/components/schemas/accountNumber'
-        tokenRequestorName:
-          type: string
+          $ref: '../components.yaml#/components/schemas/PermissionGrant'
 
     encryptedEnrolmentCardholderAuthenticationData:
       type: string
