@@ -66,19 +66,15 @@ components:
           enum:
             - payment.v1
             - approveAccount.v1
-        #authenticationDateTime
-        #verificationDateTime
         iat:
           type: integer
           minimum: 1600000000
           maximum: 1800000000
-        #authenticationCredentialsSet.authenticationProviderId
         iss:
           type: string
         nonce:
           type: string
           description: The nonce from the permission statement
-        #nin
         sub:
           type: string
           description: |
@@ -86,17 +82,14 @@ components:
             The syntax is "identifierType:identifierValue". For
             NNINs, the identifierType is "nnin".
           example: "nnin:010112345"
-        #authenticationReference
         permissionId:
           type: string
           description: Unique id of the permission request
-        #authenticatedData
         digest:
           type: string
           format: bytes
           description: |
             The digest of the permission statement (URL-safe Base64-encoded SHA-256 hash of the permission statement bytes)
-        #authenticationCredentialsSet.trustedAnchorName
         mostRecentTrustAnchorAuthentication:
           $ref: '#/components/schemas/PermissionGrant'
 
