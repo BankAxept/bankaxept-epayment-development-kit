@@ -312,6 +312,9 @@ components:
     PaymentCardholderAuthenticationData:
       $ref: '../components.yaml#/components/schemas/PaymentCardholderAuthenticationData'
 
+    PermissionGrant:
+      $ref: '../components.yaml#/components/schemas/PermissionGrant'
+
     CaptureRequest:
       type: object
       required:

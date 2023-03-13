@@ -96,6 +96,9 @@ components:
         cardholderAuthenticationData:
           $ref: '#/components/schemas/CardholderAuthenticationData'
 
+    PermissionGrant:
+      $ref: '../components.yaml#/components/schemas/PermissionGrant'
+
     EnrolmentData:
       type: object
       required:
