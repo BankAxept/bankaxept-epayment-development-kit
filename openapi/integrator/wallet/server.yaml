@@ -156,6 +156,7 @@ components:
           $ref: '../components.yaml#/components/schemas/tokenId'
         multiClient:
           type: boolean
+          description: Defines if authentication is performed via client-initiated backchannel flow (true) or HTTP redirect binding authorization code flow (false).
 
     PaymentData:
       type: object
