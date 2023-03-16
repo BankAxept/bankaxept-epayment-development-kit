@@ -91,10 +91,23 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
+  /payments/authentication-response:
+    get:
+      summary: Endpoint used by the authentication provider to provide the payment authentication response.
+      operationId: completePaymentAuthentication
+      parameters:
+        - $ref: '#/components/parameters/oauth2Code'
+        - $ref: '#/components/parameters/oauth2State'
+        - $ref: '#/components/parameters/oauth2Error'
+        - $ref: '#/components/parameters/oauth2ErrorDescription'
+      responses:
+        '303':
+          description: Redirect to a callback url registered to a merchant aggregator.
+
   /payment-tokens/authentication-response:
     get:
-      summary: Endpoint used by the authentication provider to provide the authentication response.
-      operationId: completeAuthentication
+      summary: Endpoint used by the authentication provider to provide the card enrolment authentication response.
+      operationId: completeCardEnrolmentAuthentication
       parameters:
         - $ref: '#/components/parameters/oauth2Code'
         - $ref: '#/components/parameters/oauth2State'
@@ -131,6 +144,7 @@ components:
         - merchantAggregatorId
         - paymentData
         - tokenId
+        - multiClient
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
@@ -140,6 +154,9 @@ components:
           $ref: '#/components/schemas/PaymentData'
         tokenId:
           $ref: '../components.yaml#/components/schemas/tokenId'
+        multiClient:
+          type: boolean
+          description: Defines if authentication is performed via client-initiated backchannel flow (true) or HTTP redirect binding authorization code flow (false).
 
     PaymentData:
       type: object

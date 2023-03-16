@@ -225,6 +225,9 @@ components:
       example: "8140d6ef-be34-4cd4-9f67-c2c41d8a5573"
       description: >-
         The globally unique id for the token.
+    authenticationURL:
+      type: string
+      description: URL to redirect the user to for completing authentication.
     verifiedCardholderAuthenticationSignedData:
       type: string
       example: "eyJhbGciOiJSUzI1NiIsIng1dCNTMjU2IjoiZGlnZXN0KGNlcnQpIn0.eyJhdXRoZW50aWNhdGVkRGF0YSI6eyJhY2NvdW50TnVtYmVyIjoiOTk5Nzc1MTIzNDUiLCJ0b2tlblJlcXVlc3Rvck5hbWUiOiJ0b2tlblJlcXVlc3Rvck5hbWUifSwibmluIjoiMTMwODc1MTIzNDUiLCJhdXRoZW50aWNhdGlvblNkbyI6Ijg0MzEzYWYxLWUyY2MtNDAzZi04NWYxLTYwNTA3MjViMDFiNiIsImF1dGhlbnRpY2F0aW9uQ3JlZGVudGlhbHNTZXQiOiJCQU5LSUQiLCJhdXRoZW50aWNhdGlvbkRhdGVUaW1lIjoiMjAxNy0wNy0yMVQxNzozMjoyOFoiLCJ2ZXJpZmljYXRpb25EYXRlVGltZSI6IjIwMTctMDctMjFUMTc6MzI6NDJaIn0.UoRYvKtrZrojIaq4P_iHjfA5Hx9SkEL-v_U0WMv78urpMbqsH2EpBdMuervwNWJKhc5vSp7ugO9LFYgE1PzSDUOYrMa6HfCJeRjlcgRODPC_exrX5lflUr7c-B8MJwSidCkOaKekrYexskYFpk4sdRTizbFdERzr3ZkgvBs_oa22KTYMwpipFO8i-Yf5XEE4zHGvh8abOsIY1yQQGhMwgr9RjNh_bi1wqL_FTJRPggsPjBMxrneWgy2veUbhHUq_JYqvSQxvhhJ_1RdE4gHXz0xaptmmbdZ5mtI1DyCRJEn6Io4x-0VIssApvljPjsMylcG2moeIDqUbjUAfxGrZcA"
