@@ -163,6 +163,8 @@ components:
       required:
         - amount
         - merchantName
+        - merchantDisplayName
+        - merchantReference
       properties:
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
