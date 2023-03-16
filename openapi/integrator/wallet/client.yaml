@@ -258,8 +258,7 @@ components:
         - tokenId
       properties:
         authenticationURL:
-          type: string
-          description: URL to redirect the user to for completing authentication.
+          $ref: '../components.yaml#/components/schemas/authenticationURL'
         tokenId:
           $ref: '../components.yaml#/components/schemas/tokenId'
 
@@ -290,9 +289,9 @@ components:
 
     PaymentAuthentication:
       type: object
-      required:
-        - bindingMessage
       properties:
+        authenticationURL:
+          $ref: '../components.yaml#/components/schemas/authenticationURL'
         bindingMessage:
           $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
 
@@ -300,7 +299,14 @@ components:
       type: object
       required:
         - messageId
+        - status
       properties:
+        status:
+          type: string
+          enum:
+            - Accepted
+            - Failed
+            - AuthenticationFailed
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
         encryptedCardholderAuthenticationData:
