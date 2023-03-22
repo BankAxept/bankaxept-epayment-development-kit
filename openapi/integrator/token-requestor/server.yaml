@@ -114,12 +114,9 @@ components:
       type: object
       required:
         - nin
-        - mostRecentTrustAnchorAuthentication
       properties:
         nin:
           $ref: '../components.yaml#/components/schemas/nin'
-        mostRecentTrustAnchorAuthentication:
-          $ref: '../components.yaml#/components/schemas/PermissionGrant'
 
     encryptedEnrolmentCardholderAuthenticationData:
       type: string
