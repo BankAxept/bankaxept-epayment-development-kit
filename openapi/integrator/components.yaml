@@ -90,8 +90,6 @@ components:
           format: bytes
           description: |
             The digest of the permission statement (URL-safe Base64-encoded SHA-256 hash of the permission statement bytes)
-        mostRecentTrustAnchorAuthentication:
-          $ref: '#/components/schemas/PermissionGrant'
 
     Nonce:
       type: string
