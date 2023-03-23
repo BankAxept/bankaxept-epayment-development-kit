@@ -39,20 +39,6 @@ components:
         cashback:
           $ref: '#/components/schemas/Amount'
 
-    MostRecentTrustAnchorAuthentication:
-      type: object
-      required:
-        - authenticationDateTime
-        - authenticationReference
-        - authenticationCredentialsSet
-      properties:
-        authenticationDateTime:
-          $ref: '#/components/schemas/authenticationDateTime'
-        authenticationReference:
-          $ref: '#/components/schemas/authenticationReference'
-        authenticationCredentialsSet:
-          $ref: '#/components/schemas/AuthenticationCredentialsSet'
-
     encryptedPaymentCardholderAuthenticationData:
       type: string
       example: "eyJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiYWxnIjoiUlNBLU9BRVAtMjU2In0.f5nkE6FuGYkoa4usRQ1MhUJY34pYi31xgSiApiR1uP4tSXV3DNnY3N5Zq9Bnt1OucN2nJxAqCcND4G8TpGw9kofFcLcs5kXHg7nmIgjI8ZXTYx7GuZ_w6YxVTzCmjT5dpSlOQFkuCfJn2VdKnF4PjaqiKW9fWluOKorUZdsjsDl5PjIjf3ndqCtGEma6TBpKxLX0FnCZzvsVATCBcxqwKLvkAYFdFFtLfxe5OvW0PFsy4OjasODW3Kk55e58v5xXB8bP9hzr5S7sXFlzX2TG583MLLXG3K1E3XG0R262vs2cGgSA1B6zmujvmkpR4lLofwgahpO-ZrhGZtXE0-wFJw.NDB8Ln7XCf1q1p6ddRvnSw.PTBsKUkN5stmSQwrQ-jQLA.ece3W1q3AiMdg5QQbAd1tq_nQWLRkyNnk2mL1TP8fpQ"
@@ -71,58 +57,135 @@ components:
         verifiedCardholderAuthenticationSignedData:
           $ref: '#/components/schemas/verifiedCardholderAuthenticationSignedData'
 
-    VerifiedCardholderPaymentAuthenticationData:
+    PermissionGrant:
       type: object
-      required:
-        - authenticatedData
-        - nin
-        - authenticationReference
-        - authenticationCredentialsSet
-        - verificationDateTime
       properties:
-        authenticatedData:
-          $ref: '#/components/schemas/PaymentAuthenticatedData'
-        nin:
-          $ref: '#/components/schemas/nin'
-        authenticationReference:
-          $ref: '#/components/schemas/authenticationReference'
-        authenticationCredentialsSet:
-          $ref: '#/components/schemas/AuthenticationCredentialsSet'
-        authenticationDateTime:
-          $ref: '#/components/schemas/authenticationDateTime'
-        verificationDateTime:
+        type:
           type: string
-          format: date-time
-        mostRecentTrustAnchorAuthentication:
-          $ref: '#/components/schemas/MostRecentTrustAnchorAuthentication'
+          description: Type of the permission statement.
+          enum:
+            - payment.v1
+            - approveAccount.v1
+        iat:
+          type: integer
+          minimum: 1600000000
+          maximum: 1800000000
+        iss:
+          type: string
+        nonce:
+          type: string
+          description: The nonce from the permission statement
+        sub:
+          type: string
+          description: |
+            The primary identifier of the subject that granted the permission.
+            The syntax is "identifierType:identifierValue". For
+            NNINs, the identifierType is "nnin".
+          example: "nnin:010112345"
+        permissionId:
+          type: string
+          description: Unique id of the permission request
+        digest:
+          type: string
+          format: bytes
+          description: |
+            The digest of the permission statement (URL-safe Base64-encoded SHA-256 hash of the permission statement bytes)
 
-    PaymentAuthenticatedData:
+    Nonce:
+      type: string
+      minLength: 16
+      maxLength: 64
+      example: -MEDBtU6SeGtFsdHHI-rlA
+
+    BasePermission:
       type: object
       required:
-        - accountNumberLastFourDigits
+        - nonce
+      properties:
+        nonce:
+          $ref: "#/components/schemas/Nonce"
+
+    ApproveAccountPermissionV1:
+      allOf:
+        - $ref: "#/components/schemas/BasePermission"
+        - type: object
+          required:
+            - accountNumber
+            - merchantName
+          properties:
+            accountNumber:
+              description: Account number
+              type: string
+              pattern: "^[0-9]{11}$"
+              example: "12341212345"
+            merchantName:
+              type: string
+              description: The Merchant where the card will be approved
+              maxLength: 70
+
+    PaymentBasePermissionV1:
+      description: |
+        This must satisfy PSD2 RTS Article 4 Authentication code and
+        Article 5 Dynamic Linking
+      type: object
+      required:
+        - paymentId
         - amount
-        - merchantName
+        - currency
+        - creditorName
       properties:
-        accountNumberLastFourDigits:
+        paymentId:
           type: string
-          pattern: '^[0-9]{4}$'
+          description: |
+            Payment id used for lookup at ASPSP.
+            Payment id is not displayed to the user.
+          example: Gm1rYOxUyzBQ03BLgr_EpEXq5HTwm-K-uUMroUNlRpI=
         amount:
-          $ref: '#/components/schemas/Amount'
-        merchantName:
-          $ref: '#/components/schemas/merchantName'
-        merchantDisplayName:
+          description: |
+            The amount given with fractional digits, where fractions must be compliant to the currency definition.
+            Up to 14 significant figures. Negative amounts are signed by minus.
+            The decimal separator is a dot.
+            **Example:**
+            Valid representations for EUR with up to two decimals are:
+              * 1056
+              * 5768.2
+              * -1.50
+              * 5877.78
+          type: string
+          pattern: "-?[0-9]{1,14}(\\.[0-9]{1,3})?"
+          example: "5877.78"
+        currency:
+          type: string
+          description: |
+            ISO 4217 Alpha 3 currency code.
+          minLength: 3
+          maxLength: 3
+          pattern: "[A-Z]{3}"
+          example: "NOK"
+        creditorName:
           $ref: '#/components/schemas/merchantDisplayName'
-        merchantReference:
-          $ref: '#/components/schemas/merchantReference'
 
-    AuthenticationCredentialsSet:
-      type: object
-      properties:
-        authenticationProviderId:
-          type: string
-          pattern: '^[0-9]{4}$'
-        trustedAnchorName:
-          type: string
+    PaymentPermissionV1:
+      description: |
+        This must satisfy PSD2 RTS Article 4 Authentication code and
+        Article 5 Dynamic Linking
+      allOf:
+        - $ref: "#/components/schemas/BasePermission"
+        - type: object
+          required:
+            - id
+            - payments
+          properties:
+            id:
+              type: string
+              description: |
+                Payment or basket id used for lookup at ASPSP.
+                The user does not approve the id itself or anything implicitly inferred from the id.
+              example: 1234-basket-567
+            payments:
+              type: array
+              items:
+                $ref: "#/components/schemas/PaymentBasePermissionV1"
 
     PaymentToken:
       type: object
@@ -232,8 +295,8 @@ components:
       type: string
       example: "eyJhbGciOiJSUzI1NiIsIng1dCNTMjU2IjoiZGlnZXN0KGNlcnQpIn0.eyJhdXRoZW50aWNhdGVkRGF0YSI6eyJhY2NvdW50TnVtYmVyIjoiOTk5Nzc1MTIzNDUiLCJ0b2tlblJlcXVlc3Rvck5hbWUiOiJ0b2tlblJlcXVlc3Rvck5hbWUifSwibmluIjoiMTMwODc1MTIzNDUiLCJhdXRoZW50aWNhdGlvblNkbyI6Ijg0MzEzYWYxLWUyY2MtNDAzZi04NWYxLTYwNTA3MjViMDFiNiIsImF1dGhlbnRpY2F0aW9uQ3JlZGVudGlhbHNTZXQiOiJCQU5LSUQiLCJhdXRoZW50aWNhdGlvbkRhdGVUaW1lIjoiMjAxNy0wNy0yMVQxNzozMjoyOFoiLCJ2ZXJpZmljYXRpb25EYXRlVGltZSI6IjIwMTctMDctMjFUMTc6MzI6NDJaIn0.UoRYvKtrZrojIaq4P_iHjfA5Hx9SkEL-v_U0WMv78urpMbqsH2EpBdMuervwNWJKhc5vSp7ugO9LFYgE1PzSDUOYrMa6HfCJeRjlcgRODPC_exrX5lflUr7c-B8MJwSidCkOaKekrYexskYFpk4sdRTizbFdERzr3ZkgvBs_oa22KTYMwpipFO8i-Yf5XEE4zHGvh8abOsIY1yQQGhMwgr9RjNh_bi1wqL_FTJRPggsPjBMxrneWgy2veUbhHUq_JYqvSQxvhhJ_1RdE4gHXz0xaptmmbdZ5mtI1DyCRJEn6Io4x-0VIssApvljPjsMylcG2moeIDqUbjUAfxGrZcA"
       description: >-
-        The Verified Cardholder Authentication Data is signed in JWS Compact Serialisation format according to the Java Web Signature specification defined in RFC-7515.
-        See schema VerifiedCardholderEnrolmentAuthenticationData and VerifiedCardholderPaymentAuthenticationData for payload format.
+        The Verified Cardholder Authentication Data is a signed JWT in JWS Compact Serialisation format according to the
+        Java Web Signature specification defined in RFC-7515. See schema PermissionGrant for payload format.
     nin:
       type: string
       pattern: '^[0-9]{11}$'
