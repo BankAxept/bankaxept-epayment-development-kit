@@ -203,7 +203,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     private String createBody() {
       var body = new StringBuilder("grant_type=").append(grantType);
       if (!scopes.isEmpty()) {
-        body.append("&").append("scopes=").append(String.join(",", scopes));
+        body.append("&").append("scope=").append(String.join("%20", scopes));
       }
       return body.toString();
     }
