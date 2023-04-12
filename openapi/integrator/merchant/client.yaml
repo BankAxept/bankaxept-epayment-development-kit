@@ -149,7 +149,6 @@ components:
       example: Accepted
       description: |
         Status code specifying the result of the operation:
-        * Authenticating - Cardholder authentication in progress.
         * AuthorisationApproved - Payment was authorised.
         * Rejected - Payment request was rejected.
         * RolledBack - Payment request was rolled back.
@@ -158,7 +157,6 @@ components:
         * AuthorisationFailed - Payment authorisation failed.
         * AuthorisationDeclined - Payment authorisation was declined.
       enum:
-        - Authenticating
         - AuthorisationApproved
         - Rejected
         - RolledBack

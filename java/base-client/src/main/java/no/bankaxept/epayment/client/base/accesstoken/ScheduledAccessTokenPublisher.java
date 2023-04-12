@@ -1,5 +1,6 @@
 package no.bankaxept.epayment.client.base.accesstoken;
 
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.util.ArrayList;
@@ -203,7 +204,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     private String createBody() {
       var body = new StringBuilder("grant_type=").append(grantType);
       if (!scopes.isEmpty()) {
-        body.append("&").append("scopes=").append(String.join(",", scopes));
+        body.append("&").append("scope=").append(URLEncoder.encode(String.join(" ", scopes), StandardCharsets.UTF_8));
       }
       return body.toString();
     }

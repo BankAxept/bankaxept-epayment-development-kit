@@ -160,7 +160,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments:
+  /wallet/payments:
     post:
       description: Response to a payment request
       operationId: addPayment
@@ -187,7 +187,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payments/authentication:
+  /wallet/payments/authentication:
     description: Payment authentication
     post:
       operationId: authenticatePayment
@@ -294,6 +294,8 @@ components:
           $ref: '../components.yaml#/components/schemas/authenticationURL'
         bindingMessage:
           $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
 
     PaymentResult:
       type: object
@@ -311,6 +313,8 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         encryptedCardholderAuthenticationData:
           $ref: '../components.yaml#/components/schemas/encryptedPaymentCardholderAuthenticationData'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
 
     PaymentCardholderAuthenticationData:
       $ref: '../components.yaml#/components/schemas/PaymentCardholderAuthenticationData'
