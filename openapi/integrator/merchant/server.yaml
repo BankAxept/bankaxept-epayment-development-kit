@@ -256,6 +256,7 @@ components:
         - merchantName
         - merchantReference
         - messageId
+        - encryptedCardholderAuthenticationData
         - inStore
         - transactionTime
       properties:
@@ -271,8 +272,6 @@ components:
           example: false
         encryptedCardholderAuthenticationData:
           $ref: '../components.yaml#/components/schemas/encryptedPaymentCardholderAuthenticationData'
-        cardholderData:
-          $ref: '#/components/schemas/cardholderData'
         merchantAggregatorId:
           $ref: '../components.yaml#/components/schemas/merchantAggregatorId'
         merchantId:
@@ -357,16 +356,6 @@ components:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
 
-    cardholderData:
-      type: object
-      required:
-        - tokenRequestorId
-        - tokenId
-      properties:
-        tokenRequestorId:
-          $ref: '../components.yaml#/components/schemas/tokenRequestorId'
-        tokenId:
-          $ref: '../components.yaml#/components/schemas/tokenId'
     merchantLocation:
       type: object
       required:
