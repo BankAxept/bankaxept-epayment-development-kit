@@ -47,7 +47,7 @@
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
                             <generateApis>false</generateApis>
-                            <modelPackage>no.bankaxept.epayment.client.merchant.bankaxept</modelPackage>
+                            <modelPackage>no.bankaxept.epayment.client.merchant</modelPackage>
                         </configuration>
                     </execution>
                 </executions>

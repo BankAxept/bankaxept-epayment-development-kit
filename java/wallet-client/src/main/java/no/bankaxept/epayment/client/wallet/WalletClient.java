@@ -12,8 +12,8 @@ import no.bankaxept.epayment.client.base.BaseClient;
 import no.bankaxept.epayment.client.base.MapOperator;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.base.SinglePublisher;
-import no.bankaxept.epayment.client.wallet.outgoing.EnrolCardRequest;
-import no.bankaxept.epayment.client.wallet.outgoing.PaymentRequest;
+import no.bankaxept.epayment.client.wallet.bankaxept.EnrolCardRequest;
+import no.bankaxept.epayment.client.wallet.bankaxept.PaymentRequest;
 
 public class WalletClient {
 
