@@ -27,7 +27,7 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>merchant-api-epp</id>
+                        <id>merchant-api-send</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -41,13 +41,13 @@
                             </configOptions>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <inputSpec>${project.basedir}/../../openapi/integrator/merchant/server.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../../openapi/integrator/merchant/bankaxept.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <generateModels>true</generateModels>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
                             <generateApis>false</generateApis>
-                            <modelPackage>no.bankaxept.epayment.client.merchant</modelPackage>
+                            <modelPackage>no.bankaxept.epayment.client.merchant.bankaxept</modelPackage>
                         </configuration>
                     </execution>
                 </executions>
