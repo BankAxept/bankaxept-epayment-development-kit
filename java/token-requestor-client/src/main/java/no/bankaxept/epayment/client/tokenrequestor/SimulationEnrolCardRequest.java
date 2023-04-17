@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
 import no.bankaxept.epayment.client.base.SimulationRequest;
+import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 
 @JsonIgnoreProperties(value = {"simulationValues"})
 public class SimulationEnrolCardRequest extends EnrolCardRequest implements SimulationRequest {

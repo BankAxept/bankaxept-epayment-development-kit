@@ -41,13 +41,13 @@
                             </configOptions>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <inputSpec>${project.basedir}/../../openapi/integrator/wallet/server.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../../openapi/integrator/wallet/bankaxept.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <generateModels>true</generateModels>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
                             <generateApis>false</generateApis>
-                            <modelPackage>no.bankaxept.epayment.client.wallet.outgoing</modelPackage>
+                            <modelPackage>no.bankaxept.epayment.client.wallet.bankaxept</modelPackage>
                         </configuration>
                     </execution>
                     <execution>
@@ -65,13 +65,13 @@
                             </configOptions>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <inputSpec>${project.basedir}/../../openapi/integrator/wallet/client.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../../openapi/integrator/wallet/partner.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <generateModels>true</generateModels>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
                             <generateApis>false</generateApis>
-                            <modelPackage>no.bankaxept.epayment.client.wallet.incoming</modelPackage>
+                            <modelPackage>no.bankaxept.epayment.client.wallet.partner</modelPackage>
                         </configuration>
                     </execution>
                 </executions>

@@ -7,6 +7,6 @@ module no.bankaxept.epayment.client.wallet {
   requires java.compiler;
   requires jsr305;
 
-  exports no.bankaxept.epayment.client.wallet.outgoing;
-  exports no.bankaxept.epayment.client.wallet.incoming;
+  exports no.bankaxept.epayment.client.wallet.partner;
+  exports no.bankaxept.epayment.client.wallet.bankaxept;
 }

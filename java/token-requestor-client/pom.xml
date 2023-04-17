@@ -41,13 +41,13 @@
                             </configOptions>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <inputSpec>${project.basedir}/../../openapi/integrator/token-requestor/server.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../../openapi/integrator/token-requestor/bankaxept.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <generateModels>true</generateModels>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
                             <generateApis>false</generateApis>
-                            <modelPackage>no.bankaxept.epayment.client.tokenrequestor</modelPackage>
+                            <modelPackage>no.bankaxept.epayment.client.tokenrequestor.bankaxept</modelPackage>
                         </configuration>
                     </execution>
                     <execution>
@@ -65,13 +65,13 @@
                             </configOptions>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <inputSpec>${project.basedir}/../../openapi/integrator/token-requestor/client.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../../openapi/integrator/token-requestor/partner.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <generateModels>true</generateModels>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateModelTests>false</generateModelTests>
                             <generateApis>false</generateApis>
-                            <modelPackage>no.bankaxept.epayment.client.tokenrequestor.incoming</modelPackage>
+                            <modelPackage>no.bankaxept.epayment.client.tokenrequestor.partner</modelPackage>
                         </configuration>
                     </execution>
                 </executions>

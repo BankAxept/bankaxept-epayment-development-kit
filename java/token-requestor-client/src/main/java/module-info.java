@@ -7,5 +7,5 @@ module no.bankaxept.epayment.sdk.tokenrequestor {
   requires java.compiler;
   requires jsr305;
 
-  exports no.bankaxept.epayment.client.tokenrequestor;
+  exports no.bankaxept.epayment.client.tokenrequestor.bankaxept;
 }
