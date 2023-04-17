@@ -12,7 +12,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import java.util.UUID;
 import no.bankaxept.epayment.client.base.RequestStatus;
-import no.bankaxept.epayment.client.tokenrequestor.EnrolCardRequest;
+import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
 import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
 import org.junit.jupiter.api.BeforeEach;

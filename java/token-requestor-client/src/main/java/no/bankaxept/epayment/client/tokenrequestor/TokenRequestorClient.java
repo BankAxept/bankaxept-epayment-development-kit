@@ -14,6 +14,7 @@ import no.bankaxept.epayment.client.base.MapOperator;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.base.SimulationRequest;
 import no.bankaxept.epayment.client.base.SinglePublisher;
+import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 
 public class TokenRequestorClient {
 
