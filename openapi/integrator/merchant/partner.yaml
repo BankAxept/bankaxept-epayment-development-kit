@@ -134,8 +134,6 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         status:
           $ref: '#/components/schemas/PaymentStatus'
-        authenticationBindingMessage:
-          $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
         authorisationCode:
           type: string
           maxLength: 6

@@ -156,8 +156,6 @@ components:
           $ref: '../components.yaml#/components/schemas/nin'
         status:
           $ref: '#/components/schemas/EnrolmentStatus'
-        authenticationBindingMessage:
-          $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
         paymentToken:
           $ref: '../components.yaml#/components/schemas/PaymentToken'
         accountNumberLastFourDigits:
@@ -175,12 +173,10 @@ components:
       example: Accepted
       description: |
         Code specifying the result of the operation:
-        * Authenticating - Cardholder authentication in progress.
         * Accepted - Enrolment was accepted.
         * Rejected - Enrolment was rejected.
         * Failed - Enrolment failed.
       enum:
-        - Authenticating
         - Accepted
         - Rejected
         - Failed
