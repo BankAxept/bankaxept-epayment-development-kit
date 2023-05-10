@@ -127,6 +127,7 @@ components:
         - merchantAggregatorId
         - nin
         - accountNumber
+        - merchantReference
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
@@ -136,6 +137,8 @@ components:
           $ref: '../components.yaml#/components/schemas/nin'
         accountNumber:
           $ref: '../components.yaml#/components/schemas/accountNumber'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
 
     PaymentRequest:
       type: object

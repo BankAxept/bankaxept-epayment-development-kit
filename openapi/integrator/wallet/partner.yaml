@@ -4,7 +4,7 @@ info:
   title: BankAxept ePayment Wallet API - ePayment Platform
 
 paths:
-  /payment-tokens:
+  /wallet/payment-tokens:
     description: EnrolCard callback
     post:
       operationId: addToken
@@ -31,7 +31,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/authentication:
+  /wallet/payment-tokens/authentication:
     description: Enrolment authentication
     post:
       operationId: authenticateEnrolment
@@ -58,7 +58,30 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/suspensions:
+
+  /wallet/payment-tokens/authentication/complete:
+    description: When the authentication process has been completed, the user agent is redirected to this endpoint.
+    get:
+      operationId: completeEnrolmentAuthentication
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - in: query
+          name: merchantReference
+          required: true
+          schema:
+            $ref: '../components.yaml#/components/schemas/merchantReference'
+        - in: query
+          name: status
+          description: Status of authorization code flow
+          schema:
+            $ref: '#/components/schemas/AuthenticationStatus'
+
+      responses:
+        default:
+          description: The partner is free to define its own responses.
+
+
+  /wallet/payment-tokens/suspensions:
     description: Payment token suspension notification
     post:
       operationId: suspendToken
@@ -85,7 +108,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/resumptions:
+  /wallet/payment-tokens/resumptions:
     description: Payment token resumption notification
     post:
       operationId: resumeToken
@@ -134,7 +157,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/expirations:
+  /wallet/payment-tokens/expirations:
     description: Payment token expiry date extension notification
     post:
       operationId: extendExpiration
@@ -214,6 +237,26 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
+  /wallet/payments/authentication/complete:
+    description: When the authentication process has been completed, the user agent is redirected to this endpoint.
+    get:
+      operationId: completePaymentAuthentication
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - in: query
+          name: merchantReference
+          required: true
+          schema:
+            $ref: '../components.yaml#/components/schemas/merchantReference'
+        - in: query
+          name: status
+          description: Status of authorization code flow
+          schema:
+            $ref: '#/components/schemas/AuthenticationStatus'
+
+      responses:
+        default:
+          description: The partner is free to define its own responses.
 
 components:
   schemas:
@@ -222,6 +265,7 @@ components:
       required:
         - messageId
         - status
+        - merchantReference
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
@@ -229,6 +273,8 @@ components:
           $ref: '../components.yaml#/components/schemas/tokenId'
         status:
           $ref: '#/components/schemas/EnrolmentStatus'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
         issuerId:
           description: |
             An identifier for the issuer of the payment card. "Company Bankreg number" (konsern bankreg.nummer) of issuer.
@@ -251,6 +297,11 @@ components:
         - Failed
         - AuthenticationFailed
 
+    AuthenticationStatus:
+      type: string
+      example: Accepted
+      enum: [ Accepted, Failed ]
+
     CardEnrolmentAuthentication:
       type: object
       required:
@@ -261,6 +312,8 @@ components:
           $ref: '../components.yaml#/components/schemas/authenticationURL'
         tokenId:
           $ref: '../components.yaml#/components/schemas/tokenId'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
 
     TokenUpdateData:
       type: object
