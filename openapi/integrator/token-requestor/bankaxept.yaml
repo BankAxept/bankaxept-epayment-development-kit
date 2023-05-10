@@ -72,6 +72,7 @@ components:
         - messageId
         - tokenRequestorId
         - tokenRequestorReference
+        - encryptedCardholderAuthenticationData
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
@@ -81,8 +82,6 @@ components:
           $ref: '../components.yaml#/components/schemas/tokenRequestorReference'
         encryptedCardholderAuthenticationData:
           $ref: '#/components/schemas/encryptedEnrolmentCardholderAuthenticationData'
-        cardholderData:
-          $ref: '#/components/schemas/cardholderData'
 
     EnrolmentCardholderAuthenticationData:
       type: object
@@ -124,13 +123,3 @@ components:
       description: >-
         The Enrolment and Cardholder Authentication Data is encrypted according to the Java Web Encryption specification defined in RFC-7516.
         See schema EnrolmentCardholderAuthenticationData for decrypted data format.
-    cardholderData:
-      type: object
-      required:
-        - nin
-        - accountNumber
-      properties:
-        nin:
-          $ref: '../components.yaml#/components/schemas/nin'
-        accountNumber:
-          $ref: '../components.yaml#/components/schemas/accountNumber'
