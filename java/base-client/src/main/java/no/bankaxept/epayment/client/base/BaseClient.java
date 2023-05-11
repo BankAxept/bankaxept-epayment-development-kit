@@ -6,8 +6,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
 import java.util.function.Supplier;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
 import no.bankaxept.epayment.client.base.accesstoken.EmptyAccessTokenPublisher;
@@ -20,11 +26,17 @@ import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
 
 public class BaseClient {
 
+  private final static String SIMULATION_HEADER = "X-Simulation";
   private final static Duration tokenTimeout = Duration.ofSeconds(10);
+  private final Executor executor = Executors.newSingleThreadExecutor();
+  private final ObjectMapper objectMapper = new ObjectMapper()
+      .registerModule(new JavaTimeModule())
+      .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
   private final HttpClient httpClient;
   private final AccessTokenPublisher tokenPublisher;
   private String apimKey;
+
 
   private BaseClient(HttpClient httpClient, AccessTokenPublisher tokenPublisher, String apimKey) {
     this.httpClient = httpClient;
@@ -57,6 +69,23 @@ public class BaseClient {
       String correlationId
   ) {
     return post(uri, body, correlationId, Map.of());
+  }
+
+  public <T> Flow.Publisher<HttpResponse> postJson(
+      String uri,
+      T request,
+      String correlationId
+  ) {
+    try {
+      return post(
+          uri,
+          new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
+          correlationId,
+          request instanceof SimulationRequest sr ? Map.of(SIMULATION_HEADER, sr.getSimulationValues()) : Map.of()
+      );
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public Flow.Publisher<HttpResponse> post(

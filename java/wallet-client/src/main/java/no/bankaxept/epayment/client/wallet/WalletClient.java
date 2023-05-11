@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -11,6 +13,7 @@ import java.util.concurrent.Flow;
 import no.bankaxept.epayment.client.base.BaseClient;
 import no.bankaxept.epayment.client.base.MapOperator;
 import no.bankaxept.epayment.client.base.RequestStatus;
+import no.bankaxept.epayment.client.base.SimulationRequest;
 import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.wallet.bankaxept.EnrolCardRequest;
 import no.bankaxept.epayment.client.wallet.bankaxept.PaymentRequest;
@@ -52,15 +55,11 @@ public class WalletClient {
   }
 
   public Flow.Publisher<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
-    try {
-      return new MapOperator<>(baseClient.post(
-          "/payments",
-          new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
-          correlationId
-      ), httpResponse -> httpResponse.getStatus().toResponse());
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
+    return new MapOperator<>(baseClient.postJson(
+        "/payments",
+        request,
+        correlationId
+    ), httpResponse -> httpResponse.getStatus().toResponse());
   }
 
 }
