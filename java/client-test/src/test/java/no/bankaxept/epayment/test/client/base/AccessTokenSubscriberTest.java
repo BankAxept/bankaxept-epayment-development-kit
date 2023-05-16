@@ -10,7 +10,7 @@ import java.util.concurrent.Flow;
 import java.util.concurrent.TimeoutException;
 import no.bankaxept.epayment.client.base.AccessFailed;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
-import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.publisher.ScheduledAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpStatus;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
 import org.junit.jupiter.api.Test;

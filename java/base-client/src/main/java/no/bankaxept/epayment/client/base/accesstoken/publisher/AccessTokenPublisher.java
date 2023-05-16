@@ -1,4 +1,4 @@
-package no.bankaxept.epayment.client.base.accesstoken;
+package no.bankaxept.epayment.client.base.accesstoken.publisher;
 
 import java.util.concurrent.Flow;
 

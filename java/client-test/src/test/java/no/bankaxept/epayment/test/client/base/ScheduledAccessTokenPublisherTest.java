@@ -18,9 +18,9 @@ import java.util.concurrent.Flow;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import no.bankaxept.epayment.client.base.SinglePublisher;
-import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
-import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
-import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.publisher.AccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.publisher.ScheduledAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.publisher.StaticAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -32,7 +32,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class AccessTokenPublisherTest {
+class ScheduledAccessTokenPublisherTest {
 
   @Spy
   private ScheduledExecutorService schedulerMock = Executors.newScheduledThreadPool(1);
@@ -90,11 +90,11 @@ class AccessTokenPublisherTest {
 
   private ScheduledAccessTokenPublisher createPublisher() {
     return new ScheduledAccessTokenPublisher.Builder()
+        .scheduler(schedulerMock)
         .httpClient(httpClientMock)
         .uri("uri")
         .clientCredentials("username", "password")
         .clock(clock)
-        .scheduler(schedulerMock)
         .apimKey("key")
         .build();
   }

@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Flow;
 import java.util.concurrent.TimeUnit;
 import no.bankaxept.epayment.client.base.AccessFailed;
+import no.bankaxept.epayment.client.base.accesstoken.publisher.AccessTokenPublisher;
 
 public class AccessTokenSubscriber implements Flow.Subscriber<String> {
 

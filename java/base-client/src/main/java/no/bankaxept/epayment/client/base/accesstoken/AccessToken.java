@@ -5,7 +5,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.regex.Pattern;
 
-class AccessToken {
+public class AccessToken {
 
   private final String token;
   private final Instant expiry;
@@ -23,7 +23,7 @@ class AccessToken {
     return Parser.parse(input);
   }
 
-  static AccessToken parse(String input, Clock clock) {
+  public static AccessToken parse(String input, Clock clock) {
     return Parser.parse(input, clock);
   }
 
