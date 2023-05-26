@@ -5,12 +5,12 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.regex.Pattern;
 
-public class AccessToken {
+class AccessToken {
 
   private final String token;
   private final Instant expiry;
 
-  AccessToken(String token, long expiresIn, Clock clock) {
+  public AccessToken(String token, long expiresIn, Clock clock) {
     this.token = token;
     this.expiry = clock.instant().plusSeconds(expiresIn);
   }
