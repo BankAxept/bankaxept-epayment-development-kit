@@ -10,7 +10,7 @@ public class AccessToken {
   private final String token;
   private final Instant expiry;
 
-  public AccessToken(String token, long expiresIn, Clock clock) {
+  AccessToken(String token, long expiresIn, Clock clock) {
     this.token = token;
     this.expiry = clock.instant().plusSeconds(expiresIn);
   }
@@ -23,7 +23,7 @@ public class AccessToken {
     return Parser.parse(input);
   }
 
-  public static AccessToken parse(String input, Clock clock) {
+  static AccessToken parse(String input, Clock clock) {
     return Parser.parse(input, clock);
   }
 
