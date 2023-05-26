@@ -1,8 +1,8 @@
 package no.bankaxept.epayment.test.client.base;
 
 import no.bankaxept.epayment.client.base.SinglePublisher;
-import no.bankaxept.epayment.client.base.accesstoken.publisher.AccessTokenPublisher;
-import no.bankaxept.epayment.client.base.accesstoken.publisher.OnDemandAccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
+import no.bankaxept.epayment.client.base.accesstoken.OnDemandAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.verification.VerificationMode;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,7 +23,6 @@ import java.util.concurrent.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 

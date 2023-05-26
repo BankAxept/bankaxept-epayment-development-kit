@@ -1,4 +1,4 @@
-package no.bankaxept.epayment.client.base.accesstoken.publisher;
+package no.bankaxept.epayment.client.base.accesstoken;
 
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import java.time.Clock;
