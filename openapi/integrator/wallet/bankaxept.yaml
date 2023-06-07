@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   version: 0.3.0
-  title: BankAxept ePayment Wallet API - ePayment Platform
+  title: BankAxept ePayment Wallet API - ePayment Platform - v1
 
 servers:
   - url: /bankaxept-epayment/wallet-api/v1
