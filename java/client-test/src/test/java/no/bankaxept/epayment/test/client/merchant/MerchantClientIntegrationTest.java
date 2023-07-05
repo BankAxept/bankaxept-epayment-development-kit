@@ -33,7 +33,7 @@ public class MerchantClientIntegrationTest {
 
   @Test
   public void paymentRequest() throws MalformedURLException {
-    MerchantClient client = testClient();
+    MerchantClient client = t1Client();
     var correlationId = UUID.randomUUID().toString();
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
             new PaymentRequest(),
