@@ -61,7 +61,7 @@ public class MerchantClient {
   public Flow.Publisher<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
     try {
       return new MapOperator<>(baseClient.post(
-          "/v1/payments",
+          "v1/payments",
           new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
           correlationId,
           findSimulationHeader(request)
@@ -78,7 +78,7 @@ public class MerchantClient {
     );
   }
 
-  public Flow.Publisher<RequestStatus> capture(String paymentId, CaptureRequest request, String correlationId) {
+  public Flow.Publisher<RequestStatus> capturePayment(String paymentId, CaptureRequest request, String correlationId) {
     try {
       return new MapOperator<>(baseClient.post(
           String.format("v1/payments/%s/captures", paymentId),
@@ -91,7 +91,7 @@ public class MerchantClient {
     }
   }
 
-  public Flow.Publisher<RequestStatus> cancel(String paymentId, String correlationId) {
+  public Flow.Publisher<RequestStatus> cancelPayment(String paymentId, String correlationId) {
     return new MapOperator<>(baseClient.post(
         String.format("v1/payments/%s/cancellation", paymentId),
         new SinglePublisher<>("", executor),
@@ -99,7 +99,7 @@ public class MerchantClient {
     ), httpResponse -> httpResponse.getStatus().toResponse());
   }
 
-  public Flow.Publisher<RequestStatus> refund(String paymentId, RefundRequest request, String correlationId) {
+  public Flow.Publisher<RequestStatus> refundPayment(String paymentId, RefundRequest request, String correlationId) {
     try {
       return new MapOperator<>(baseClient.post(
           String.format("v1/payments/%s/refunds", paymentId),
@@ -112,7 +112,7 @@ public class MerchantClient {
     }
   }
 
-  public Flow.Publisher<RequestStatus> cutOffSettlementBatch(
+  public Flow.Publisher<RequestStatus> cutOff(
       String merchantId, CutOffRequest request,
       String batchNumber, String correlationId
   ) {

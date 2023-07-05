@@ -184,7 +184,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(CaptureEndpointMapping("payment-id", "1", created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.capture(
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.capturePayment(
               "payment-id",
               new CaptureRequest().amount(new Amount().currency("NOK").value(10000L))
                   .messageId("74313af1-e2cc-403f-85f1-6050725b01b6"),
@@ -215,7 +215,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(CancelEndpointMapping("payment-id", "1", created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cancel("payment-id", "1")))
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cancelPayment("payment-id", "1")))
           .expectNext(RequestStatus.Accepted)
           .verifyComplete();
     }
@@ -242,7 +242,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
             "1",
             created()
         ));
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.refund(
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.refundPayment(
                 "payment-id",
                 new RefundRequest()
                     .amount(new Amount()
@@ -306,7 +306,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         CutOffRequest cutOffRequest = new CutOffRequest().messageId("message-id").merchantAggregatorId("1");
         stubFor(cutOffSettlementBatchEndpointMapping("merchant-id", "batch-number", "1", created()));
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(
-                client.cutOffSettlementBatch("merchant-id", cutOffRequest, "batch-number", "1")))
+                client.cutOff("merchant-id", cutOffRequest, "batch-number", "1")))
             .expectNext(RequestStatus.Accepted)
             .verifyComplete();
       }
