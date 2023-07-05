@@ -11,6 +11,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -124,7 +125,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     }
 
     private MappingBuilder paymentMapping(OffsetDateTime transactionTime) {
-      return post("/payments")
+      return post(urlPathEqualTo("/v1/payments"))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern("1"))
           .withRequestBody(matchingJsonPath("merchantId", equalTo("10030005")))
@@ -168,7 +169,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         String messageId,
         ResponseDefinitionBuilder responseBuilder
     ) {
-      return delete(String.format("/payments/messages/%s", messageId))
+      return delete(urlPathEqualTo(String.format("/v1/payments/messages/%s", messageId)))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .willReturn(responseBuilder);
@@ -198,7 +199,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         String correlationId,
         ResponseDefinitionBuilder responseBuilder
     ) {
-      return post(String.format("/payments/%s/captures", paymentId))
+      return post(urlPathEqualTo(String.format("/v1/payments/%s/captures", paymentId)))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
@@ -224,7 +225,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         String correlationId,
         ResponseDefinitionBuilder responseBuilder
     ) {
-      return post(String.format("/payments/%s/cancellation", paymentId))
+      return post(urlPathEqualTo(String.format("/v1/payments/%s/cancellation", paymentId)))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .willReturn(responseBuilder);
@@ -261,7 +262,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
           String correlationId,
           ResponseDefinitionBuilder responseBuilder
       ) {
-        return post(String.format("/payments/%s/refunds", paymentId))
+        return post(urlPathEqualTo(String.format("/v1/payments/%s/refunds", paymentId)))
             .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
             .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
             .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
@@ -289,7 +290,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
           String correlationId,
           ResponseDefinitionBuilder responseBuilder
       ) {
-        return delete(String.format("/payments/%s/refunds/messages/%s", paymentId, messageId))
+        return delete(urlPathEqualTo(String.format("/v1/payments/%s/refunds/messages/%s", paymentId, messageId)))
             .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
             .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
             .willReturn(responseBuilder);
@@ -316,7 +317,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
           String correlationId,
           ResponseDefinitionBuilder responseBuilder
       ) {
-        return put(String.format("/settlements/%s/%s", merchantId, batchNumber))
+        return put(urlPathEqualTo(String.format("/v1/settlements/%s/%s", merchantId, batchNumber)))
             .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
             .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
             .willReturn(responseBuilder);

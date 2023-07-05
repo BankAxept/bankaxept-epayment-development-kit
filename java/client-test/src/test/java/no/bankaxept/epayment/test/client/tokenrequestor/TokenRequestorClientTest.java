@@ -5,6 +5,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -64,14 +66,14 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   }
 
   private MappingBuilder DeletionEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return post("/payment-tokens/" + tokenId + "/deletion")
+    return post(urlPathEqualTo("/v1/payment-tokens/" + tokenId + "/deletion"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
         .willReturn(responseBuilder);
   }
 
   private MappingBuilder EnrolmentEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return post("/payment-tokens")
+    return post(urlPathEqualTo("/v1/payment-tokens"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
         .withRequestBody(matchingJsonPath("tokenRequestorId", equalTo(tokenRequestorIdExample)))
