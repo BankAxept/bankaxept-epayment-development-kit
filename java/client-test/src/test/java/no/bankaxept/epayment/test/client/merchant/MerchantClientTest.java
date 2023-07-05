@@ -40,7 +40,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
   private final OffsetDateTime transactionTime = OffsetDateTime.now();
 
   @BeforeEach
-  public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+  public  void setup(WireMockRuntimeInfo wmRuntimeInfo) {
     super.setup(wmRuntimeInfo);
     client = new MerchantClient(baseClient);
   }
@@ -52,7 +52,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(paymentEndpointMapping(transactionTime, created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
               createPaymentRequest(transactionTime),
               "1"
           )))
@@ -63,7 +63,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success_with_simulation() {
       stubFor(simulationPaymentEndpointMapping(transactionTime, created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
               createSimulationRequest(transactionTime),
               "1"
           )))
@@ -75,7 +75,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void server_error() {
       stubFor(paymentEndpointMapping(transactionTime, serverError()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
               createPaymentRequest(transactionTime),
               "1"
           )))
@@ -87,7 +87,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     public void client_error() {
       stubFor(paymentEndpointMapping(transactionTime, forbidden()));
       var paymentRequest = createPaymentRequest(transactionTime);
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(paymentRequest, "1")))
           .expectNext(RequestStatus.ClientError)
           .verifyComplete();
     }
@@ -203,31 +203,6 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
           .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
           .withRequestBody(matchingJsonPath("amount", containing("10000").and(containing("NOK"))))
-          .willReturn(responseBuilder);
-    }
-  }
-
-  @Nested
-  @DisplayName("Capture Rollback")
-  public class CaptureRollbackTest {
-
-    @Test
-    public void success() {
-      stubFor(CaptureRollbackEndpointMapping("payment-id", "message-id", "1", created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollbackCapture("payment-id", "message-id", "1")))
-          .expectNext(RequestStatus.Accepted)
-          .verifyComplete();
-    }
-
-    private MappingBuilder CaptureRollbackEndpointMapping(
-        String paymentId,
-        String messageId,
-        String correlationId,
-        ResponseDefinitionBuilder responseBuilder
-    ) {
-      return delete(String.format("/payments/%s/captures/messages/%s", paymentId, messageId))
-          .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
-          .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .willReturn(responseBuilder);
     }
   }

@@ -24,7 +24,7 @@ public class BaseClient {
 
   private final HttpClient httpClient;
   private final AccessTokenPublisher tokenPublisher;
-  private String apimKey;
+  private final String apimKey;
 
   private BaseClient(HttpClient httpClient, AccessTokenPublisher tokenPublisher, String apimKey) {
     this.httpClient = httpClient;
@@ -89,17 +89,14 @@ public class BaseClient {
 
   public static class Builder {
 
-    private HttpClient httpClient;
+    private final HttpClient httpClient;
     private String apimKey;
     private AccessTokenPublisher tokenPublisher;
 
-    private Builder() {
-    }
-
-    public Builder(String baseurl) {
+    public Builder(String resourceServerUrl) {
       this.httpClient = ServiceLoader.load(HttpClientProvider.class)
           .findFirst()
-          .map(httpClientProvider -> httpClientProvider.create(baseurl))
+          .map(httpClientProvider -> httpClientProvider.create(resourceServerUrl))
           .orElseThrow();
     }
 
@@ -123,20 +120,20 @@ public class BaseClient {
       return this;
     }
 
-    public Builder withScheduledToken(String id, String secret) {
+    public Builder withScheduledToken(String accessTokenApiUrl, String id, String secret) {
       this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
           .httpClient(httpClient)
-          .uri("/bankaxept-epayment/access-token-api/v1/accesstoken")
+          .uri(accessTokenApiUrl)
           .clientCredentials(id, secret)
           .apimKey(apimKey)
           .build();
       return this;
     }
 
-    public Builder withScheduledToken(String id, String secret, Clock clock) {
+    public Builder withScheduledToken(String accessTokenApiPath, String id, String secret, Clock clock) {
       this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
           .httpClient(httpClient)
-          .uri("/bankaxept-epayment/access-token-api/v1/accesstoken")
+          .uri(accessTokenApiPath)
           .clientCredentials(id, secret)
           .apimKey(apimKey)
           .clock(clock)

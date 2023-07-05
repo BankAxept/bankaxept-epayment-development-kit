@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -20,9 +21,6 @@ public class TokenRequestorClient {
 
   private final BaseClient baseClient;
 
-  private final static String ENROLMENT_URL = "/payment-tokens";
-  private final static String DELETION_URL = "/payment-tokens/%s/deletion"; //Token id in path
-
   private final static String SIMULATION_HEADER = "X-Simulation";
 
   private final ObjectMapper objectMapper = new ObjectMapper()
@@ -35,14 +33,29 @@ public class TokenRequestorClient {
     this.baseClient = baseClient;
   }
 
-  public TokenRequestorClient(String baseurl, String apimKey, String username, String password) {
-    this.baseClient = new BaseClient.Builder(baseurl).apimKey(apimKey).withScheduledToken(username, password).build();
+  public TokenRequestorClient(
+      URL authorizationServerUrl,
+      URL resourceServerUrl,
+      String apimKey,
+      String clientId,
+      String clientSecret
+  ) {
+    this(
+        new BaseClient.Builder(resourceServerUrl.toString())
+            .apimKey(apimKey)
+            .withScheduledToken(authorizationServerUrl.toString(), clientId, clientSecret)
+            .build()
+    );
+  }
+
+  public TokenRequestorClient(URL authorizationServerUrl, URL resourceServerUrl, String clientId, String clientSecret) {
+    this(authorizationServerUrl, resourceServerUrl, null, clientId, clientSecret);
   }
 
   public Flow.Publisher<RequestStatus> enrol(EnrolCardRequest request, String correlationId) {
     return new MapOperator<>(
         baseClient.post(
-            ENROLMENT_URL,
+            "v1/payment-tokens",
             new SinglePublisher<>(serialize(request), executor),
             correlationId,
             findSimulationHeader(request)
@@ -53,7 +66,11 @@ public class TokenRequestorClient {
 
   public Flow.Publisher<RequestStatus> delete(String tokenId, String correlationId) {
     return new MapOperator<>(
-        baseClient.post(String.format(DELETION_URL, tokenId), new SinglePublisher<>("", executor), correlationId),
+        baseClient.post(
+            String.format("v1/payment-tokens/%s/deletion", tokenId),
+            new SinglePublisher<>("", executor),
+            correlationId
+        ),
         httpResponse -> httpResponse.getStatus().toResponse()
     );
   }

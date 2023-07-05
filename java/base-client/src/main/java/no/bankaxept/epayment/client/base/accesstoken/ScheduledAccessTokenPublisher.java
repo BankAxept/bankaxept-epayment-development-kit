@@ -76,7 +76,13 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
   @Override
   public void onNext(HttpResponse item) {
     if (!item.getStatus().is2xxOk()) {
-      onError(new HttpStatusException(item.getStatus(), "Error when fetching token"));
+      onError(new HttpStatusException(item.getStatus(), String.format(
+              "Could not get access token from %s. HTTP status: %s. HTTP payload: %s",
+              uri,
+              item.getStatus(),
+              item.getBody()
+          ))
+      );
       return;
     }
     AccessToken token;
@@ -158,7 +164,8 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     }
 
     public Builder apimKey(String apimKey) {
-      headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
+      if (apimKey != null)
+        headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
       return this;
     }
 
