@@ -52,7 +52,7 @@ public class TokenRequestorClient {
     this(authorizationServerUrl, resourceServerUrl, null, clientId, clientSecret);
   }
 
-  public Flow.Publisher<RequestStatus> enrol(EnrolCardRequest request, String correlationId) {
+  public Flow.Publisher<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
     return new MapOperator<>(
         baseClient.post(
             "v1/payment-tokens",
@@ -64,7 +64,7 @@ public class TokenRequestorClient {
     );
   }
 
-  public Flow.Publisher<RequestStatus> delete(String tokenId, String correlationId) {
+  public Flow.Publisher<RequestStatus> deleteToken(String tokenId, String correlationId) {
     return new MapOperator<>(
         baseClient.post(
             String.format("v1/payment-tokens/%s/deletion", tokenId),
