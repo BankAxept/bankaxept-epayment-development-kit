@@ -120,20 +120,20 @@ public class BaseClient {
       return this;
     }
 
-    public Builder withScheduledToken(String accessTokenApiUrl, String id, String secret) {
+    public Builder withScheduledToken(String authorizationServerUrl, String id, String secret) {
       this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
           .httpClient(httpClient)
-          .uri(accessTokenApiUrl)
+          .uri(authorizationServerUrl)
           .clientCredentials(id, secret)
           .apimKey(apimKey)
           .build();
       return this;
     }
 
-    public Builder withScheduledToken(String accessTokenApiPath, String id, String secret, Clock clock) {
+    public Builder withScheduledToken(String authorizationServerUrl, String id, String secret, Clock clock) {
       this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
           .httpClient(httpClient)
-          .uri(accessTokenApiPath)
+          .uri(authorizationServerUrl)
           .clientCredentials(id, secret)
           .apimKey(apimKey)
           .clock(clock)

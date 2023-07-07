@@ -61,7 +61,12 @@ public abstract class AbstractBaseClientWireMockTest {
 
   protected BaseClient createScheduledBaseClient(int port) {
     return new BaseClient.Builder("http://localhost:" + port).apimKey("key")
-        .withScheduledToken("/bankaxept-epayment/access-token-api/v1/accesstoken", "username", "password", clock)
+        .withScheduledToken(
+            "http://localhost:" + port + "/bankaxept-epayment/access-token-api/v1/accesstoken",
+            "username",
+            "password",
+            clock
+        )
         .build();
   }
 
