@@ -364,6 +364,8 @@ components:
             - AuthenticationFailed
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
+        iss:
+          $ref: '../components.yaml#/components/schemas/iss'
         encryptedCardholderAuthenticationData:
           $ref: '../components.yaml#/components/schemas/encryptedPaymentCardholderAuthenticationData'
         merchantReference:

@@ -49,9 +49,13 @@ components:
     PaymentCardholderAuthenticationData:
       type: object
       required:
+        # - iat
+        - iss
         - paymentToken
         - verifiedCardholderAuthenticationSignedData
       properties:
+        iss:
+          $ref: '#/components/schemas/iss'
         paymentToken:
           $ref: '#/components/schemas/PaymentToken'
         verifiedCardholderAuthenticationSignedData:
@@ -252,6 +256,11 @@ components:
       type: string
       maxLength: 36
       example: "74313af1-e2cc-403f-85f1-6050725b01b6"
+    iss:
+      description: >-
+        A unique identifier for the issuer.
+      type: string
+      maxLength: 100
     messageId:
       description: >-
         A unique identifier that guarantees message idempotency.
