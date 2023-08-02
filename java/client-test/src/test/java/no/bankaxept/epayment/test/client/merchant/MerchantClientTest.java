@@ -41,7 +41,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
   private final OffsetDateTime transactionTime = OffsetDateTime.now();
 
   @BeforeEach
-  public  void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+  public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
     super.setup(wmRuntimeInfo);
     client = new MerchantClient(baseClient);
   }
