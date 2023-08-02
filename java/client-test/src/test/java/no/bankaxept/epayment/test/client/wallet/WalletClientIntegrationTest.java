@@ -15,7 +15,7 @@ public class WalletClientIntegrationTest {
   private WalletClient t1Client() throws MalformedURLException {
     return new WalletClient(
         new URL("https://t1-api.techcloud0dev.net/bankaxept-epayment/access-token-api/v1/accesstoken"),
-        new URL("https://t1-api.techcloud0dev.net/bankaxept-epayment/merchant-api"),
+        new URL("https://t1-api.techcloud0dev.net/bankaxept-epayment/wallet-api"),
         System.getenv("APIM_KEY"),
         System.getenv("CLIENT_ID"),
         System.getenv("CLIENT_SECRET")
@@ -25,7 +25,7 @@ public class WalletClientIntegrationTest {
   private WalletClient testClient() throws MalformedURLException {
     return new WalletClient(
         new URL("https://epp.stoetest.cloud/access-token/v1/accesstoken"),
-        new URL("https://epp.stoetest.cloud/merchant"),
+        new URL("https://epp.stoetest.cloud/wallet"),
         System.getenv("CLIENT_ID"),
         System.getenv("CLIENT_SECRET")
     );

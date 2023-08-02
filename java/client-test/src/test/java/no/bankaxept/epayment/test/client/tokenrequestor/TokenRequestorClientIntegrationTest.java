@@ -16,7 +16,7 @@ public class TokenRequestorClientIntegrationTest {
   private TokenRequestorClient t1Client() throws MalformedURLException {
     return new TokenRequestorClient(
         new URL("https://t1-api.techcloud0dev.net/bankaxept-epayment/access-token-api/v1/accesstoken"),
-        new URL("https://t1-api.techcloud0dev.net/bankaxept-epayment/merchant-api"),
+        new URL("https://t1-api.techcloud0dev.net/bankaxept-epayment/token-requestor-api"),
         System.getenv("APIM_KEY"),
         System.getenv("CLIENT_ID"),
         System.getenv("CLIENT_SECRET")
@@ -26,7 +26,7 @@ public class TokenRequestorClientIntegrationTest {
   private TokenRequestorClient testClient() throws MalformedURLException {
     return new TokenRequestorClient(
         new URL("https://epp.stoetest.cloud/access-token/v1/accesstoken"),
-        new URL("https://epp.stoetest.cloud/merchant"),
+        new URL("https://epp.stoetest.cloud/token-requestor"),
         System.getenv("CLIENT_ID"),
         System.getenv("CLIENT_SECRET")
     );
