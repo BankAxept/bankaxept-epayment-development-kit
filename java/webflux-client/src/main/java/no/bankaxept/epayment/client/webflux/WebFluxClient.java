@@ -18,7 +18,7 @@ public class WebFluxClient implements HttpClient {
   private final WebClient webClient;
 
   public WebFluxClient(String baseUrl) {
-    webClient = WebClient.create(baseUrl);
+    webClient = WebClient.create(baseUrl.endsWith("/") ? baseUrl : baseUrl + "/");
   }
 
   public WebFluxClient() {
