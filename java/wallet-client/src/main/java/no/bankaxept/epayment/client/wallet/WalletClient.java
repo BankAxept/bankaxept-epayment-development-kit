@@ -51,7 +51,7 @@ public class WalletClient {
   public Flow.Publisher<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
     try {
       return new MapOperator<>(baseClient.post(
-          "v1/payment-tokens",
+          "/v1/payment-tokens",
           new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
           correlationId
       ), httpResponse -> httpResponse.getStatus().toResponse());
@@ -62,7 +62,7 @@ public class WalletClient {
 
   public Flow.Publisher<RequestStatus> deleteToken(UUID tokenId, String correlationId) {
     return new MapOperator<>(
-        baseClient.delete(String.format("v1/payment-tokens/%s", tokenId), correlationId),
+        baseClient.delete(String.format("/v1/payment-tokens/%s", tokenId), correlationId),
         httpResponse -> httpResponse.getStatus().toResponse()
     );
   }
@@ -70,7 +70,7 @@ public class WalletClient {
   public Flow.Publisher<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
     try {
       return new MapOperator<>(baseClient.post(
-          "v1/payments",
+          "/v1/payments",
           new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
           correlationId
       ), httpResponse -> httpResponse.getStatus().toResponse());

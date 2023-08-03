@@ -61,7 +61,7 @@ public class MerchantClient {
   public Flow.Publisher<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
     try {
       return new MapOperator<>(baseClient.post(
-          "v1/payments",
+          "/v1/payments",
           new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
           correlationId,
           findSimulationHeader(request)
@@ -73,7 +73,7 @@ public class MerchantClient {
 
   public Flow.Publisher<RequestStatus> rollbackPayment(String correlationId, String messageId) {
     return new MapOperator<>(
-        baseClient.delete(String.format("v1/payments/messages/%s", messageId), correlationId),
+        baseClient.delete(String.format("/v1/payments/messages/%s", messageId), correlationId),
         httpResponse -> httpResponse.getStatus().toResponse()
     );
   }
@@ -81,7 +81,7 @@ public class MerchantClient {
   public Flow.Publisher<RequestStatus> capturePayment(String paymentId, CaptureRequest request, String correlationId) {
     try {
       return new MapOperator<>(baseClient.post(
-          String.format("v1/payments/%s/captures", paymentId),
+          String.format("/v1/payments/%s/captures", paymentId),
           new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
           correlationId,
           findSimulationHeader(request)
@@ -93,7 +93,7 @@ public class MerchantClient {
 
   public Flow.Publisher<RequestStatus> cancelPayment(String paymentId, String correlationId) {
     return new MapOperator<>(baseClient.post(
-        String.format("v1/payments/%s/cancellation", paymentId),
+        String.format("/v1/payments/%s/cancellation", paymentId),
         new SinglePublisher<>("", executor),
         correlationId
     ), httpResponse -> httpResponse.getStatus().toResponse());
@@ -102,7 +102,7 @@ public class MerchantClient {
   public Flow.Publisher<RequestStatus> refundPayment(String paymentId, RefundRequest request, String correlationId) {
     try {
       return new MapOperator<>(baseClient.post(
-          String.format("v1/payments/%s/refunds", paymentId),
+          String.format("/v1/payments/%s/refunds", paymentId),
           new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
           correlationId,
           findSimulationHeader(request)
@@ -119,7 +119,7 @@ public class MerchantClient {
     try {
       return new MapOperator<>(
           baseClient.put(
-              String.format("v1/settlements/%s/%s", merchantId, batchNumber),
+              String.format("/v1/settlements/%s/%s", merchantId, batchNumber),
               new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
               correlationId
           ),
@@ -133,7 +133,7 @@ public class MerchantClient {
   public Flow.Publisher<RequestStatus> rollbackRefund(String paymentId, String messageId, String correlationId) {
     return new MapOperator<>(
         baseClient.delete(
-            String.format("v1/payments/%s/refunds/messages/%s", paymentId, messageId),
+            String.format("/v1/payments/%s/refunds/messages/%s", paymentId, messageId),
             correlationId
         ),
         httpResponse -> httpResponse.getStatus().toResponse()
