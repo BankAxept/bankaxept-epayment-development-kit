@@ -6,8 +6,7 @@
 pr:
   - '*'
 
-pool:
-  vmImage: ubuntu-latest
+pool: bai-epayment-pool
 
 steps:
 - task: Maven@3
