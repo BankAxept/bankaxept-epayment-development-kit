@@ -34,8 +34,13 @@ public class TokenRequestorClientIntegrationTest {
 
   @Test
   public void enrolCardRequest() throws MalformedURLException {
-    TokenRequestorClient client = t1Client();
+    enrolCardRequest(t1Client());
+    enrolCardRequest(testClient());
+  }
+
+  private void enrolCardRequest(TokenRequestorClient client) {
     var correlationId = UUID.randomUUID().toString();
+    System.out.println("Correlation id: " + correlationId);
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.enrolCard(
             new EnrolCardRequest(),
             correlationId

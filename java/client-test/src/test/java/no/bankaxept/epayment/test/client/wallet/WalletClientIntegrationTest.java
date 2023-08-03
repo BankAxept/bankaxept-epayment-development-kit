@@ -33,8 +33,13 @@ public class WalletClientIntegrationTest {
 
   @Test
   public void paymentRequest() throws MalformedURLException {
-    WalletClient client = t1Client();
+    paymentRequest(t1Client());
+    paymentRequest(testClient());
+  }
+
+  private void paymentRequest(WalletClient client) {
     var correlationId = UUID.randomUUID().toString();
+    System.out.println("Correlation id: " + correlationId);
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
             new PaymentRequest(),
             correlationId
