@@ -5,6 +5,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -41,7 +42,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   @Test
   public void enrolment_successful() {
     stubFor(EnrolmentEndpoint(created()));
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.enrol(createEnrolmentRequest(), someCorrelationId)))
+    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.enrolCard(createEnrolmentRequest(), someCorrelationId)))
         .expectNext(RequestStatus.Accepted)
         .verifyComplete();
   }
@@ -49,7 +50,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   @Test
   public void deletion_successful() {
     stubFor(DeletionEndpoint(created()));
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.delete(tokenId.toString(), someCorrelationId)))
+    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.deleteToken(tokenId.toString(), someCorrelationId)))
         .expectNext(RequestStatus.Accepted)
         .verifyComplete();
   }
@@ -64,14 +65,14 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   }
 
   private MappingBuilder DeletionEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return post("/payment-tokens/" + tokenId + "/deletion")
+    return post(urlPathEqualTo("/v1/payment-tokens/" + tokenId + "/deletion"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
         .willReturn(responseBuilder);
   }
 
   private MappingBuilder EnrolmentEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return post("/payment-tokens")
+    return post(urlPathEqualTo("/v1/payment-tokens"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
         .withRequestBody(matchingJsonPath("tokenRequestorId", equalTo(tokenRequestorIdExample)))

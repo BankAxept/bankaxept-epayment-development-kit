@@ -58,6 +58,12 @@
         </dependency>
         <dependency>
             <groupId>no.bankaxept.epayment</groupId>
+            <artifactId>wallet-client</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.bankaxept.epayment</groupId>
             <artifactId>webflux-client</artifactId>
             <scope>test</scope>
         </dependency>

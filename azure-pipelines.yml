@@ -6,11 +6,14 @@
 pr:
   - '*'
 
-pool:
-  vmImage: ubuntu-latest
+pool: bai-epayment-pool
 
 steps:
 - task: Maven@3
+  env:
+    APIM_KEY: $(APIM_KEY)
+    CLIENT_ID: $(CLIENT_ID)
+    CLIENT_SECRET: $(CLIENT_SECRET)
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
