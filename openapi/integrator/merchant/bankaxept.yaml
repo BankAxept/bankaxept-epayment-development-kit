@@ -60,7 +60,7 @@ paths:
   /payments/messages/{messageId}:
     delete:
       summary: Rollback a payment request
-      operationId: rollbackPaymentRequest
+      operationId: rollbackPayment
       description: >-
         Rollback an ongoing payment request.
       parameters:
@@ -190,7 +190,7 @@ paths:
   /payments/{paymentId}/refunds/messages/{messageId}:
     delete:
       summary: Rollback a refund request
-      operationId: rollbackRefundRequest
+      operationId: rollbackRefund
       description: >-
         Rollback an ongoing refund request.
       parameters:
@@ -218,7 +218,7 @@ paths:
   /settlements/{merchantId}/{batchNumber}:
     put:
       summary: Cut off a settlement batch
-      operationId: cutOffSettlementBatch
+      operationId: cutOff
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
         - $ref: '../components.yaml#/components/parameters/merchantId'

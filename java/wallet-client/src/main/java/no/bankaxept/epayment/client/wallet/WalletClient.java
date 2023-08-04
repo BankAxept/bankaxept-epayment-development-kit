@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.net.URL;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -28,14 +29,29 @@ public class WalletClient {
     this.baseClient = baseClient;
   }
 
-  public WalletClient(String baseurl, String apimKey, String username, String password) {
-    this.baseClient = new BaseClient.Builder(baseurl).apimKey(apimKey).withScheduledToken(username, password).build();
+  public WalletClient(
+      URL authorizationServerUrl,
+      URL resourceServerUrl,
+      String apimKey,
+      String clientId,
+      String clientSecret
+  ) {
+    this(
+        new BaseClient.Builder(resourceServerUrl.toString())
+            .apimKey(apimKey)
+            .withScheduledToken(authorizationServerUrl.toString(), clientId, clientSecret)
+            .build()
+    );
+  }
+
+  public WalletClient(URL authorizationServerUrl, URL resourceServerUrl, String clientId, String clientSecret) {
+    this(authorizationServerUrl, resourceServerUrl, null, clientId, clientSecret);
   }
 
   public Flow.Publisher<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
     try {
       return new MapOperator<>(baseClient.post(
-          "/payment-tokens",
+          "/v1/payment-tokens",
           new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
           correlationId
       ), httpResponse -> httpResponse.getStatus().toResponse());
@@ -46,7 +62,7 @@ public class WalletClient {
 
   public Flow.Publisher<RequestStatus> deleteToken(UUID tokenId, String correlationId) {
     return new MapOperator<>(
-        baseClient.delete(String.format("/payment-tokens/%s", tokenId), correlationId),
+        baseClient.delete(String.format("/v1/payment-tokens/%s", tokenId), correlationId),
         httpResponse -> httpResponse.getStatus().toResponse()
     );
   }
@@ -54,7 +70,7 @@ public class WalletClient {
   public Flow.Publisher<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
     try {
       return new MapOperator<>(baseClient.post(
-          "/payments",
+          "/v1/payments",
           new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
           correlationId
       ), httpResponse -> httpResponse.getStatus().toResponse());

@@ -11,6 +11,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -52,7 +53,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(paymentEndpointMapping(transactionTime, created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
               createPaymentRequest(transactionTime),
               "1"
           )))
@@ -63,7 +64,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success_with_simulation() {
       stubFor(simulationPaymentEndpointMapping(transactionTime, created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
               createSimulationRequest(transactionTime),
               "1"
           )))
@@ -75,7 +76,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void server_error() {
       stubFor(paymentEndpointMapping(transactionTime, serverError()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
               createPaymentRequest(transactionTime),
               "1"
           )))
@@ -87,7 +88,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     public void client_error() {
       stubFor(paymentEndpointMapping(transactionTime, forbidden()));
       var paymentRequest = createPaymentRequest(transactionTime);
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.payment(paymentRequest, "1")))
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(paymentRequest, "1")))
           .expectNext(RequestStatus.ClientError)
           .verifyComplete();
     }
@@ -124,7 +125,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     }
 
     private MappingBuilder paymentMapping(OffsetDateTime transactionTime) {
-      return post("/payments")
+      return post(urlPathEqualTo("/v1/payments"))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern("1"))
           .withRequestBody(matchingJsonPath("merchantId", equalTo("10030005")))
@@ -168,7 +169,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         String messageId,
         ResponseDefinitionBuilder responseBuilder
     ) {
-      return delete(String.format("/payments/messages/%s", messageId))
+      return delete(urlPathEqualTo(String.format("/v1/payments/messages/%s", messageId)))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .willReturn(responseBuilder);
@@ -183,7 +184,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(CaptureEndpointMapping("payment-id", "1", created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.capture(
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.capturePayment(
               "payment-id",
               new CaptureRequest().amount(new Amount().currency("NOK").value(10000L))
                   .messageId("74313af1-e2cc-403f-85f1-6050725b01b6"),
@@ -198,36 +199,11 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         String correlationId,
         ResponseDefinitionBuilder responseBuilder
     ) {
-      return post(String.format("/payments/%s/captures", paymentId))
+      return post(urlPathEqualTo(String.format("/v1/payments/%s/captures", paymentId)))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
           .withRequestBody(matchingJsonPath("amount", containing("10000").and(containing("NOK"))))
-          .willReturn(responseBuilder);
-    }
-  }
-
-  @Nested
-  @DisplayName("Capture Rollback")
-  public class CaptureRollbackTest {
-
-    @Test
-    public void success() {
-      stubFor(CaptureRollbackEndpointMapping("payment-id", "message-id", "1", created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollbackCapture("payment-id", "message-id", "1")))
-          .expectNext(RequestStatus.Accepted)
-          .verifyComplete();
-    }
-
-    private MappingBuilder CaptureRollbackEndpointMapping(
-        String paymentId,
-        String messageId,
-        String correlationId,
-        ResponseDefinitionBuilder responseBuilder
-    ) {
-      return delete(String.format("/payments/%s/captures/messages/%s", paymentId, messageId))
-          .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
-          .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .willReturn(responseBuilder);
     }
   }
@@ -239,7 +215,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(CancelEndpointMapping("payment-id", "1", created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cancel("payment-id", "1")))
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cancelPayment("payment-id", "1")))
           .expectNext(RequestStatus.Accepted)
           .verifyComplete();
     }
@@ -249,7 +225,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         String correlationId,
         ResponseDefinitionBuilder responseBuilder
     ) {
-      return post(String.format("/payments/%s/cancellation", paymentId))
+      return post(urlPathEqualTo(String.format("/v1/payments/%s/cancellation", paymentId)))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .willReturn(responseBuilder);
@@ -266,7 +242,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
             "1",
             created()
         ));
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.refund(
+        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.refundPayment(
                 "payment-id",
                 new RefundRequest()
                     .amount(new Amount()
@@ -286,7 +262,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
           String correlationId,
           ResponseDefinitionBuilder responseBuilder
       ) {
-        return post(String.format("/payments/%s/refunds", paymentId))
+        return post(urlPathEqualTo(String.format("/v1/payments/%s/refunds", paymentId)))
             .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
             .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
             .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
@@ -314,7 +290,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
           String correlationId,
           ResponseDefinitionBuilder responseBuilder
       ) {
-        return delete(String.format("/payments/%s/refunds/messages/%s", paymentId, messageId))
+        return delete(urlPathEqualTo(String.format("/v1/payments/%s/refunds/messages/%s", paymentId, messageId)))
             .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
             .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
             .willReturn(responseBuilder);
@@ -330,7 +306,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         CutOffRequest cutOffRequest = new CutOffRequest().messageId("message-id").merchantAggregatorId("1");
         stubFor(cutOffSettlementBatchEndpointMapping("merchant-id", "batch-number", "1", created()));
         StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(
-                client.cutOffSettlementBatch("merchant-id", cutOffRequest, "batch-number", "1")))
+                client.cutOff("merchant-id", cutOffRequest, "batch-number", "1")))
             .expectNext(RequestStatus.Accepted)
             .verifyComplete();
       }
@@ -341,7 +317,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
           String correlationId,
           ResponseDefinitionBuilder responseBuilder
       ) {
-        return put(String.format("/settlements/%s/%s", merchantId, batchNumber))
+        return put(urlPathEqualTo(String.format("/v1/settlements/%s/%s", merchantId, batchNumber)))
             .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
             .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
             .willReturn(responseBuilder);
