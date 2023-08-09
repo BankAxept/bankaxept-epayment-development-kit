@@ -5,6 +5,8 @@ import static no.bankaxept.epayment.client.test.Verifier.verifyBadRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
+import java.util.concurrent.Flow;
+import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
 import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 import org.junit.jupiter.api.Test;
@@ -32,14 +34,14 @@ public class TokenRequestorClientIT {
 
   @Test
   public void enrolCardRequest() throws MalformedURLException {
-    enrolCardRequest(t1Client());
-    enrolCardRequest(testClient());
+    verifyBadRequest(enrolCardRequest(t1Client()));
+    verifyBadRequest(enrolCardRequest(testClient()));
   }
 
-  private void enrolCardRequest(TokenRequestorClient client) {
+  private Flow.Publisher<RequestStatus> enrolCardRequest(TokenRequestorClient client) {
     var correlationId = UUID.randomUUID().toString();
     System.out.println("Correlation id: " + correlationId);
-    verifyBadRequest(client.enrolCard(new EnrolCardRequest(), correlationId));
+    return client.enrolCard(new EnrolCardRequest(), correlationId);
   }
 
 }
