@@ -1,17 +1,15 @@
-package no.bankaxept.epayment.test.client.tokenrequestor;
+package no.bankaxept.epayment.client.test.tokenrequestor;
 
-import no.bankaxept.epayment.client.base.RequestStatus;
-import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
-import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
-import org.junit.jupiter.api.Test;
-import reactor.adapter.JdkFlowAdapter;
-import reactor.test.StepVerifier;
+import static no.bankaxept.epayment.client.test.Verifier.verifyBadRequest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
+import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
+import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
+import org.junit.jupiter.api.Test;
 
-public class TokenRequestorClientIntegrationTest {
+public class TokenRequestorClientIT {
 
   private TokenRequestorClient t1Client() throws MalformedURLException {
     return new TokenRequestorClient(
@@ -41,12 +39,7 @@ public class TokenRequestorClientIntegrationTest {
   private void enrolCardRequest(TokenRequestorClient client) {
     var correlationId = UUID.randomUUID().toString();
     System.out.println("Correlation id: " + correlationId);
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.enrolCard(
-            new EnrolCardRequest(),
-            correlationId
-        )))
-        .expectNext(RequestStatus.ClientError)
-        .verifyComplete();
+    verifyBadRequest(client.enrolCard(new EnrolCardRequest(), correlationId));
   }
 
 }

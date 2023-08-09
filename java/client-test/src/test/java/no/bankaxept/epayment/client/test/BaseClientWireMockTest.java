@@ -1,4 +1,4 @@
-package no.bankaxept.epayment.test.client;
+package no.bankaxept.epayment.client.test;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.lang.annotation.ElementType;

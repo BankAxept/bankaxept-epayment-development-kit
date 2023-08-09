@@ -1,16 +1,17 @@
-package no.bankaxept.epayment.test.client.merchant;
+package no.bankaxept.epayment.client.test.merchant;
+
+import static no.bankaxept.epayment.client.test.Verifier.verifyBadRequest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
+import java.util.concurrent.Flow;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.merchant.MerchantClient;
 import no.bankaxept.epayment.client.merchant.PaymentRequest;
 import org.junit.jupiter.api.Test;
-import reactor.adapter.JdkFlowAdapter;
-import reactor.test.StepVerifier;
 
-public class MerchantClientIntegrationTest {
+public class MerchantClientIT {
 
   private MerchantClient t1Client() throws MalformedURLException {
     return new MerchantClient(
@@ -33,19 +34,14 @@ public class MerchantClientIntegrationTest {
 
   @Test
   public void paymentRequest() throws MalformedURLException {
-    paymentRequest(t1Client());
-    paymentRequest(testClient());
+    verifyBadRequest(paymentRequest(t1Client()));
+    verifyBadRequest(paymentRequest(testClient()));
   }
 
-  private void paymentRequest(MerchantClient client) {
+  private Flow.Publisher<RequestStatus> paymentRequest(MerchantClient client) {
     var correlationId = UUID.randomUUID().toString();
     System.out.println("Correlation id: " + correlationId);
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
-            new PaymentRequest(),
-            correlationId
-        )))
-        .expectNext(RequestStatus.ClientError)
-        .verifyComplete();
+    return client.requestPayment(new PaymentRequest(), correlationId);
   }
 
 }

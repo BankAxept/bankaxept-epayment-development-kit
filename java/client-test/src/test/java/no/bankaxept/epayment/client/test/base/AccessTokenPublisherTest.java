@@ -1,4 +1,4 @@
-package no.bankaxept.epayment.test.client.base;
+package no.bankaxept.epayment.client.test.base;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
