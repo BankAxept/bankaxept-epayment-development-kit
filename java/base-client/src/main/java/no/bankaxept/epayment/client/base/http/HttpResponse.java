@@ -18,18 +18,12 @@ public class HttpResponse {
   }
 
   public RequestStatus requestStatus() {
-    var requestStatus = switch (status.code()) {
-      case 200 -> RequestStatus.Repeated;
-      case 201 -> RequestStatus.Accepted;
-      case 422 -> RequestStatus.Rejected;
-      case 409 -> RequestStatus.Conflicted;
-      default -> status.is4xxClientError() ? RequestStatus.ClientError : RequestStatus.Failed;
-    };
-    if (requestStatus == RequestStatus.ClientError) {
-      throw new IllegalArgumentException(body);
-    } else {
-      return requestStatus;
-    }
+    if (status.code() == 200) return RequestStatus.Repeated;
+    else if (status.code() == 201) return RequestStatus.Accepted;
+    else if (status.code() == 409) return RequestStatus.Conflicted;
+    else if (status.code() == 422) return RequestStatus.Rejected;
+    else if (status.is4xxClientError()) throw new IllegalArgumentException(body);
+    else return RequestStatus.Failed;
   }
 
   public String getBody() {
