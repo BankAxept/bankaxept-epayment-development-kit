@@ -34,7 +34,9 @@ public class TokenRequestorClientIT {
 
   @Test
   public void enrolCardRequest() throws MalformedURLException {
+    System.out.println("Verifying with t1...");
     verifyBadRequest(enrolCardRequest(t1Client()));
+    System.out.println("Verifying with test...");
     verifyBadRequest(enrolCardRequest(testClient()));
   }
 
