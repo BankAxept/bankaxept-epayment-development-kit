@@ -34,8 +34,12 @@ public class MerchantClientIT {
 
   @Test
   public void paymentRequest() throws MalformedURLException {
-    verifyBadRequest(paymentRequest(t1Client()));
     verifyBadRequest(paymentRequest(testClient()));
+  }
+
+  @Test
+  public void paymentRequestT1() throws MalformedURLException {
+    verifyBadRequest(paymentRequest(t1Client()));
   }
 
   private Flow.Publisher<RequestStatus> paymentRequest(MerchantClient client) {
