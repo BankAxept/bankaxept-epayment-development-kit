@@ -21,9 +21,7 @@ public final class Verifier {
 
   public static <T> void verifyForbiddenRequest(Flow.Publisher<T> publisher) {
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(publisher))
-        .expectErrorMatches(
-            t -> t instanceof ClientError && t.getMessage().equals("")
-        )
+        .expectErrorMatches(t -> t instanceof ClientError && t.getMessage().equals(""))
         .verify();
   }
 
