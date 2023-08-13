@@ -15,6 +15,7 @@ import no.bankaxept.epayment.client.base.MapOperator;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.base.SimulationRequest;
 import no.bankaxept.epayment.client.base.SinglePublisher;
+import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 
 public class TokenRequestorClient {
@@ -56,11 +57,11 @@ public class TokenRequestorClient {
     return new MapOperator<>(
         baseClient.post(
             "/v1/payment-tokens",
-            new SinglePublisher<>(serialize(request), executor),
+            new SinglePublisher<>(json(request), executor),
             correlationId,
             findSimulationHeader(request)
         ),
-        httpResponse -> httpResponse.getStatus().toResponse()
+        HttpResponse::requestStatus
     );
   }
 
@@ -71,7 +72,7 @@ public class TokenRequestorClient {
             new SinglePublisher<>("", executor),
             correlationId
         ),
-        httpResponse -> httpResponse.getStatus().toResponse()
+        HttpResponse::requestStatus
     );
   }
 
@@ -82,7 +83,7 @@ public class TokenRequestorClient {
     return Map.of();
   }
 
-  private <T> String serialize(T input) {
+  private <T> String json(T input) {
     try {
       return objectMapper.writeValueAsString(input);
     } catch (JsonProcessingException e) {

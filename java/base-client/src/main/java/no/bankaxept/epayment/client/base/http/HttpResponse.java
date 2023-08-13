@@ -1,5 +1,7 @@
 package no.bankaxept.epayment.client.base.http;
 
+import no.bankaxept.epayment.client.base.ClientError;
+import no.bankaxept.epayment.client.base.RequestStatus;
 import java.util.Objects;
 
 public class HttpResponse {
@@ -14,6 +16,15 @@ public class HttpResponse {
 
   public HttpStatus getStatus() {
     return status;
+  }
+
+  public RequestStatus requestStatus() {
+    if (status.code() == 200) return RequestStatus.Repeated;
+    else if (status.code() == 201) return RequestStatus.Accepted;
+    else if (status.code() == 409) return RequestStatus.Conflicted;
+    else if (status.code() == 422) return RequestStatus.Rejected;
+    else if (status.is4xxClientError()) throw new ClientError(body);
+    else return RequestStatus.Failed;
   }
 
   public String getBody() {

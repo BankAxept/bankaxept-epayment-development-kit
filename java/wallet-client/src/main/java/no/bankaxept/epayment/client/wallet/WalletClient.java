@@ -13,6 +13,7 @@ import no.bankaxept.epayment.client.base.BaseClient;
 import no.bankaxept.epayment.client.base.MapOperator;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.base.SinglePublisher;
+import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.wallet.bankaxept.EnrolCardRequest;
 import no.bankaxept.epayment.client.wallet.bankaxept.PaymentRequest;
 
@@ -49,31 +50,36 @@ public class WalletClient {
   }
 
   public Flow.Publisher<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
-    try {
-      return new MapOperator<>(baseClient.post(
-          "/v1/payment-tokens",
-          new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
-          correlationId
-      ), httpResponse -> httpResponse.getStatus().toResponse());
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
+    return new MapOperator<>(
+        baseClient.post(
+            "/v1/payment-tokens",
+            new SinglePublisher<>(json(request), executor),
+            correlationId
+        ), HttpResponse::requestStatus
+    );
   }
 
   public Flow.Publisher<RequestStatus> deleteToken(UUID tokenId, String correlationId) {
     return new MapOperator<>(
         baseClient.delete(String.format("/v1/payment-tokens/%s", tokenId), correlationId),
-        httpResponse -> httpResponse.getStatus().toResponse()
+        HttpResponse::requestStatus
     );
   }
 
   public Flow.Publisher<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
+    return new MapOperator<>(
+        baseClient.post(
+            "/v1/payments",
+            new SinglePublisher<>(json(request), executor),
+            correlationId
+        ),
+        HttpResponse::requestStatus
+    );
+  }
+
+  private <T> String json(T input) {
     try {
-      return new MapOperator<>(baseClient.post(
-          "/v1/payments",
-          new SinglePublisher<>(objectMapper.writeValueAsString(request), executor),
-          correlationId
-      ), httpResponse -> httpResponse.getStatus().toResponse());
+      return objectMapper.writeValueAsString(input);
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }

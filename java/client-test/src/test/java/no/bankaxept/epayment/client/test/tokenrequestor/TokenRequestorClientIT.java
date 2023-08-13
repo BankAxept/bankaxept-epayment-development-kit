@@ -1,17 +1,17 @@
-package no.bankaxept.epayment.test.client.tokenrequestor;
+package no.bankaxept.epayment.client.test.tokenrequestor;
 
-import no.bankaxept.epayment.client.base.RequestStatus;
-import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
-import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
-import org.junit.jupiter.api.Test;
-import reactor.adapter.JdkFlowAdapter;
-import reactor.test.StepVerifier;
+import static no.bankaxept.epayment.client.test.Verifier.verifyBadRequest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
+import java.util.concurrent.Flow;
+import no.bankaxept.epayment.client.base.RequestStatus;
+import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
+import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
+import org.junit.jupiter.api.Test;
 
-public class TokenRequestorClientIntegrationTest {
+public class TokenRequestorClientIT {
 
   private TokenRequestorClient t1Client() throws MalformedURLException {
     return new TokenRequestorClient(
@@ -34,19 +34,18 @@ public class TokenRequestorClientIntegrationTest {
 
   @Test
   public void enrolCardRequest() throws MalformedURLException {
-    enrolCardRequest(t1Client());
-    enrolCardRequest(testClient());
+    verifyBadRequest(enrolCardRequest(testClient()));
   }
 
-  private void enrolCardRequest(TokenRequestorClient client) {
+  @Test
+  public void enrolCardRequestT1() throws MalformedURLException {
+    verifyBadRequest(enrolCardRequest(t1Client()));
+  }
+
+  private Flow.Publisher<RequestStatus> enrolCardRequest(TokenRequestorClient client) {
     var correlationId = UUID.randomUUID().toString();
     System.out.println("Correlation id: " + correlationId);
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.enrolCard(
-            new EnrolCardRequest(),
-            correlationId
-        )))
-        .expectNext(RequestStatus.ClientError)
-        .verifyComplete();
+    return client.enrolCard(new EnrolCardRequest(), correlationId);
   }
 
 }

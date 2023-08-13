@@ -67,12 +67,8 @@ public class WebFluxClient implements HttpClient {
   }
 
   private Function<ClientResponse, Mono<HttpResponse>> mapResponse() {
-    return clientResponse -> {
-      if (clientResponse.statusCode().is2xxSuccessful())
-        return clientResponse.bodyToMono(String.class)
-            .defaultIfEmpty("")
-            .map(v -> new HttpResponse(clientResponse.statusCode().value(), v));
-      return Mono.just(new HttpResponse(clientResponse.statusCode().value(), null));
-    };
+    return clientResponse -> clientResponse.bodyToMono(String.class)
+        .defaultIfEmpty("")
+        .map(v -> new HttpResponse(clientResponse.statusCode().value(), v));
   }
 }

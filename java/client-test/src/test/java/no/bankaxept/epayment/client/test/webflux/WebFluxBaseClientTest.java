@@ -1,4 +1,4 @@
-package no.bankaxept.epayment.test.client.webflux;
+package no.bankaxept.epayment.client.test.webflux;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.forbidden;
@@ -18,7 +18,7 @@ import no.bankaxept.epayment.client.base.AccessFailed;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.http.HttpStatus;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
-import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
+import no.bankaxept.epayment.client.test.AbstractBaseClientWireMockTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

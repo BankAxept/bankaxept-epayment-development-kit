@@ -27,7 +27,14 @@ public class MapOperator<T, U> implements Flow.Processor<T, U> {
 
   @Override
   public void onNext(T item) {
-    downstream.onNext(mapper.apply(item));
+    U mappedItem;
+    try {
+      mappedItem = mapper.apply(item);
+    } catch (Throwable t) {
+      onError(t);
+      return;
+    }
+    downstream.onNext(mappedItem);
   }
 
   @Override
@@ -39,4 +46,5 @@ public class MapOperator<T, U> implements Flow.Processor<T, U> {
   public void onComplete() {
     downstream.onComplete();
   }
+
 }

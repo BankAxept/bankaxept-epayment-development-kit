@@ -1,4 +1,4 @@
-package no.bankaxept.epayment.test.client.merchant;
+package no.bankaxept.epayment.client.test.merchant;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.created;
@@ -12,6 +12,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static no.bankaxept.epayment.client.test.Verifier.verifyForbiddenRequest;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -27,7 +28,7 @@ import no.bankaxept.epayment.client.merchant.MerchantClient;
 import no.bankaxept.epayment.client.merchant.PaymentRequest;
 import no.bankaxept.epayment.client.merchant.RefundRequest;
 import no.bankaxept.epayment.client.merchant.SimulationPaymentRequest;
-import no.bankaxept.epayment.test.client.AbstractBaseClientWireMockTest;
+import no.bankaxept.epayment.client.test.AbstractBaseClientWireMockTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -88,9 +89,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     public void client_error() {
       stubFor(paymentEndpointMapping(transactionTime, forbidden()));
       var paymentRequest = createPaymentRequest(transactionTime);
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(paymentRequest, "1")))
-          .expectNext(RequestStatus.ClientError)
-          .verifyComplete();
+      verifyForbiddenRequest(client.requestPayment(paymentRequest, "1"));
     }
 
     private PaymentRequest createSimulationRequest(OffsetDateTime transactionTime) {

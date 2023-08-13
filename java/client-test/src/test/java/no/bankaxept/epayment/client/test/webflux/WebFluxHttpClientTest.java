@@ -1,4 +1,4 @@
-package no.bankaxept.epayment.test.client.webflux;
+package no.bankaxept.epayment.client.test.webflux;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.findUnmatchedRequests;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
