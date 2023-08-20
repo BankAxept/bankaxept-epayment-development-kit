@@ -8,7 +8,7 @@ import java.util.concurrent.Flow;
 public final class Verifier {
 
   public static <T> void verifyBadRequest(Flow.Publisher<T> publisher) {
-    verifyBadRequest(publisher, "Illegal value for parameter: ");
+    verifyBadRequest(publisher, "Missing field: messageId");
   }
 
   public static <T> void verifyBadRequest(Flow.Publisher<T> publisher, String messageStart) {
