@@ -5,14 +5,14 @@ info:
   description: BankAxept ePayment Merchant API - ePayment Platform side
 
 servers:
-  - url: /bankaxept-epayment/merchant-api/v1
+  - url: https://epp.stoetest.cloud/merchant
 
 security:
   - ocpApimSubscriptionKey: [ ]
   - bearerAuth: [ ]
 
 paths:
-  /payments:
+  /v1/payments:
     post:
       summary: Request a new payment
       description: >-
@@ -57,7 +57,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/messages/{messageId}:
+  /v1/payments/messages/{messageId}:
     delete:
       summary: Rollback a payment request
       operationId: rollbackPayment
@@ -84,7 +84,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/{paymentId}/captures:
+  /v1/payments/{paymentId}/captures:
     post:
       summary: Capture a payment
       description: |
@@ -119,7 +119,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/{paymentId}/cancellation:
+  /v1/payments/{paymentId}/cancellation:
     post:
       summary: Cancel a payment
       description: |
@@ -149,7 +149,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/{paymentId}/refunds:
+  /v1/payments/{paymentId}/refunds:
     post:
       summary: Refund a payment
       description: |
@@ -187,7 +187,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/{paymentId}/refunds/messages/{messageId}:
+  /v1/payments/{paymentId}/refunds/messages/{messageId}:
     delete:
       summary: Rollback a refund request
       operationId: rollbackRefund
@@ -215,7 +215,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /settlements/{merchantId}/{batchNumber}:
+  /v1/settlements/{merchantId}/{batchNumber}:
     put:
       summary: Cut off a settlement batch
       operationId: cutOff

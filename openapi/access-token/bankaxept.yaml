@@ -5,13 +5,13 @@ info:
   description: BankAxept ePayment Access Token APIs
 
 servers:
-  - url: /bankaxept-epayment/access-token-api/v1
+  - url: https://epp.stoetest.cloud/access-token
 
 security:
   - ocpApimSubscriptionKey: []
 
 paths:
-  /accesstoken:
+  /v1/accesstoken:
     post:
       tags:
         - Client Authorization Service

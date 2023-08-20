@@ -4,7 +4,7 @@ info:
   title: BankAxept ePayment Wallet API - ePayment Platform
 
 servers:
-  - url: /bankaxept-epayment/wallet-api/v1
+  - url: https://epp.stoetest.cloud/wallet
 
 security:
   - ocpApimSubscriptionKey: [ ]
@@ -12,7 +12,7 @@ security:
 
 paths:
 
-  /payment-tokens:
+  /v1/payment-tokens:
     post:
       summary: Request a card enrolment
       operationId: enrolCard
@@ -40,7 +40,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payment-tokens/{tokenId}:
+  /v1/payment-tokens/{tokenId}:
     delete:
       summary: Delete a token
       operationId: deleteToken
@@ -63,7 +63,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments:
+  /v1/payments:
     post:
       summary: Request a new payment
       operationId: requestPayment
@@ -91,7 +91,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/authentication-response:
+  /v1/payments/authentication-response:
     get:
       summary: Endpoint used by the authentication provider to provide the payment authentication response.
       operationId: completePaymentAuthentication
@@ -104,7 +104,7 @@ paths:
         '303':
           description: Redirect to a callback url registered to a merchant aggregator.
 
-  /payment-tokens/authentication-response:
+  /v1/payment-tokens/authentication-response:
     get:
       summary: Endpoint used by the authentication provider to provide the card enrolment authentication response.
       operationId: completeCardEnrolmentAuthentication
