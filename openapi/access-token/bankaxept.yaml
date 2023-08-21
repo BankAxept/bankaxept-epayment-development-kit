@@ -8,7 +8,7 @@ servers:
   - url: https://epp.stoetest.cloud/access-token
 
 security:
-  - ocpApimSubscriptionKey: []
+  - basicAuth: []
 
 paths:
   /v1/accesstoken:
@@ -92,10 +92,6 @@ components:
 
 
   securitySchemes:
-    ocpApimSubscriptionKey:
-      type: apiKey
-      in: header
-      name: Ocp-Apim-Subscription-Key
     basicAuth:
       type: http
       scheme: basic
