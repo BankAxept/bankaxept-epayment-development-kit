@@ -5,15 +5,14 @@ info:
   description: BankAxept ePayment Token Requestor APIs - ePayment Platform side
   
 servers:
-  - url: /bankaxept-epayment/token-requestor-api/v1
+  - url: https://epp.stoetest.cloud/token-requestor
 
 security:
-  - ocpApimSubscriptionKey: [ ]
   - bearerAuth: [ ]
 
 paths:
 
-  /payment-tokens:
+  /v1/payment-tokens:
     post:
       summary: Request a card enrolment
       operationId: enrolCard
@@ -41,7 +40,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payment-tokens/{tokenId}/deletion:
+  /v1/payment-tokens/{tokenId}/deletion:
     post:
       summary: Delete a token
       operationId: deleteToken

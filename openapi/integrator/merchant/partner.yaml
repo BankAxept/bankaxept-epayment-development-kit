@@ -5,7 +5,7 @@ info:
   description: BankAxept ePayment Merchant API - Merchant Server side
 
 paths:
-  /payments:
+  /v1/payments:
     description: Response to a payment request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
@@ -33,7 +33,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/captures:
+  /v1/payments/captures:
     description: Response to a capture request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
@@ -61,7 +61,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /payments/refunds:
+  /v1/payments/refunds:
     description: Response to a refund request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
@@ -88,7 +88,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /settlements:
+  /v1/settlements:
     description: Response to a cut-off request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'

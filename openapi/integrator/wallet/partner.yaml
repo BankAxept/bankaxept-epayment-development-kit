@@ -4,7 +4,7 @@ info:
   title: BankAxept ePayment Wallet API - ePayment Platform
 
 paths:
-  /wallet/payment-tokens:
+  /v1/wallet/payment-tokens:
     description: EnrolCard callback
     post:
       operationId: addToken
@@ -31,7 +31,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /wallet/payment-tokens/authentication:
+  /v1/wallet/payment-tokens/authentication:
     description: Enrolment authentication
     post:
       operationId: authenticateEnrolment
@@ -59,7 +59,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /wallet/payment-tokens/authentication/complete:
+  /v1/wallet/payment-tokens/authentication/complete:
     description: When the authentication process has been completed, the user agent is redirected to this endpoint.
     get:
       operationId: completeEnrolmentAuthentication
@@ -81,7 +81,7 @@ paths:
           description: The partner is free to define its own responses.
 
 
-  /wallet/payment-tokens/suspensions:
+  /v1/wallet/payment-tokens/suspensions:
     description: Payment token suspension notification
     post:
       operationId: suspendToken
@@ -108,7 +108,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /wallet/payment-tokens/resumptions:
+  /v1/wallet/payment-tokens/resumptions:
     description: Payment token resumption notification
     post:
       operationId: resumeToken
@@ -135,7 +135,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/{tokenId}:
+  /v1/wallet/payment-tokens/{tokenId}:
     description: Payment token deletion notification
     delete:
       operationId: deleteToken
@@ -157,7 +157,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /wallet/payment-tokens/expirations:
+  /v1/wallet/payment-tokens/expirations:
     description: Payment token expiry date extension notification
     post:
       operationId: extendExpiration
@@ -183,7 +183,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /wallet/payments:
+  /v1/wallet/payments:
     post:
       description: Response to a payment request
       operationId: addPayment
@@ -210,7 +210,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /wallet/payments/authentication:
+  /v1/wallet/payments/authentication:
     description: Payment authentication
     post:
       operationId: authenticatePayment
@@ -237,7 +237,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /wallet/payments/authentication/complete:
+  /v1/wallet/payments/authentication/complete:
     description: When the authentication process has been completed, the user agent is redirected to this endpoint.
     get:
       operationId: completePaymentAuthentication

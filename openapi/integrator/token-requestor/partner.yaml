@@ -5,7 +5,7 @@ info:
   description: BankAxept ePayment Token Requestor APIs - Token Requestor side
 
 paths:
-  /payment-tokens:
+  /v1/payment-tokens:
     description: EnrolCard callback
     post:
       operationId: addToken
@@ -32,7 +32,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/suspensions:
+  /v1/payment-tokens/suspensions:
     description: Payment token suspension notification
     post:
       operationId: suspendToken
@@ -59,7 +59,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/resumptions:
+  /v1/payment-tokens/resumptions:
     description: Payment token resumption notification
     post:
       operationId: resumeToken
@@ -86,7 +86,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/{tokenRequestorReference}:
+  /v1/payment-tokens/{tokenRequestorReference}:
     description: Payment token deletion notification
     delete:
       operationId: deleteToken
@@ -108,7 +108,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
-  /payment-tokens/expirations:
+  /v1/payment-tokens/expirations:
     description: Payment token expiry date extension notification
     post:
       operationId: extendExpiration
