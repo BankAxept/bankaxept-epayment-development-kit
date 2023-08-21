@@ -383,10 +383,6 @@ components:
       description: Server Error
 
   securitySchemes:
-    ocpApimSubscriptionKey:
-      type: apiKey
-      in: header
-      name: Ocp-Apim-Subscription-Key
     bearerAuth:
       type: http
       scheme: bearer
