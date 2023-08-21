@@ -7,7 +7,6 @@ servers:
   - url: https://epp.stoetest.cloud/wallet
 
 security:
-  - ocpApimSubscriptionKey: [ ]
   - bearerAuth: [ ]
 
 paths:

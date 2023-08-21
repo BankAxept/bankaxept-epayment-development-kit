@@ -8,7 +8,6 @@ servers:
   - url: https://epp.stoetest.cloud/token-requestor
 
 security:
-  - ocpApimSubscriptionKey: [ ]
   - bearerAuth: [ ]
 
 paths:
