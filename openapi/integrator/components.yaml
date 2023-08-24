@@ -260,7 +260,7 @@ components:
       example: "74313af1-e2cc-403f-85f1-6050725b01b6"
     iss:
       description: >-
-        A unique identifier for the issuer.
+        Identifies the principal that issued the JWT.
       type: string
       maxLength: 100
     iat:
