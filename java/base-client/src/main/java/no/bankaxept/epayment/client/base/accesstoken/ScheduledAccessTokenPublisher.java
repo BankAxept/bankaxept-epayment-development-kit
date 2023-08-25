@@ -163,12 +163,6 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
       return this;
     }
 
-    public Builder apimKey(String apimKey) {
-      if (apimKey != null)
-        headers.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
-      return this;
-    }
-
     public Builder clientCredentials(String id, String secret) {
       headers.put(
           "Authorization",
