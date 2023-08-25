@@ -5,7 +5,7 @@ info:
   description: BankAxept ePayment Token Requestor APIs - ePayment Platform side
   
 servers:
-  - url: https://epp.stoetest.cloud/token-requestor
+  - url: https://api.epp.stoetest.cloud/token-requestor
 
 security:
   - bearerAuth: [ ]

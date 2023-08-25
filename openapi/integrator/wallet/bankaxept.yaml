@@ -4,7 +4,7 @@ info:
   title: BankAxept ePayment Wallet API - ePayment Platform
 
 servers:
-  - url: https://epp.stoetest.cloud/wallet
+  - url: https://api.epp.stoetest.cloud/wallet
 
 security:
   - bearerAuth: [ ]
