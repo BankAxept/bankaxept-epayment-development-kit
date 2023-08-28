@@ -21,6 +21,5 @@ and then create a configuration file (like [this](java/webflux-client/src/main/r
 It's pretty simple to create a client.<br>
 You need a few values to get started
 * **Base url** of the ePayment service
-* **API-M key** (optional). Needed if you're you're routed through Azure. If you're not working on ePayment you probably always need to set this.
 * **Credentials for fetching tokens** .
-> var merchantClient = new MerchantClient(baseurl, apimKey, username, password);
+> var merchantClient = new MerchantClient(baseurl, username, password);

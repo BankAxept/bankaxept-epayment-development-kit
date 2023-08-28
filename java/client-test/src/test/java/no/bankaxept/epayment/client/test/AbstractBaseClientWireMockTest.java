@@ -42,7 +42,6 @@ public abstract class AbstractBaseClientWireMockTest {
 
   protected MappingBuilder tokenEndpointMapping(ResponseDefinitionBuilder responseBuilder) {
     return WireMock.post("/bankaxept-epayment/access-token-api/v1/accesstoken")
-        .withHeader("Ocp-Apim-Subscription-Key", new EqualToPattern("key"))
         .withBasicAuth("username", "password")
         .willReturn(responseBuilder);
   }
@@ -60,7 +59,7 @@ public abstract class AbstractBaseClientWireMockTest {
   }
 
   protected BaseClient createScheduledBaseClient(int port) {
-    return new BaseClient.Builder("http://localhost:" + port).apimKey("key")
+    return new BaseClient.Builder("http://localhost:" + port)
         .withScheduledToken(
             "http://localhost:" + port + "/bankaxept-epayment/access-token-api/v1/accesstoken",
             "username",

@@ -13,20 +13,10 @@ import org.junit.jupiter.api.Test;
 
 public class WalletClientIT {
 
-  private WalletClient t1Client() throws MalformedURLException {
-    return new WalletClient(
-        new URL("https://t1-api.techcloud0dev.net/bankaxept-epayment/access-token-api/v1/accesstoken"),
-        new URL("https://t1-api.techcloud0dev.net/bankaxept-epayment/wallet-api"),
-        System.getenv("APIM_KEY"),
-        System.getenv("CLIENT_ID"),
-        System.getenv("CLIENT_SECRET")
-    );
-  }
-
   private WalletClient testClient() throws MalformedURLException {
     return new WalletClient(
-        new URL("https://epp.stoetest.cloud/access-token/v1/accesstoken"),
-        new URL("https://epp.stoetest.cloud/wallet"),
+        new URL("https://api.epp.stoetest.cloud/access-token/v1/accesstoken"),
+        new URL("https://api.epp.stoetest.cloud/wallet"),
         System.getenv("CLIENT_ID"),
         System.getenv("CLIENT_SECRET")
     );
@@ -35,11 +25,6 @@ public class WalletClientIT {
   @Test
   public void paymentRequest() throws MalformedURLException {
     verifyBadRequest(paymentRequest(testClient()), "");
-  }
-
-  @Test
-  public void paymentRequestT1() throws MalformedURLException {
-    verifyBadRequest(paymentRequest(t1Client()), "");
   }
 
   private Flow.Publisher<RequestStatus> paymentRequest(WalletClient client) {
