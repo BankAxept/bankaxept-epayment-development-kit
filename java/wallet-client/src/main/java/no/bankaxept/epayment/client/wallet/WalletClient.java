@@ -33,20 +33,14 @@ public class WalletClient {
   public WalletClient(
       URL authorizationServerUrl,
       URL resourceServerUrl,
-      String apimKey,
       String clientId,
       String clientSecret
   ) {
     this(
         new BaseClient.Builder(resourceServerUrl.toString())
-            .apimKey(apimKey)
             .withScheduledToken(authorizationServerUrl.toString(), clientId, clientSecret)
             .build()
     );
-  }
-
-  public WalletClient(URL authorizationServerUrl, URL resourceServerUrl, String clientId, String clientSecret) {
-    this(authorizationServerUrl, resourceServerUrl, null, clientId, clientSecret);
   }
 
   public Flow.Publisher<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {

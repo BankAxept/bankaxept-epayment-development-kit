@@ -36,20 +36,14 @@ public class MerchantClient {
   public MerchantClient(
       URL authorizationServerUrl,
       URL resourceServerUrl,
-      String apimKey,
       String clientId,
       String clientSecret
   ) {
     this(
         new BaseClient.Builder(resourceServerUrl.toString())
-            .apimKey(apimKey)
             .withScheduledToken(authorizationServerUrl.toString(), clientId, clientSecret)
             .build()
     );
-  }
-
-  public MerchantClient(URL authorizationServerUrl, URL merchantServerUrl, String clientId, String clientSecret) {
-    this(authorizationServerUrl, merchantServerUrl, null, clientId, clientSecret);
   }
 
   private static Map<String, List<String>> findSimulationHeader(Object request) {

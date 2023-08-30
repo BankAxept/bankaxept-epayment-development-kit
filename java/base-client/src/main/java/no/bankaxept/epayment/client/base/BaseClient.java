@@ -24,12 +24,10 @@ public class BaseClient {
 
   private final HttpClient httpClient;
   private final AccessTokenPublisher tokenPublisher;
-  private final String apimKey;
 
-  private BaseClient(HttpClient httpClient, AccessTokenPublisher tokenPublisher, String apimKey) {
+  private BaseClient(HttpClient httpClient, AccessTokenPublisher tokenPublisher) {
     this.httpClient = httpClient;
     this.tokenPublisher = tokenPublisher;
-    this.apimKey = apimKey;
   }
 
   private Map<String, List<String>> filterHeaders(
@@ -46,8 +44,6 @@ public class BaseClient {
       );
     if (hasBody && !headers.containsKey("Content-Type"))
       filteredHeaders.put("Content-Type", List.of("application/json"));
-    if (apimKey != null)
-      filteredHeaders.put("Ocp-Apim-Subscription-Key", List.of(apimKey));
     return filteredHeaders;
   }
 
@@ -90,7 +86,6 @@ public class BaseClient {
   public static class Builder {
 
     private final HttpClient httpClient;
-    private String apimKey;
     private AccessTokenPublisher tokenPublisher;
 
     public Builder(String resourceServerUrl) {
@@ -98,11 +93,6 @@ public class BaseClient {
           .findFirst()
           .map(httpClientProvider -> httpClientProvider.create(resourceServerUrl))
           .orElseThrow();
-    }
-
-    public Builder apimKey(String apimKey) {
-      this.apimKey = apimKey;
-      return this;
     }
 
     public Builder withStaticToken(String token) {
@@ -125,7 +115,6 @@ public class BaseClient {
           .httpClient(httpClient)
           .uri(authorizationServerUrl)
           .clientCredentials(id, secret)
-          .apimKey(apimKey)
           .build();
       return this;
     }
@@ -135,14 +124,13 @@ public class BaseClient {
           .httpClient(httpClient)
           .uri(authorizationServerUrl)
           .clientCredentials(id, secret)
-          .apimKey(apimKey)
           .clock(clock)
           .build();
       return this;
     }
 
     public BaseClient build() {
-      return new BaseClient(httpClient, tokenPublisher, apimKey);
+      return new BaseClient(httpClient, tokenPublisher);
     }
   }
 

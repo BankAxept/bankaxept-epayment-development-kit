@@ -95,7 +95,6 @@ class AccessTokenPublisherTest {
         .clientCredentials("username", "password")
         .clock(clock)
         .scheduler(schedulerMock)
-        .apimKey("key")
         .build();
   }
 
