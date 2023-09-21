@@ -49,9 +49,15 @@ components:
     PaymentCardholderAuthenticationData:
       type: object
       required:
+        - iss
+        - iat
         - paymentToken
         - verifiedCardholderAuthenticationSignedData
       properties:
+        iss:
+          $ref: '#/components/schemas/iss'
+        iat:
+          $ref: '#/components/schemas/iat'
         paymentToken:
           $ref: '#/components/schemas/PaymentToken'
         verifiedCardholderAuthenticationSignedData:
@@ -252,6 +258,18 @@ components:
       type: string
       maxLength: 36
       example: "74313af1-e2cc-403f-85f1-6050725b01b6"
+    iss:
+      description: >-
+        Identifies the principal that issued the JWT.
+      type: string
+      maxLength: 100
+    iat:
+      description: >-
+        Identifies the time at which the JWT was issued.
+      type: integer
+      format: int64
+      minimum: 1600000000
+      maximum: 1800000000
     messageId:
       description: >-
         A unique identifier that guarantees message idempotency.

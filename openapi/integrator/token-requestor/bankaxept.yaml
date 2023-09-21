@@ -86,9 +86,15 @@ components:
       type: object
       required:
         - enrolmentData
+        - iss
+        - iat
       properties:
         enrolmentData:
           $ref: '#/components/schemas/EnrolmentData'
+        iss:
+          $ref: '../components.yaml#/components/schemas/iss'
+        iat:
+          $ref: '../components.yaml#/components/schemas/iat'
         verifiedCardholderAuthenticationSignedData:
           $ref: '../components.yaml#/components/schemas/verifiedCardholderAuthenticationSignedData'
         cardholderAuthenticationData:
