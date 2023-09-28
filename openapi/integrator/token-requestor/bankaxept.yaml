@@ -63,6 +63,29 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
+  /v1/eligible-banks/{bankIdentifiers}:
+    get:
+      summary: Eligible bank identifiers
+      description: From the input of comma-separated list of bank identifiers, return the ones that are eligible for enrolment with ePayment.
+      operationId: supportedBankRegistrationNumbers
+      parameters:
+        - name: bankIdentifiers
+          description: Comma-separated list of 4-digit bank identifiers to be checked for eligibility
+          in: path
+          schema:
+            type: string
+          example: 9998, 2030
+          required: true
+      responses:
+        '200':
+          description: Input processed
+          content:
+            application/text;charset=UTF-8:
+              schema:
+                type: string
+                description: Comma-separated list of eligible bank identifiers
+                example: 9998
+
 components:
   schemas:
     EnrolCardRequest:
