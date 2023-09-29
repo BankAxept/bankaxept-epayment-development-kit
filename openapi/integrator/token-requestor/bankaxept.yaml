@@ -65,8 +65,8 @@ paths:
 
   /v1/eligible-banks:
     get:
-      summary: Eligible bank identifiers
-      description: From the input of comma-separated list of bank identifiers, return the ones that are eligible for enrolment with ePayment.
+      summary: Eligible banks
+      description: Returns the subset of the input list of banks that are eligible for enrolment.
       operationId: eligibleBanks
       parameters:
         - name: bankIdentifier
