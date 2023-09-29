@@ -2,6 +2,7 @@ package no.bankaxept.epayment.client.test.tokenrequestor;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.created;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
@@ -13,6 +14,7 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import no.bankaxept.epayment.client.base.RequestStatus;
@@ -61,7 +63,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   @Test
   public void eligibleBanksSuccessful() {
     stubFor(eligibleBanksEndpoint(ok()));
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.deleteToken(tokenId.toString(), someCorrelationId)))
+    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.eligibleBanks(List.of("9998"))))
         .expectNext(RequestStatus.Repeated)
         .verifyComplete();
   }
@@ -92,7 +94,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   }
 
   private MappingBuilder eligibleBanksEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return post(urlPathEqualTo("/v1/payment-tokens"))
+    return get(urlPathEqualTo("/v1/eligible-banks"))
         .withQueryParams(Map.of("bankIdentifier", matching("[0-9]{4}")))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .willReturn(responseBuilder);
