@@ -4,6 +4,7 @@ import static no.bankaxept.epayment.client.test.Verifier.verifyBadRequest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Flow;
 import no.bankaxept.epayment.client.base.RequestStatus;
@@ -25,6 +26,11 @@ public class TokenRequestorClientIT {
   @Test
   public void enrolCardRequest() throws MalformedURLException {
     verifyBadRequest(enrolCardRequest(testClient()));
+  }
+
+  @Test
+  public void eligibleBanksRequest() throws MalformedURLException {
+    verifyBadRequest(testClient().eligibleBanks(List.of("090909")));
   }
 
   private Flow.Publisher<RequestStatus> enrolCardRequest(TokenRequestorClient client) {

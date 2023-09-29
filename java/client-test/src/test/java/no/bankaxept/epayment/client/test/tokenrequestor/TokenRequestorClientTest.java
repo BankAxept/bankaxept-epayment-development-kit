@@ -2,7 +2,9 @@ package no.bankaxept.epayment.client.test.tokenrequestor;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.created;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
@@ -11,11 +13,12 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import java.util.Map;
 import java.util.UUID;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.test.AbstractBaseClientWireMockTest;
-import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
+import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
@@ -55,6 +58,13 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
         .verifyComplete();
   }
 
+  @Test
+  public void eligibleBanksSuccessful() {
+    stubFor(eligibleBanksEndpoint(ok()));
+    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.deleteToken(tokenId.toString(), someCorrelationId)))
+        .expectNext(RequestStatus.Repeated)
+        .verifyComplete();
+  }
 
   private EnrolCardRequest createEnrolmentRequest() {
     return new EnrolCardRequest()
@@ -78,6 +88,13 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
         .withRequestBody(matchingJsonPath("tokenRequestorId", equalTo(tokenRequestorIdExample)))
         .withRequestBody(matchingJsonPath("messageId", equalTo(messageIdExample)))
         .withRequestBody(matchingJsonPath("encryptedCardholderAuthenticationData", equalTo(encryptedExampleData)))
+        .willReturn(responseBuilder);
+  }
+
+  private MappingBuilder eligibleBanksEndpoint(ResponseDefinitionBuilder responseBuilder) {
+    return post(urlPathEqualTo("/v1/payment-tokens"))
+        .withQueryParams(Map.of("bankIdentifier", matching("[0-9]{4}")))
+        .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .willReturn(responseBuilder);
   }
 

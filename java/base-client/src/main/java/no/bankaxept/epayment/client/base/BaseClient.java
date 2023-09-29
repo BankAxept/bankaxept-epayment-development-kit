@@ -47,6 +47,13 @@ public class BaseClient {
     return filteredHeaders;
   }
 
+  public Flow.Publisher<HttpResponse> get(
+      String uri,
+      Map<String, List<String>> headers
+  ) {
+    return httpClient.get(uri, headers);
+  }
+
   public Flow.Publisher<HttpResponse> post(
       String uri,
       Flow.Publisher<String> body,
