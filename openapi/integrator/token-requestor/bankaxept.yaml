@@ -85,7 +85,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                type: string
+                type: object
                 description: Comma-separated list of eligible bank identifiers
                 example: ["9998", "0001"]
         '400':
