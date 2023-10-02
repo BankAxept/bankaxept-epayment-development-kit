@@ -25,7 +25,7 @@ public class TokenRequestorClientIT {
 
   @Test
   public void enrolCardRequest() throws MalformedURLException {
-    verifyBadRequest(enrolCardRequest(testClient()));
+    verifyBadRequest(enrolCardRequest(testClient()), "Invalid bank identifier 090909");
   }
 
   @Test
