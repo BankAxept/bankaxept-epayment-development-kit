@@ -15,8 +15,8 @@ public class TokenRequestorClientIT {
 
   private TokenRequestorClient testClient() throws MalformedURLException {
     return new TokenRequestorClient(
-        new URL("https://api.epp.stoetest.cloud/access-token/v1/accesstoken"),
-        new URL("https://api.epp.stoetest.cloud/token-requestor"),
+        new URL("https://api.epp-stoetest.cloud/access-token/v1/accesstoken"),
+        new URL("https://api.epp-stoetest.cloud/token-requestor"),
         System.getenv("CLIENT_ID"),
         System.getenv("CLIENT_SECRET")
     );
