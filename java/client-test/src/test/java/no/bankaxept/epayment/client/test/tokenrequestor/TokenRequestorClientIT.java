@@ -33,12 +33,12 @@ public class TokenRequestorClientIT {
 
   @Test
   public void enrolCardRequest() {
-    verifyBadRequest(enrolCardRequest(testClient), "Invalid bank identifier 090909");
+    verifyBadRequest(enrolCardRequest(testClient));
   }
 
   @Test
   public void eligibleBanksRequest() {
-    verifyBadRequest(testClient.eligibleBanks(List.of("090909")));
+    verifyBadRequest(testClient.eligibleBanks(List.of("090909")), "Invalid bank identifier 090909");
   }
 
   private Flow.Publisher<RequestStatus> enrolCardRequest(TokenRequestorClient client) {
