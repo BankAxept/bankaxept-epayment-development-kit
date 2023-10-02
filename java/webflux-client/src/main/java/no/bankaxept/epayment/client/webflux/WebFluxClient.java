@@ -26,6 +26,11 @@ public class WebFluxClient implements HttpClient {
   }
 
   @Override
+  public Publisher<HttpResponse> get(String uri, Map<String, List<String>> headers) {
+    return sendRequest(uri, headers, HttpMethod.GET);
+  }
+
+  @Override
   public Publisher<HttpResponse> post(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
     return sendRequest(uri, bodyPublisher, headers, HttpMethod.POST);
   }

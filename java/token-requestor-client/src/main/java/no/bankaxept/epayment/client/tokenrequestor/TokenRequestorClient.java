@@ -65,6 +65,15 @@ public class TokenRequestorClient {
     );
   }
 
+  public Flow.Publisher<RequestStatus> eligibleBanks(List<String> bankIdentifiers) {
+    return new MapOperator<>(
+        baseClient.get(
+            "/v1/eligible-banks?bankIdentifier=" + String.join(",", bankIdentifiers),
+            Map.of()
+        ),
+        HttpResponse::requestStatus);
+  }
+
   private static Map<String, List<String>> findSimulationHeader(Object request) {
     if (request instanceof SimulationRequest) {
       return Map.of(SIMULATION_HEADER, ((SimulationRequest) request).getSimulationValues());
