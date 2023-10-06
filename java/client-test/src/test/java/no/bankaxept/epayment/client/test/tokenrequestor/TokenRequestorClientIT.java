@@ -3,9 +3,8 @@ package no.bankaxept.epayment.client.test.tokenrequestor;
 import static no.bankaxept.epayment.client.test.Verifier.verifyBadRequest;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Flow;
@@ -21,8 +20,8 @@ public class TokenRequestorClientIT {
   {
     try {
       testClient = new TokenRequestorClient(
-          new URI("https://api.epp.stoetest.cloud/access-token/v1/accesstoken").toURL(),
-          new URI("https://api.epp.stoetest.cloud/token-requestor").toURL(),
+          new URI("https://api.epp-stoetest.cloud/access-token/v1/accesstoken").toURL(),
+          new URI("https://api.epp-stoetest.cloud/token-requestor").toURL(),
           System.getenv("CLIENT_ID"),
           System.getenv("CLIENT_SECRET")
       );
