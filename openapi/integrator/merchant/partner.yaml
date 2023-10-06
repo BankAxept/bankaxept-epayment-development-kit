@@ -169,7 +169,7 @@ components:
       type: string
       example: 00
       description: |
-        Status code specifying the result of the operation:
+        Original Nisok response code:
         * 00 - Payment was authorised.
         * 03 - Invalid merchant.
         * 05 - Declined without specific reason.
