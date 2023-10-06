@@ -5,7 +5,7 @@ info:
   description: BankAxept ePayment Merchant API - ePayment Platform side
 
 servers:
-  - url: https://api.epp.stoetest.cloud/merchant
+  - url: https://api.epp-stoetest.cloud/merchant
 
 security:
   - bearerAuth: [ ]
