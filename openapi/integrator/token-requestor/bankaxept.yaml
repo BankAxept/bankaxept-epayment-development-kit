@@ -5,7 +5,7 @@ info:
   description: BankAxept ePayment Token Requestor APIs - ePayment Platform side
   
 servers:
-  - url: https://api.epp.stoetest.cloud/token-requestor
+  - url: https://api.epp-stoetest.cloud/token-requestor
 
 security:
   - bearerAuth: [ ]
@@ -62,6 +62,34 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/eligible-banks:
+    get:
+      summary: Eligible banks
+      description: Returns the subset of the input list of banks that are eligible for enrolment.
+      operationId: eligibleBanks
+      parameters:
+        - name: bankIdentifier
+          description: 4-digit bank identifier
+          in: query
+          schema:
+            items:
+              type: string
+              pattern: "[0-9]{4}"
+              example: "9998"
+            type: array
+          required: true
+      responses:
+        '200':
+          description: Request processed
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: object
+                description: Comma-separated list of eligible bank identifiers
+                example: ["9998", "0001"]
+        '400':
+          description: Invalid input format
 
 components:
   schemas:

@@ -36,7 +36,9 @@ public class BaseClient {
       boolean hasBody
   ) {
     var filteredHeaders = new LinkedHashMap<>(headers);
-    filteredHeaders.put("X-Correlation-Id", List.of(correlationId));
+    if (correlationId != null) {
+      filteredHeaders.put("X-Correlation-Id", List.of(correlationId));
+    }
     if (!(tokenPublisher instanceof EmptyAccessTokenPublisher))
       filteredHeaders.put(
           "Authorization",
@@ -45,6 +47,13 @@ public class BaseClient {
     if (hasBody && !headers.containsKey("Content-Type"))
       filteredHeaders.put("Content-Type", List.of("application/json"));
     return filteredHeaders;
+  }
+
+  public Flow.Publisher<HttpResponse> get(
+      String uri,
+      Map<String, List<String>> headers
+  ) {
+    return httpClient.get(uri, filterHeaders(headers, null, false));
   }
 
   public Flow.Publisher<HttpResponse> post(
