@@ -125,7 +125,6 @@ components:
         - paymentId
         - merchantReference
         - status
-        - responseCode
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
