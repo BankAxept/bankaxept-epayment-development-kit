@@ -135,7 +135,10 @@ components:
         status:
           $ref: '#/components/schemas/PaymentStatus'
         responseCode:
-          $ref: '#/components/schemas/NisokResponseCode'
+          type: string
+          maxLength: 2
+          description: >-
+            Direct response code as it was gotten from Baltus
         authorisationCode:
           type: string
           maxLength: 6
@@ -164,61 +167,6 @@ components:
         - AuthenticationFailed
         - AuthorisationFailed
         - AuthorisationDeclined
-
-    NisokResponseCode:
-      type: string
-      example: 00
-      description: |
-        Original Nisok response code:
-        * 00 - Payment was authorised.
-        * 03 - Invalid merchant.
-        * 05 - Declined without specific reason.
-        * 13 - Invalid amount.
-        * 14 - Invalid card number.
-        * 25 - Transaction not found.
-        * 41 - Blocked. Lost card.
-        * 43 - Blocked. Stolen card.
-        * 51 - Not sufficient funds.
-        * 54 - Expired card.
-        * 57 - Transaction not permitted to card holder.
-        * 58 - Transaction not permitted to terminal.
-        * 61 - Exceeds amount limit.
-        * 65 - Exceeds frequency limits.
-        * 86 - Duplicate.
-        * 91 - Issuer or switch inoperative.
-        * 96 - System malfunction.
-        * 9A - Timestamp deviation.
-        * A1 - Token or card not found.
-        * AE - Card blocked.
-        * AI - Declined due to a settlement control.
-        * D8 - Transaction cryptogram failure.
-        * F6 - Amount below minimal limit.
-        * JD - Reversal rejected.
-      enum:
-        - "00"
-        - "03"
-        - "05"
-        - "13"
-        - "14"
-        - "25"
-        - "41"
-        - "43"
-        - "51"
-        - "54"
-        - "57"
-        - "58"
-        - "61"
-        - "65"
-        - "86"
-        - "91"
-        - "96"
-        - "9A"
-        - "A1"
-        - "AE"
-        - "AI"
-        - "D8"
-        - "F6"
-        - "JD"
 
     CaptureResponse:
       type: object
