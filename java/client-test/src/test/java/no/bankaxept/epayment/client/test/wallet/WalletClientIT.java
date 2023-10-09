@@ -15,8 +15,8 @@ public class WalletClientIT {
 
   private WalletClient testClient() throws MalformedURLException {
     return new WalletClient(
-        new URL("https://api.epp.stoetest.cloud/access-token/v1/accesstoken"),
-        new URL("https://api.epp.stoetest.cloud/wallet"),
+        new URL("https://api.epp-stoetest.cloud/access-token/v1/accesstoken"),
+        new URL("https://api.epp-stoetest.cloud/wallet"),
         System.getenv("CLIENT_ID"),
         System.getenv("CLIENT_SECRET")
     );
