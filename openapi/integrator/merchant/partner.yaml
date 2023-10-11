@@ -138,7 +138,7 @@ components:
           type: string
           maxLength: 2
           description: >-
-            Direct response code as it was gotten from Baltus
+            Response code from issuer or processor when payment was declined
         authorisationCode:
           type: string
           maxLength: 6
