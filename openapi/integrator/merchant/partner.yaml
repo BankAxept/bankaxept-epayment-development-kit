@@ -134,6 +134,11 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         status:
           $ref: '#/components/schemas/PaymentStatus'
+        responseCode:
+          type: string
+          maxLength: 2
+          description: >-
+            Response code from issuer or processor when payment status is AuthorisationApproved or AuthorisationDeclined
         authorisationCode:
           type: string
           maxLength: 6
