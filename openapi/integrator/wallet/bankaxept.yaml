@@ -127,6 +127,7 @@ components:
         - nin
         - accountNumber
         - merchantReference
+        - multiClient
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
@@ -138,6 +139,8 @@ components:
           $ref: '../components.yaml#/components/schemas/accountNumber'
         merchantReference:
           $ref: '../components.yaml#/components/schemas/merchantReference'
+        multiClient:
+          $ref: '../components.yaml#/components/schemas/multiClient'
 
     PaymentRequest:
       type: object
@@ -157,8 +160,7 @@ components:
         tokenId:
           $ref: '../components.yaml#/components/schemas/tokenId'
         multiClient:
-          type: boolean
-          description: Defines if authentication is performed via client-initiated backchannel flow (true) or HTTP redirect binding authorization code flow (false).
+          $ref: '../components.yaml#/components/schemas/multiClient'
 
     PaymentData:
       type: object
