@@ -305,11 +305,12 @@ components:
     CardEnrolmentAuthentication:
       type: object
       required:
-        - authenticationURL
         - tokenId
       properties:
         authenticationURL:
           $ref: '../components.yaml#/components/schemas/authenticationURL'
+        bindingMessage:
+          $ref: '../components.yaml#/components/schemas/authenticationBindingMessage'
         tokenId:
           $ref: '../components.yaml#/components/schemas/tokenId'
         merchantReference:
