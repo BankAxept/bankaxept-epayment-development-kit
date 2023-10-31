@@ -298,7 +298,8 @@ components:
       pattern: "^[0-9]{1,11}$"
       example: "19474920408"
       description: >-
-        The globally unique id for the token requestor.
+        The globally unique id for the token requestor. This field is no longer used and will be removed in the future.
+      deprecated: true
     tokenId:
       type: string
       format: uuid

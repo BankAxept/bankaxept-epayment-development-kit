@@ -97,7 +97,6 @@ components:
       type: object
       required:
         - messageId
-        - tokenRequestorId
         - tokenRequestorReference
         - encryptedCardholderAuthenticationData
       properties:
