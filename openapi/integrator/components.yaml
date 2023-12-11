@@ -217,6 +217,8 @@ components:
       maxLength: 100
       description: >-
         The merchant name as registered in the Central Coordinating Register for Legal Entities (Enhetsregisteret).
+        This field is no longer used and will be removed in the future.
+      deprecated: true
     merchantDisplayName:
       type: string
       maxLength: 100
