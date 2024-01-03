@@ -32,15 +32,6 @@
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
                     </configuration>
-                    <!--As of surefire v.2.22.2, its plexus-java dependency was transitively pulling an older
-                    version of asm 6.2 that did not support Java 17, requiring us to manually provide the version.-->
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.ow2.asm</groupId>
-                            <artifactId>asm</artifactId>
-                            <version>9.1</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>
