@@ -134,6 +134,8 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         status:
           $ref: '#/components/schemas/PaymentStatus'
+        stan:
+          $ref: '#/components/schemas/stan'
         responseCode:
           type: string
           maxLength: 2
@@ -213,6 +215,18 @@ components:
           format: date-time
           description: >-
             The time and date the request was created. The date fields use the YYYY-MM-DDThh:mm:ss.sssZ date ISO 8601 format. Times are returned in the UTC time zone.
+        stan:
+          $ref: '#/components/schemas/stan'
+        responseCode:
+          type: string
+          maxLength: 2
+          description: >-
+            Response code from issuer or processor when refund status is Approved or Declined
+        authorisationCode:
+          type: string
+          maxLength: 6
+          description: >-
+            Authorisation code: When the refund is authorised successfully, this field holds the authorisation code for the refund. When the refund is not authorised, this field is empty.
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
 
@@ -273,3 +287,9 @@ components:
         - Approved
         - Declined
         - Failed
+
+    stan:
+      type: string
+      maxLength: 6
+      description: >-
+        System Trace Audit Number (STAN): This field is a number assigned by the message originator to identify the transaction.
