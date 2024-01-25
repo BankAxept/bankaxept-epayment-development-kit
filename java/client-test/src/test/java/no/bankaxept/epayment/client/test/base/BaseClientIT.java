@@ -21,7 +21,7 @@ public class BaseClientIT {
     var publisher = JdkFlowAdapter.flowPublisherToFlux(
         new ScheduledAccessTokenPublisher.Builder()
             .httpClient(httpClient)
-            .url(new URL("http://localhost:8082/v1/accesstoken"))
+            .url(new URL(System.getenv("AUTHORIZATION_SERVER_URL")))
             .clientCredentials(System.getenv("CLIENT_ID_COMPLEX_SECRET"), System.getenv("CLIENT_SECRET_COMPLEX_SECRET"))
             .build()
     ).elementAt(0);
