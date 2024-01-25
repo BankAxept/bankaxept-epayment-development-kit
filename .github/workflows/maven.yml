@@ -29,7 +29,7 @@ jobs:
           CLIENT_SECRET: ${{ secrets.ClientSecret }}
           CLIENT_ID_COMPLEX_SECRET: ${{ secrets.ClientIdComplexSecret }}
           CLIENT_SECRET_COMPLEX_SECRET: ${{ secrets.ClientSecretComplexSecret }}
-        run: mvn -B -Pfailsafe verify --file pom.xml
+        run: mvn -B verify --file pom.xml #-Pfailsafe
 
       # Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
       - name: Update dependency graph
