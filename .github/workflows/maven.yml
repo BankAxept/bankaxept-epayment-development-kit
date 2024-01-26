@@ -29,8 +29,12 @@ jobs:
           CLIENT_SECRET: ${{ secrets.ClientSecret }}
           CLIENT_ID_COMPLEX_SECRET: ${{ secrets.ClientIdComplexSecret }}
           CLIENT_SECRET_COMPLEX_SECRET: ${{ secrets.ClientSecretComplexSecret }}
-        run: mvn -B verify --file pom.xml #-Pfailsafe
+        run: mvn -B verify --file pom.xml #-Pfailsafe IT tests not yet supported as runner can't access EPP test
 
       # Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-      - name: Update dependency graph
-        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+      # Currently fails with:
+      #   Error: TypeError: Cannot read properties of undefined (reading 'forEach')
+      #   Error: Error: Could not generate a snapshot of the dependencies; Cannot read properties of undefined (reading 'forEach')
+      #   Error: Failed to generate a dependency snapshot, check logs for more details, Error: Could not generate a snapshot of the dependencies; Cannot read properties of undefined (reading 'forEach')
+      #- name: Update dependency graph
+      #  uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
