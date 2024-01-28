@@ -1,7 +1,7 @@
 package no.bankaxept.epayment.client.base.accesstoken;
 
+import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -12,6 +12,7 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
+import java.util.concurrent.Flow.Subscription;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,8 @@ import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow.Subscriber<HttpResponse> {
 
@@ -30,7 +33,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
   private boolean shutDown;
 
   private final HttpClient httpClient;
-  private final String uri;
+  private final URL url;
   private final Map<String, List<String>> headers;
   private final String body;
 
@@ -39,14 +42,14 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
   private final Queue<Flow.Subscriber<? super String>> subscribers = new LinkedBlockingQueue<>();
 
   private ScheduledAccessTokenPublisher(
-      String uri,
+      URL url,
       Map<String, List<String>> headers,
       String body,
       Clock clock,
       ScheduledExecutorService scheduler,
       HttpClient httpClient
   ) {
-    this.uri = uri;
+    this.url = url;
     this.headers = headers;
     this.body = body;
     this.clock = clock;
@@ -65,7 +68,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
   private void fetchNewToken() {
     if (shutDown)
       return;
-    httpClient.post(uri, new SinglePublisher<>(body, fetchExecutor), headers).subscribe(this);
+    httpClient.post(url.toString(), new SinglePublisher<>(body, fetchExecutor), headers).subscribe(this);
   }
 
   @Override
@@ -78,7 +81,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     if (!item.getStatus().is2xxOk()) {
       onError(new HttpStatusException(item.getStatus(), String.format(
               "Could not get access token from %s. HTTP status: %s. HTTP payload: %s",
-              uri,
+              url.toString(),
               item.getStatus(),
               item.getBody()
           ))
@@ -129,6 +132,12 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
 
   @Override
   public void subscribe(Flow.Subscriber<? super String> subscriber) {
+    subscriber.onSubscribe(new Subscription() {
+      @Override
+      public void request(long n) {}
+      @Override
+      public void cancel() {}
+    });
     var token = atomicToken.get();
     if (token != null && token.getExpiry().isAfter(clock.instant()))
       subscriber.onNext(token.getToken());
@@ -141,7 +150,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
 
   public static class Builder {
 
-    private String uri;
+    private URL url;
     private HttpClient httpClient;
     private ScheduledExecutorService scheduler;
     private Clock clock = Clock.systemDefaultZone();
@@ -158,15 +167,17 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
       return this;
     }
 
-    public Builder uri(String uri) {
-      this.uri = uri;
+    public Builder url(URL url) {
+      this.url = url;
       return this;
     }
 
     public Builder clientCredentials(String id, String secret) {
       headers.put(
           "Authorization",
-          List.of("Basic " + Base64.getEncoder().encodeToString((id + ":" + secret).getBytes(StandardCharsets.UTF_8)))
+          List.of("Basic " + Base64.getEncoder().encodeToString(
+              (URLEncoder.encode(id, UTF_8) + ":" + URLEncoder.encode(secret, UTF_8)).getBytes(UTF_8)
+          ))
       );
       return grantType(GrantType.client_credentials);
     }
@@ -195,7 +206,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
       if (grantType == null) {
         throw new IllegalArgumentException("Grant type is not set");
       }
-      return new ScheduledAccessTokenPublisher(uri, headers, createBody(), clock, getSchedulerOrDefault(), httpClient);
+      return new ScheduledAccessTokenPublisher(url, headers, createBody(), clock, getSchedulerOrDefault(), httpClient);
     }
 
     private ScheduledExecutorService getSchedulerOrDefault() {
@@ -205,7 +216,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     private String createBody() {
       var body = new StringBuilder("grant_type=").append(grantType);
       if (!scopes.isEmpty()) {
-        body.append("&").append("scope=").append(URLEncoder.encode(String.join(" ", scopes), StandardCharsets.UTF_8));
+        body.append("&").append("scope=").append(URLEncoder.encode(String.join(" ", scopes), UTF_8));
       }
       return body.toString();
     }

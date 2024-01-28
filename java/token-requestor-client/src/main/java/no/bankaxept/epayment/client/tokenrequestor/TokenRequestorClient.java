@@ -36,8 +36,8 @@ public class TokenRequestorClient {
 
   public TokenRequestorClient(URL authorizationServerUrl, URL resourceServerUrl, String clientId, String clientSecret) {
     this(
-        new BaseClient.Builder(resourceServerUrl.toString())
-            .withScheduledToken(authorizationServerUrl.toString(), clientId, clientSecret)
+        new BaseClient.Builder(resourceServerUrl)
+            .withScheduledToken(authorizationServerUrl, clientId, clientSecret)
             .build()
     );
   }

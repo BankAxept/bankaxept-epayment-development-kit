@@ -25,11 +25,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
+import java.net.MalformedURLException;
 
 public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
 
   @BeforeEach
-  public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+  public void setup(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
     super.setup(wmRuntimeInfo);
     stubFor(testEndpointMapping());
   }
@@ -39,7 +40,7 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
   public class WebfluxAccessTokenErrorTests {
 
     @BeforeEach
-    public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+    public void setup(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
       WireMock.stubFor(tokenEndpointMapping(validTokenResponse("scheduled-token")));
       baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
       stubFor(testEndpointMapping("scheduled-token"));
@@ -53,7 +54,7 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
     }
 
     @Test
-    public void should_fail_if_client_error_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) {
+    public void should_fail_if_client_error_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
       stubFor(tokenEndpointMapping(forbidden()));
       baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
       assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
@@ -62,14 +63,14 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
     }
 
     @Test
-    public void should_fail_if_connection_reset_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) {
+    public void should_fail_if_connection_reset_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
       stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
       baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
       assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class);
     }
 
     @Test
-    public void new_token_is_fetched_after_error(WireMockRuntimeInfo wmRuntimeInfo) {
+    public void new_token_is_fetched_after_error(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
       stubFor(tokenEndpointMapping(serverError()));
       baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
       assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)

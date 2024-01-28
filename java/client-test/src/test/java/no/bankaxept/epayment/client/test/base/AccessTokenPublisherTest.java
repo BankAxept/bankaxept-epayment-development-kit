@@ -6,6 +6,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Clock;
@@ -58,7 +60,7 @@ class AccessTokenPublisherTest {
   @Test
   public void should_schedule_on_startup_then_new_on_success() throws IOException {
     doReturn(new SinglePublisher<>(new HttpResponse(200, tokenResponse()), executor)).when(httpClientMock)
-        .post(eq("uri"), any(), any());
+        .post(any(), any(), any());
     accessTokenProcessor = createPublisher();
     accessTokenProcessor.subscribe(subscriberMock);
     verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.SECONDS));
@@ -70,9 +72,9 @@ class AccessTokenPublisherTest {
   }
 
   @Test
-  public void should_schedule_on_startup_then_again_on_error() {
+  public void should_schedule_on_startup_then_again_on_error() throws MalformedURLException {
     doReturn(new SinglePublisher<>(new HttpResponse(500, "error"), executor)).when(httpClientMock)
-        .post(eq("uri"), any(), any());
+        .post(any(), any(), any());
     accessTokenProcessor = createPublisher();
     accessTokenProcessor.subscribe(subscriberMock);
     verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.SECONDS));
@@ -88,10 +90,10 @@ class AccessTokenPublisherTest {
     verify(subscriberMock).onNext("static-token");
   }
 
-  private ScheduledAccessTokenPublisher createPublisher() {
+  private ScheduledAccessTokenPublisher createPublisher() throws MalformedURLException {
     return new ScheduledAccessTokenPublisher.Builder()
         .httpClient(httpClientMock)
-        .uri("uri")
+        .url(new URL("http://example.com"))
         .clientCredentials("username", "password")
         .clock(clock)
         .scheduler(schedulerMock)

@@ -18,6 +18,7 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import java.net.MalformedURLException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import no.bankaxept.epayment.client.base.RequestStatus;
@@ -42,7 +43,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
   private final OffsetDateTime transactionTime = OffsetDateTime.now();
 
   @BeforeEach
-  public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+  public void setup(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
     super.setup(wmRuntimeInfo);
     client = new MerchantClient(baseClient);
   }

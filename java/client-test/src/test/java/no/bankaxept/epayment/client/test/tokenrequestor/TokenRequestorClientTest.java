@@ -14,6 +14,7 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -39,7 +40,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   private final UUID tokenId = UUID.randomUUID();
 
   @BeforeEach
-  public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+  public void setup(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
     super.setup(wmRuntimeInfo);
     client = new TokenRequestorClient(baseClient);
   }

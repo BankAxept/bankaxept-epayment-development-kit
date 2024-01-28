@@ -1,5 +1,6 @@
 package no.bankaxept.epayment.client.base;
 
+import java.net.URL;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.LinkedHashMap;
@@ -97,10 +98,10 @@ public class BaseClient {
     private final HttpClient httpClient;
     private AccessTokenPublisher tokenPublisher;
 
-    public Builder(String resourceServerUrl) {
+    public Builder(URL resourceServerUrl) {
       this.httpClient = ServiceLoader.load(HttpClientProvider.class)
           .findFirst()
-          .map(httpClientProvider -> httpClientProvider.create(resourceServerUrl))
+          .map(httpClientProvider -> httpClientProvider.create(resourceServerUrl.toString()))
           .orElseThrow();
     }
 
@@ -109,29 +110,24 @@ public class BaseClient {
       return this;
     }
 
-    public Builder withoutToken() {
-      this.tokenPublisher = new EmptyAccessTokenPublisher();
-      return this;
-    }
-
     public Builder withSuppliedToken(Supplier<String> tokenSupplier) {
       this.tokenPublisher = new SuppliedAccessTokenPublisher(tokenSupplier);
       return this;
     }
 
-    public Builder withScheduledToken(String authorizationServerUrl, String id, String secret) {
+    public Builder withScheduledToken(URL authorizationServerUrl, String id, String secret) {
       this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
           .httpClient(httpClient)
-          .uri(authorizationServerUrl)
+          .url(authorizationServerUrl)
           .clientCredentials(id, secret)
           .build();
       return this;
     }
 
-    public Builder withScheduledToken(String authorizationServerUrl, String id, String secret, Clock clock) {
+    public Builder withScheduledToken(URL authorizationServerUrl, String id, String secret, Clock clock) {
       this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
           .httpClient(httpClient)
-          .uri(authorizationServerUrl)
+          .url(authorizationServerUrl)
           .clientCredentials(id, secret)
           .clock(clock)
           .build();
