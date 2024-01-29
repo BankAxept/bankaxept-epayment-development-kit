@@ -17,6 +17,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode versions:set -DnewVersion=1.0.0 deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
