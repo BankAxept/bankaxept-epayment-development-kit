@@ -1,25 +1,70 @@
-# Development kit for ePayment integration
+# Development kit for BankAxept ePayment integration
 
-The ePayment SDK provides reactive clients for interacting with the ePayment API using the Java Flow API.<br>
-Currently there are no artifacts provided, so you would need to build them yourself using
->mvn install
+The BankAxept ePayment development kit provides OpenAPI specifications and Java clients for integration with the
+ePayment APIs:
+* Merchant API
+* Token Requestor API
+* Wallet API
 
-and then importing them into your project.
-## Usage
+## Maven artifacts for Java clients
 
-### Importing
-#### Standard usage (Provided client)
-By importing the specific client(s) (e.g. **merchant-client**) you need and the **webflux-client** module - Everything should work out of the box. 
+There are three Maven artifacts available, one for each if the ePayment APIs:
+```xml
+<dependency>
+  <groupId>no.bankaxept.epayment</groupId>
+  <artifactId>merchant-client</artifactId>
+  <version>x.y.z</version>
+</dependency>
 
-#### Use your own http client
-If you don't want to use our HTTP client implementation using webflux, you are free to provide your own. <br>
-This SDK uses a Java Service Provider Interface. <br>
-You need to implement [HttpClient](java/base-client/src/main/java/no/bankaxept/epayment/client/base/http/HttpClient.java) and [HttpClientProvider](java/base-client/src/main/java/no/bankaxept/epayment/client/base/spi/HttpClientProvider.java)
-and then create a configuration file (like [this](java/webflux-client/src/main/resources/META-INF/services/no.bankaxept.epayment.client.base.spi.HttpClientProvider)). The [webflux-client module](java/webflux-client) can be used for reference
+<dependency>
+  <groupId>no.bankaxept.epayment</groupId>
+  <artifactId>token-requestor-client</artifactId>
+  <version>x.y.z</version>
+</dependency>
 
-### Starting clients
-It's pretty simple to create a client.<br>
-You need a few values to get started
-* **Base url** of the ePayment service
-* **Credentials for fetching tokens** .
-> var merchantClient = new MerchantClient(baseurl, username, password);
+<dependency>
+  <groupId>no.bankaxept.epayment</groupId>
+  <artifactId>wallet-client</artifactId>
+  <version>x.y.z</version>
+</dependency>
+```
+These artifact rely on an HTTP client loaded through Java's Service Provider Interface. There's one provided by thiskit
+development kit, based on Spring WebFlux:
+```xml
+<dependency>
+  <groupId>no.bankaxept.epayment</groupId>
+  <artifactId>webflux-client</artifactId>
+  <version>x.y.z</version>
+</dependency>
+```
+The artifacts are available on a GitHub Packages repository, so make sure to include the following in your pom.xml as
+well:
+```xml
+<repositories>
+  <repository>
+    <id>github</id>
+    <url>https://maven.pkg.github.com/BankAxept/bankaxept-epayment-development-kit</url>
+  </repository>
+</repositories>
+```
+_Note: GitHub Packages does not allow anonymous access for downloading Maven artifacts. A GitHub personal access
+token (PAT) with `read:packages` scope will provide sufficient access._
+
+## HTTP client
+
+If you want to use your own HTTP client with the Java clients you can provide it through Java Service Provider Interface
+by implementing the following interfaces:
+* [HttpClient](java/base-client/src/main/java/no/bankaxept/epayment/client/base/http/HttpClient.java)
+* [HttpClientProvider](java/base-client/src/main/java/no/bankaxept/epayment/client/base/spi/HttpClientProvider.java)
+
+Then create a configuration file (like [this](java/webflux-client/src/main/resources/META-INF/services/no.bankaxept.epayment.client.base.spi.HttpClientProvider)). The [webflux-client module](java/webflux-client) can be used for reference.
+
+## Java client usage
+
+Each of the three Java clients can be constructed by providing the following parameters:
+* authorizationServerUrl: URL for the OAuth2 authorization server.
+* resourceServerUrl: URL for the Merchant API, Token Requestor API or Wallet API.
+* clientId: Username for authenticating with the authorization server.
+* clientSecret: Password for authenticating with the authorization server
+
+Contact BankAxept for appropriate values.
