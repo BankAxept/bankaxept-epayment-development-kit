@@ -15,8 +15,8 @@ public class MerchantClientIT {
 
   private MerchantClient testClient() throws MalformedURLException {
     return new MerchantClient(
-        new URL("https://api.epp-stoetest.cloud/access-token/v1/accesstoken"),
-        new URL("https://api.epp-stoetest.cloud/merchant"),
+        new URL(System.getenv("AUTHORIZATION_SERVER_URL")),
+        new URL(System.getenv("MERCHANT_API_URL")),
         System.getenv("CLIENT_ID"),
         System.getenv("CLIENT_SECRET")
     );

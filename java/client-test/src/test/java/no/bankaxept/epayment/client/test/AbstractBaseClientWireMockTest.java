@@ -5,6 +5,8 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -31,7 +33,7 @@ public abstract class AbstractBaseClientWireMockTest {
   private final Executor executor = Executors.newSingleThreadExecutor();
 
   @BeforeEach
-  public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
+  public void setup(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
     baseClient = createBaseClient(wmRuntimeInfo.getHttpPort());
   }
 
@@ -54,14 +56,14 @@ public abstract class AbstractBaseClientWireMockTest {
     return WireMock.ok().withBody(String.format(validTokenResponseTemplate, token));
   }
 
-  protected BaseClient createBaseClient(int port) {
-    return new BaseClient.Builder("http://localhost:" + port).withStaticToken(aToken).build();
+  protected BaseClient createBaseClient(int port) throws MalformedURLException {
+    return new BaseClient.Builder(new URL("http://localhost:" + port)).withStaticToken(aToken).build();
   }
 
-  protected BaseClient createScheduledBaseClient(int port) {
-    return new BaseClient.Builder("http://localhost:" + port)
+  protected BaseClient createScheduledBaseClient(int port) throws MalformedURLException {
+    return new BaseClient.Builder(new URL("http://localhost:" + port))
         .withScheduledToken(
-            "http://localhost:" + port + "/bankaxept-epayment/access-token-api/v1/accesstoken",
+            new URL("http://localhost:" + port + "/bankaxept-epayment/access-token-api/v1/accesstoken"),
             "username",
             "password",
             clock

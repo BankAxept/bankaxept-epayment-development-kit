@@ -40,8 +40,8 @@ public class MerchantClient {
       String clientSecret
   ) {
     this(
-        new BaseClient.Builder(resourceServerUrl.toString())
-            .withScheduledToken(authorizationServerUrl.toString(), clientId, clientSecret)
+        new BaseClient.Builder(resourceServerUrl)
+            .withScheduledToken(authorizationServerUrl, clientId, clientSecret)
             .build()
     );
   }
