@@ -134,16 +134,12 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         status:
           $ref: '#/components/schemas/PaymentStatus'
+        stan:
+          $ref: '#/components/schemas/stan'
         responseCode:
-          type: string
-          maxLength: 2
-          description: >-
-            Response code from issuer or processor when payment status is AuthorisationApproved or AuthorisationDeclined
+          $ref: '#/components/schemas/responseCode'
         authorisationCode:
-          type: string
-          maxLength: 6
-          description: >-
-            Authorisation code: When the payment is authorised successfully, this field holds the authorisation code for the payment. When the payment is not authorised, this field is empty.
+          $ref: '#/components/schemas/authorisationCode'
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
 
@@ -213,6 +209,12 @@ components:
           format: date-time
           description: >-
             The time and date the request was created. The date fields use the YYYY-MM-DDThh:mm:ss.sssZ date ISO 8601 format. Times are returned in the UTC time zone.
+        stan:
+          $ref: '#/components/schemas/stan'
+        responseCode:
+          $ref: '#/components/schemas/responseCode'
+        authorisationCode:
+          $ref: '#/components/schemas/authorisationCode'
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
 
@@ -273,3 +275,21 @@ components:
         - Approved
         - Declined
         - Failed
+
+    stan:
+      type: string
+      maxLength: 6
+      description: >-
+        System trace audit number; a number assigned by the payment initiator to identify the transaction.
+
+    responseCode:
+      type: string
+      maxLength: 2
+      description: >-
+        Response code from issuer or processor when request was approved or declined.
+
+    authorisationCode:
+      type: string
+      maxLength: 6
+      description: >-
+        A code from the issuer identifying a successful authorisation.
