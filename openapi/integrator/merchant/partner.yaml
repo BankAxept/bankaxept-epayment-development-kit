@@ -280,7 +280,7 @@ components:
       type: string
       maxLength: 6
       description: >-
-        System Trace Audit Number (STAN): This field is a number assigned by the message originator to identify the transaction.
+        System trace audit number; a number assigned by the payment initiator to identify the transaction.
 
     responseCode:
       type: string
