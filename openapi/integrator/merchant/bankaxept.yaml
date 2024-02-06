@@ -321,6 +321,8 @@ components:
       properties:
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
 
@@ -334,6 +336,8 @@ components:
       properties:
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
         inStore:
