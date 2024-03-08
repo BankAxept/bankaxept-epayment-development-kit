@@ -177,11 +177,13 @@ components:
         * Rejected - Enrolment was rejected.
         * Failed - Enrolment failed.
         * Invalid_Funding_Pan - No eligible card found.
+        * Card_Expired - Card has expired.
       enum:
         - Accepted
         - Rejected
         - Failed
         - Invalid_Funding_Pan
+        - Card_Expired
 
     TokenUpdateData:
       type: object
