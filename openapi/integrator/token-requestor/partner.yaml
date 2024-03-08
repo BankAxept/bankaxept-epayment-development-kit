@@ -176,12 +176,12 @@ components:
         * Accepted - Enrolment was accepted.
         * Rejected - Enrolment was rejected.
         * Failed - Enrolment failed.
-        * INVALID_FUNDING_PAN - No eligible card found.
+        * Invalid_Funding_Pan - No eligible card found.
       enum:
         - Accepted
         - Rejected
         - Failed
-        - INVALID_FUNDING_PAN
+        - Invalid_Funding_Pan
 
     TokenUpdateData:
       type: object
