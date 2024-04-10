@@ -11,7 +11,7 @@ ePayment APIs:
 The dependency version of this repository follows the `MAJOR.MINOR.PATCH` format.
 
 * **Major version**: This version is used in the URI, like `/v1/`, and indicates breaking changes to the API. Internally, the URI is utilized to route to the correct internal execution.
-* **Minor and Patch versions**: These versions remain transparent to the client and are used internally for backward-compatible additions and updates.
+* **Minor and Patch versions**: These versions remain transparent in the API and are used internally for backward-compatible additions and updates.
 
 Diverging from the above versioning scheme requires approval from all integrators.
 
