@@ -79,6 +79,6 @@
         </dependencies>
     </dependencyManagement>
     <properties>
-        <swagger.parser.version>2.1.18</swagger.parser.version>
+        <swagger.parser.version>2.1.22</swagger.parser.version>
     </properties>
 </project>
