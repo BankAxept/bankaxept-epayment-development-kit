@@ -6,7 +6,7 @@
     <groupId>no.bankaxept.epayment</groupId>
     <artifactId>development-kit-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.1-SNAPSHOT</version>
+    <version>1.0.4</version>
 
     <parent>
         <artifactId>spring-boot-starter-parent</artifactId>
