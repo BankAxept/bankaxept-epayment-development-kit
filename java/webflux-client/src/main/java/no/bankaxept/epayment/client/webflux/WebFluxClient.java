@@ -21,14 +21,14 @@ public class WebFluxClient implements HttpClient {
   public WebFluxClient(String baseUrl) {
     webClient = Optional.ofNullable(WebFluxClient.class.getPackage().getImplementationVersion())
         .map(implementationVersion -> WebClient.builder()
-            .defaultHeader("User-Agent", "EPPDevKit/" + implementationVersion))
+            .defaultHeader("User-Agent", "EppDevKit/" + implementationVersion))
         .orElseGet(WebClient::builder).baseUrl(baseUrl).build();
   }
 
   public WebFluxClient() {
     webClient = Optional.ofNullable(WebFluxClient.class.getPackage().getImplementationVersion())
         .map(implementationVersion -> WebClient.builder()
-            .defaultHeader("User-Agent", "EPPDevKit/" + implementationVersion))
+            .defaultHeader("User-Agent", "EppDevKit/" + implementationVersion))
         .orElseGet(WebClient::builder).build();
   }
 
