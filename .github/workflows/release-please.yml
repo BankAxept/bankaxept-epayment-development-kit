@@ -20,14 +20,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           release-type: maven
       - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs.release_created }}
+        if: steps.release.outputs.release_created
       - uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: 17
+          distribution: temurin
           cache: maven
-        if: ${{ steps.release.outputs.release_created }}
+        if: steps.release.outputs.release_created
       - run: mvn -B deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ steps.release.outputs.release_created }}
+        if: steps.release.outputs.release_created
