@@ -5,7 +5,7 @@
     <parent>
         <artifactId>development-kit-parent</artifactId>
         <groupId>no.bankaxept.epayment</groupId>
-        <version>0.1-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>development-kit</artifactId>
@@ -43,32 +43,32 @@
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>base-client</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>1.0.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>webflux-client</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>1.0.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>client-test</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>1.0.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>merchant-client</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>1.0.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>token-requestor-client</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>1.0.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>wallet-client</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>1.0.4-SNAPSHOT</version>
             </dependency>
             <!-- openapi generation -->
             <dependency>

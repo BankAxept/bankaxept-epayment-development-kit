@@ -2,6 +2,7 @@ package no.bankaxept.epayment.client.webflux;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Flow.Publisher;
 import java.util.function.Function;
 import no.bankaxept.epayment.client.base.http.HttpClient;
@@ -18,11 +19,17 @@ public class WebFluxClient implements HttpClient {
   private final WebClient webClient;
 
   public WebFluxClient(String baseUrl) {
-    webClient = WebClient.create(baseUrl);
+    webClient = Optional.ofNullable(WebFluxClient.class.getPackage().getImplementationVersion())
+        .map(implementationVersion -> WebClient.builder()
+            .defaultHeader("User-Agent", "EppDevKit/" + implementationVersion))
+        .orElseGet(WebClient::builder).baseUrl(baseUrl).build();
   }
 
   public WebFluxClient() {
-    webClient = WebClient.create();
+    webClient = Optional.ofNullable(WebFluxClient.class.getPackage().getImplementationVersion())
+        .map(implementationVersion -> WebClient.builder()
+            .defaultHeader("User-Agent", "EppDevKit/" + implementationVersion))
+        .orElseGet(WebClient::builder).build();
   }
 
   @Override
