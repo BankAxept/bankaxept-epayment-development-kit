@@ -33,7 +33,7 @@ jobs:
           distribution: temurin
           cache: maven
         if: steps.release.outputs.release_created
-      - run: mvn -B deploy
+      - run: mvn --color always -ntp deploy
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: steps.release.outputs.release_created
