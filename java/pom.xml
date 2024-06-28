@@ -43,32 +43,32 @@
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>base-client</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>webflux-client</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>client-test</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>merchant-client</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>token-requestor-client</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.bankaxept.epayment</groupId>
                 <artifactId>wallet-client</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <!-- openapi generation -->
             <dependency>
