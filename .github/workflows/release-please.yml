@@ -24,7 +24,7 @@ jobs:
         id: release
         with:
           token: ${{ steps.app-token.outputs.token }}
-          release-type: maven
+          config-file: .release-please-config.json
       - uses: actions/checkout@v4
         if: steps.release.outputs.release_created
       - uses: actions/setup-java@v4
