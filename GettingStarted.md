@@ -14,6 +14,21 @@ overview of all critical features as well as some general
 hints of how to utilize this platform.
 ```
 
+<!-- TOC -->
+
+* [Introduction](#introduction)
+* [Setting up your EPP integration](#setting-up-your-epp-integration)
+  * [Authorization](#authorization)
+  * [End to end setup diagram.](#end-to-end-setup-diagram)
+    * [Checklist for information exchange](#checklist-for-information-exchange)
+* [Creating a payment](#creating-a-payment)
+  * [Standard flow](#standard-flow)
+  * [Creating a payment guidelines.](#creating-a-payment-guidelines)
+  * [Callbacks](#callbacks)
+    * [Payment Callbacks](#payment-callbacks)
+    * [Asynchronous retry policy](#asynchronous-retry-policy)
+<!-- TOC -->
+
 # Introduction
 EPaymentPlatform (EPP) is a Payment API for integrators (Integrator) utilizing BankAxept online payments. It is based on a core principle of asynchronous exchange of information where the transactions created can be identified using an EPP defined PaymentId and an Integrator defined MessageId. Traditional transaction operations can thereafter be performed as seen according to the `Operations` section.
 
@@ -28,7 +43,7 @@ be performed.
 4. Create a bCrypt based hash of a secret of your choice. We recommend reading up on [bCrypt](https://en.wikipedia.org/wiki/Bcrypt#) to understand the mechanisms involved. 
 5. Send the resulting IPs, CallbackUrl and bCrypt hash to your BankAxept ePayment team contact. 
 6. Generate an access token as described in the [Authorization](#Authorization) section 
-7. Utilize the access token to perform payments as described in the [Creating a Payment](#Authorization) section
+7. Utilize the access token to perform payments as described in the [Creating a Payment](#Creating-a-payment) section
 
 ## Authorization
 
@@ -75,7 +90,6 @@ sequenceDiagram
 
 # Creating a payment
 A full overview of all available fields for a payment can be found in the [Payments Request](https://github.com/BankAxept/bankaxept-epayment-development-kit/blob/main/openapi/integrator/merchant/bankaxept.yaml) component part our API spec.
-
 
 ## Standard flow
 
@@ -126,10 +140,10 @@ of an ongoing payment. The ePaymentPlatform performs duplicate controls on the `
 
 ## Callbacks
 
-## Payment Callbacks
+### Payment Callbacks
 The required Callback API for an ePayment Platform Payment may be found [in the Partner Yaml](https://github.com/BankAxept/bankaxept-epayment-development-kit/blob/main/openapi/integrator/merchant/partner.yaml) definition.
 
-## Asynchronous retry policy
+### Asynchronous retry policy
 Any Asynchronous Requests will be retried if the Response from the Integrator is anything other than ``200 OK``.
 
 Retries will be performed first after 10 seconds, and thereafter with an exponential backoff for 24 hours. After 24 hours the retry attempts will stop.
