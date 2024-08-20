@@ -49,20 +49,19 @@ sequenceDiagram
     IntegratorRepresentative ->> ePaymentRepresentative: Request ClientId.
     ePaymentRepresentative -->> IntegratorRepresentative: Return ClientId
 
-    IntegratorRepresentative ->> ePaymentRepresentative: Provide set of IPs and CallbackUrl.
-    ePaymentRepresentative ->> ePaymentPlatform: Configure Allow List IPs and CallbackUrl
-    
     Integrator ->> Integrator: Create bCrypt hash from self defined secret.
     Integrator ->> IntegratorRepresentative: Transmit resulting bCrypt hash.
     IntegratorRepresentative ->> ePaymentRepresentative: Transmit resulting bCrypt hash
-    ePaymentRepresentative ->> ePaymentPlatform: Configure bCrypt hash.
+
+    IntegratorRepresentative ->> ePaymentRepresentative: Provide set of IPs and CallbackUrl.
+    ePaymentRepresentative ->> ePaymentPlatform: Configure Allow List IPs, bCrypt hash and CallbackUrl
+    
     Note over IntegratorRepresentative,ePaymentRepresentative: Manual setup completed
     
     Integrator ->> ePaymentPlatform: Generate access token.
     ePaymentPlatform ->> ePaymentPlatform: Verify request 
     Note right of ePaymentPlatform: Matching ClientId and performing <br/> a bCrypt hash on the secret
     ePaymentPlatform -->> Integrator: Return Access token
-
 ```
 
 ### Checklist for information exchange
