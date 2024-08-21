@@ -1,0 +1,1 @@
+<div id="swagger-integrator-merchant-bankaxept" swagger-src="https://raw.githubusercontent.com/BankAxept/bankaxept-epayment-development-kit/main/openapi/integrator/merchant/bankaxept.yaml"></div>
