@@ -40,10 +40,12 @@ be performed.
 1. Through your BankAxept contact point you should retrieve a unique identifier (ClientId) that uniquely identifies you as an integrator.
 2. Provide a list of IPs that you will be operating from, enabling us to append them to our Allow List. Any additional IPs need to be transmitted to the BankAxept ePayment team contact before being utilized.
 3. Provide a `callBackURL` which we will utilize as our address prefix for all callbacks.
-4. Create a bCrypt based hash of a secret of your choice. We recommend reading up on [bCrypt](https://en.wikipedia.org/wiki/Bcrypt#) to understand the mechanisms involved. 
-5. Send the resulting IPs, CallbackUrl and bCrypt hash to your BankAxept ePayment team contact. 
-6. Generate an access token as described in the [Authorization](#authorization) section 
-7. Utilize the access token to perform payments as described in the [Creating a Payment](#creating-a-payment) section
+4. Provide the certified Authentication Provider which you  will use to Authenticate payments. 
+5. Create a bCrypt based hash of a secret of your choice. We recommend reading up on [bCrypt](https://en.wikipedia.org/wiki/Bcrypt#) to understand the mechanisms involved. 
+6. Send the resulting IPs, CallbackUrl and bCrypt hash to your BankAxept ePayment team contact. 
+7. Receive EPP's Public Certificate for encryption of sensitive data..
+8. Generate an access token as described in the [Authorization](#authorization) section 
+9. Utilize the access token to perform payments as described in the [Creating a Payment](#creating-a-payment) section
 
 ## Authorization
 
@@ -51,6 +53,15 @@ Once the set-up steps are performed you can then integrate with the [Client Auth
 The request should contain the secret used to generate the bCrypt based hash as well as you're ClientId. This should be sent as a [Basic token](https://en.wikipedia.org/wiki/Basic_access_authentication)
 The resulting access token has a 1-hour lifetime. We recommend refreshing it 5 minutes before end of life. The resulting `access_token` can then be used to authorize
 towards all other endpoints by putting it in the `Authorization` header as Bearer token.
+
+### Authentication Provider setup and guidelines
+Every Integrator is required to provide an Authentication Provider that will be used to verify the authenticity of the payment request. 
+This is done by providing a `nonce` that is encrypted by the Authentication the in the `iss` field of the` object. 
+The `verifiedCardholderAuthenticationSignedData` object can be reviewed in our [components overiew](/assets/swagger/swagger_epp_components.md).  
+
+The `iss` field must be unique per transaction.
+
+The `verifiedCardholderAuthenticationSignedData` object must be encrypted using the provided public certificate from EPP as received in point 7 in [Setting up your EPP integration](#setting-up-your-epp-integration).
 
 ## End to end setup diagram.
 
@@ -68,8 +79,9 @@ sequenceDiagram
     Integrator ->> IntegratorRepresentative: Transmit resulting bCrypt hash.
     IntegratorRepresentative ->> ePaymentRepresentative: Transmit resulting bCrypt hash
 
-    IntegratorRepresentative ->> ePaymentRepresentative: Provide set of IPs and CallbackUrl.
-    ePaymentRepresentative ->> ePaymentPlatform: Configure Allow List IPs, bCrypt hash and CallbackUrl
+    IntegratorRepresentative ->> ePaymentRepresentative: Provide set of IPs Authentication Provider and CallbackUrl.
+    ePaymentRepresentative ->> ePaymentPlatform: Configure Allow List IPs, Authentication Provider, bCrypt hash and CallbackUrl
+    ePaymentRepresentative -->> IntegratorRepresentative: Send EPP public certificate.
     
     Note over IntegratorRepresentative,ePaymentRepresentative: Manual setup completed
     
@@ -87,6 +99,9 @@ sequenceDiagram
 | CallbackUrl              | Defined by Integrator, will be the prefix address all Callback requests are sent. Peruse our [Callback](#callbacks) section for more context. |
 | ClientSecret             | A bCrypt secret that is **kept secret at the Integrator** and used to generate access tokens.                                                 |
 | ClientSecret bCrypt Hash | A bCrypt secret hash that is sent to the ePaymentPlatform and configured to the Integrators clientID                                          |
+| Authentication Provider  | Inform the EPP team which Authentication Provider you will be utilizing                                                                       |
+| EPP public key           | Is sent by EPP during setup, needed to encrypt parts of requests.                                                                             |
+
 
 # Creating a payment
 A full overview of all available fields for a payment can be found in the [Payments Request](https://github.com/BankAxept/bankaxept-epayment-development-kit/blob/main/openapi/integrator/merchant/bankaxept.yaml) component part our API spec.
@@ -130,6 +145,7 @@ sequenceDiagram
     
     end 
 ```
+
 
 ## Creating a payment guidelines.
 
