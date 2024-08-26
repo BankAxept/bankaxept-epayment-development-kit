@@ -76,7 +76,7 @@ sequenceDiagram
 
     IntegratorRepresentative ->> ePaymentRepresentative: Provide set of IPs, Authentication Provider and CallbackUrl.
     ePaymentRepresentative ->> ePaymentPlatform: Configure Allow List IPs, Authentication Provider, bCrypt hash and CallbackUrl
-    ePaymentRepresentative -->> IntegratorRepresentative: Send EPP public certificate and the AuthenticationProvider-ISS field.
+    ePaymentRepresentative -->> IntegratorRepresentative: Send EPP public certificate, ISS value, <br/> TokenRequestor Name and the AuthenticationProvider-ISS field
     
     Note over IntegratorRepresentative,ePaymentRepresentative: Manual setup completed
     

@@ -49,7 +49,7 @@ This object is then encoded in a signed JWS token that is signed using the priva
 Enrollment used as example, same fundamental structure applies for payment.
 ```mermaid
 erDiagram
-    PermissionGrant ||--|{ Digest : "B64-encoded SHA-256 hash"
+    PermissionGrant ||--|| Digest : "B64-encoded SHA-256 hash"
     PermissionGrant {
         string type
         int iat
@@ -108,6 +108,6 @@ sequenceDiagram
 
     Integrator ->> ePaymentPlatform: Enrollment/Payment Request.
     ePaymentPlatform ->> ePaymentPlatform: Verify request
-    note right of ePaymentPlatform: Verify IAT timestamp, ISS Matching, AuthenticationProvider signature and Digest match.
+    note right of ePaymentPlatform: Verify IAT timestamp, ISS Matching, <br/> AuthenticationProvider signature and Digest match.
 
 ```
