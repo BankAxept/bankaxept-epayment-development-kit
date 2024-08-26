@@ -11,10 +11,14 @@ plugins:
   - search
 nav:
   - Welcome: README.md
-  - Getting Started: Getting_Started.md
+  - Getting Started:
+      - Introduction: getting_started.md
+      - Authentication: authentication_interoperability.md
   - API Specs:
       - EPP Merchant API: assets/swagger/swagger_integrator_merchant_bankaxept.md
       - EPP Merchant API (Callbacks): assets/swagger/swagger_integrator_partner_bankaxept.md
+      - EPP Token Requestor API: assets/swagger/swagger_integrator_token_requestor_bankaxept.md
+      - EPP Token Requestor API (callback): assets/swagger/swagger_integrator_token_requestor_callback.md
       - EPP API components: assets/swagger/swagger_epp_components.md
 extra_javascript:
   - https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js

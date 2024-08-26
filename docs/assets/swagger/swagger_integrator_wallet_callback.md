@@ -1,0 +1,1 @@
+<div id="swagger-integrator-wallet-callback" swagger-src="https://raw.githubusercontent.com/BankAxept/bankaxept-epayment-development-kit/main/openapi/integrator/wallet/partner.yaml"></div>
