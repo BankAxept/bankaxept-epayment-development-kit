@@ -1,7 +1,7 @@
 
 
 <p align="center">
-<img alt="BankAxept_Logo.svg" src="../assets/images/BankAxept_Logo.svg" width="300"/>
+<img alt="BankAxept_Logo.svg" src="../assets/images/bankaxept_logo.svg" width="300"/>
 </p>
 
 ```
