@@ -108,6 +108,6 @@ sequenceDiagram
 
     Integrator ->> ePaymentPlatform: Enrollment/Payment Request.
     ePaymentPlatform ->> ePaymentPlatform: Verify request
-    note right of ePaymentPlatform: Verify IAT timestamp, AuthenticationProvider signature and Digest match.
+    note right of ePaymentPlatform: Verify IAT timestamp, ISS Matching, AuthenticationProvider signature and Digest match.
 
 ```
