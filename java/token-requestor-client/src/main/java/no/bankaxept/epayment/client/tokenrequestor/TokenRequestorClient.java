@@ -45,7 +45,7 @@ public class TokenRequestorClient {
   public Flow.Publisher<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
     return new MapOperator<>(
         baseClient.post(
-            "/v1/payment-tokens",
+            "/token-requestor/v1/payment-tokens",
             new SinglePublisher<>(json(request), executor),
             correlationId,
             findSimulationHeader(request)
@@ -57,7 +57,7 @@ public class TokenRequestorClient {
   public Flow.Publisher<RequestStatus> deleteToken(String tokenId, String correlationId) {
     return new MapOperator<>(
         baseClient.post(
-            String.format("/v1/payment-tokens/%s/deletion", tokenId),
+            String.format("/token-requestor/v1/payment-tokens/%s/deletion", tokenId),
             new SinglePublisher<>("", executor),
             correlationId
         ),
@@ -68,7 +68,7 @@ public class TokenRequestorClient {
   public Flow.Publisher<RequestStatus> eligibleBanks(List<String> bankIdentifiers) {
     return new MapOperator<>(
         baseClient.get(
-            "/v1/eligible-banks?bankIdentifier=" + String.join(",", bankIdentifiers),
+            "/token-requestor/v1/eligible-banks?bankIdentifier=" + String.join(",", bankIdentifiers),
             Map.of()
         ),
         HttpResponse::requestStatus);
