@@ -11,9 +11,10 @@ plugins:
   - search
 nav:
   - Welcome: README.md
-  - Getting Started:
+  - Documentation:
       - Introduction: getting_started.md
       - Authentication: authentication_interoperability.md
+      - Tokenization and enrollment: enrollment_and_payment.md
   - API Specs:
       - EPP Merchant API: assets/swagger/swagger_integrator_merchant_bankaxept.md
       - EPP Merchant API (Callbacks): assets/swagger/swagger_integrator_partner_bankaxept.md

@@ -14,21 +14,6 @@ overview of all critical features as well as some general
 hints of how to utilize this platform.
 ```
 
-<!-- TOC -->
-
-* [Introduction](#introduction)
-* [Setting up your EPP integration](#setting-up-your-epp-integration)
-  * [Authorization](#authorization)
-  * [End to end setup diagram.](#end-to-end-setup-diagram)
-    * [Checklist for information exchange](#checklist-for-information-exchange)
-* [Creating a payment](#creating-a-payment)
-  * [Standard flow](#standard-flow)
-  * [Creating a payment guidelines.](#creating-a-payment-guidelines)
-  * [Callbacks](#callbacks)
-    * [Payment Callbacks](#payment-callbacks)
-    * [Asynchronous retry policy](#asynchronous-retry-policy)
-<!-- TOC -->
-
 # Introduction
 EPaymentPlatform (EPP) is a Payment API for integrators (Integrator) utilizing BankAxept online payments. It is based on a core principle of asynchronous exchange of information where the transactions created can be identified using an EPP defined PaymentId and an Integrator defined MessageId. Traditional transaction operations can thereafter be performed as seen according to the `Operations` section.
 
@@ -99,61 +84,21 @@ sequenceDiagram
 | EPP public key           | Is sent by EPP during setup, needed to encrypt parts of requests.                                                                             |
 | Token Requestor Name     | Is sent by EPP during setup, needs to be part of enrollment requests..                                                                        |
 
-# Creating a payment
-A full overview of all available fields for a payment can be found in the [Payments Request](https://github.com/BankAxept/bankaxept-epayment-development-kit/blob/main/openapi/integrator/merchant/bankaxept.yaml) component part our API spec.
 
-## Standard flow
+## Integration guidelines.
 
-Below is the Payment request's happy flow. Note that the PaymentId which
-subsequent operations are performed with is contained in the asynchronous callback.
+This section contains general guidelines for integrating with the EPP.
 
-```mermaid
-sequenceDiagram
-    participant Integrator
-    participant ePaymentPlatform
-    
-    Integrator->>ePaymentPlatform: RequestPayment
-    activate ePaymentPlatform
-    ePaymentPlatform-->>Integrator: 200 OK.
-    deactivate ePaymentPlatform
-    
-    ePaymentPlatform ->> ePaymentPlatform : Resolve Payment Status
+### Context ID 
+All requests support an `X-Correlation-Id` header which can be used to correlate requests and responses. This is especially useful if you always ensure to set this header to a unique value for each request.
+The `X-Correlation-Id` is returned in the corresponding callback, allowing you an additional mechanism to correlate the callback with the original request. It is *very* highly recommended to use this header for enabling traceability and support. 
 
-    ePaymentPlatform->>Integrator: Asynchronous Payment result callback!
-    activate Integrator
-    Integrator-->>ePaymentPlatform: 200 OK.
-    deactivate Integrator
-    note left of Integrator: The callback contains a paymentId <br/> which subsequent Transaction Operations are <br/> performed with.
+### MessageId
+The system acts idempotent on any `messageId`. It is *very* highly recommended that you use a robust UUID generator to ensure that each request has a unique `messageId`. 
 
-    alt Subsequent operations (Capture, Refund, Cancel)
-    
-    Integrator ->> ePaymentPlatform: Transaction Operations.
-    activate ePaymentPlatform
-    ePaymentPlatform-->>Integrator: 200 OK
-    deactivate ePaymentPlatform
-
-    ePaymentPlatform ->> ePaymentPlatform : Resolve Payment Operation
-
-    ePaymentPlatform->>Integrator: Asynchronous Payment Operation result callback!
-    activate Integrator
-    Integrator-->>ePaymentPlatform: 200 OK.
-    deactivate Integrator
-    
-    end 
-```
-
-
-## Creating a payment guidelines.
-
-``messageId``: The ``messageId``field is considered the Integrator's unique identifier of a PaymentRequest, and can be used in the case of a [Rollback Request](https://github.com/BankAxept/bankaxept-epayment-development-kit/blob/main/openapi/integrator/merchant/bankaxept.yaml)
-of an ongoing payment. The ePaymentPlatform performs duplicate controls on the ``messageId`` field, and acts idempotent on requests with the same ``messageId``. Therefore, it *must* be unique pr separate payment request. Meaning that if multiple are done for the same Order (for example a retry due to a previously failed payment request.), a new ``messageId`` must be used.
-
-``merchantOrderReference``: The ``merchantOrderReference``field is considered a reference to the Merchant's Order which might be distinct from the Integrator's own ``messageId``.
-
-## Callbacks
-
-### Payment Callbacks
-The required Callback API for an ePayment Platform Payment may be found [in the Partner Yaml](https://github.com/BankAxept/bankaxept-epayment-development-kit/blob/main/openapi/integrator/merchant/partner.yaml) definition.
+#### MessageId uniqueness & Callbacks
+EPP creates a UUID that is used as a `messageId` for each callback that is used to distinguish between different requests. This `messageId` is considered to be part of the message exchange between EEP and the Integrator.
+This means that you should not re-use this `messageId` for any other requests.
 
 ### Asynchronous retry policy
 Any Asynchronous Requests will be retried if the Response from the Integrator is anything other than ``200 OK``.
