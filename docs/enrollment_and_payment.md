@@ -136,7 +136,7 @@ The Cutoff request must contain a `merchantId` and `batchNumber` which will trig
 The `batchNumber` is tied to a payment request and is returned in the asynchronous callback to the Integrator's Callback Server once a payment is successfully processed.
 In the case of an error or timeout (for example due to a network issue), the request may be retried.
 
-Once a Cutoff request is received the `batchNumber` will increase for all subsequent payment requests.
+Once a Cutoff request is received the `batchNumber` will increase and the new value will be used for all the subsequent payments until the next cutoff, at which point the `batchNumber` will increase again.
 
 We recommend settling pr merchant once a day.
 
