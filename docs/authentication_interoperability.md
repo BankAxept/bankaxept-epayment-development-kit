@@ -24,13 +24,13 @@ For payment:
 
 ````
 nonce: must be the same as the corresponding nonce in the PermissionGrant object.
-merchantReference : set by WalletProvider.
-merchantDisplayName : set by WalletProvider.
-amount : set by WalletProvider.
-currency : set by WalletProvider.
+merchantReference : set by Wallet.
+merchantDisplayName : set by Wallet.
+amount : set by Wallet.
+currency : set by Wallet.
 ````
 
-### Wallet Provider requirements.
+### Wallet requirements.
 Any request must contain `encryptedCardholderAuthenticationData` which matches the `verifiedCardholderAuthenticationSignedData` object once decrypted.
 
 The `verifiedCardholderAuthenticationSignedData` object must be encrypted using the provided public certificate from EPP as received in point 7 in [Setting up your EPP integration](#setting-up-your-epp-integration).
@@ -41,7 +41,7 @@ The `ISS` field is received from EPP and acts as a correlation to the Authentica
 A corresponding `Token Requestor Name` that represent the human-readable name of the token requestor will also be provided.
 This needs to be encoded in the Authentication Provider's `PermissionGrant` object.
 
-## Illustrated EPP-Wallet Provider-Authentication Provider interoperability.
+## Illustrated EPP-Wallet-Authentication Provider interoperability.
 
 First a PermissionGrant object is created. It's structure can be reviewed in the [components overiew](assets/swagger/swagger_epp_components.md).
 This object is then encoded in a signed JWS token that is signed using the private key of the Authentication Provider. The signature is then validated in EPP.

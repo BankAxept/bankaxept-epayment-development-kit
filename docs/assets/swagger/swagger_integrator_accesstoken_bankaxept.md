@@ -1,0 +1,1 @@
+<div id="swagger-integrator-accesstoken-bankaxept" swagger-src="https://raw.githubusercontent.com/BankAxept/bankaxept-epayment-development-kit/main/openapi/access-token/bankaxept.yaml"></div>

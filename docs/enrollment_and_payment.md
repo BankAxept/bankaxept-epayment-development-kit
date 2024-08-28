@@ -1,14 +1,17 @@
 
 
-# Enrolling a card
+## Enrolling a card
 
 In order to perform a payment a card first needs to be enrolled and tokenized. First you must gather the necessary information to perform an enrollment. This data is then sent to the ePayment Platform for tokenization.
-The account number and NIN is used to identify the card that is to be tokenized. The EPP will then asynchronously send a callback to the Integrator's Callback Server with the result of the enrollment, as well as any lifecyclce changes.
+The account number and NIN is used to identify the card that is to be tokenized. The EPP will then asynchronously send a callback to the Integrator's Callback Server with the result of the enrollment, as well as any lifecycle changes.
 
 The resulting Payment Token are then used as a reference to the account in subsequent payment requests.
+
+In the case of a end customer revoking/deleting their payment source a request should be sent to the ePayment Platform to delete the token.
+
  
 
-## Tokenization
+### Tokenization
 
 Once you have requested a token you should expect the asynchronous call to your Callback Server. your Callback Server must comply with our
 [Integration Specification](/assets/swagger/swagger_integrator_token_requestor_bankaxept/).
@@ -16,7 +19,7 @@ Once you have requested a token you should expect the asynchronous call to your 
 The tokenization request includes `tokenRequestorReference`. A reference set by the token requestor to uniquely identify an enrolment request. 
 EPP uses this reference in all communication with the token requestor about the enrolment status. It is recommended that a unique value per enrolment is used. However, it is not a requirement.
 
-## Token lifecycle
+### Token lifecycle
 
 As updates occur with the underlying payment source EPP will send updates according to our [Token Requestor Callback API](/assets/swagger/swagger_integrator_token_requestor_callback/) specification.
 
@@ -27,6 +30,8 @@ As updates occur with the underlying payment source EPP will send updates accord
 | Resumptions        | An update notifying of a token resumption, the token may be used again for payments.   |
 | Deletions          | The token should be considered deleted and not used again.                             |
 | Expiry updates     | An update extending the expiry of a token.                                             |
+
+### Enrollment Standard flow
 
 ```mermaid
 sequenceDiagram 
@@ -45,6 +50,16 @@ sequenceDiagram
     Integrator-->>ePaymentPlatform: 200 OK.
     deactivate Integrator
     note left of Integrator: The callback contains a token <br/> which is used in subsequent Payment Requests.
+
+
+    alt subsequent token deletion (For example, end customer deletion)
+
+        Integrator->>ePaymentPlatform: Post Token Deletion
+        activate ePaymentPlatform
+        ePaymentPlatform-->>Integrator: 200 OK.
+        deactivate ePaymentPlatform
+
+    end
     
     alt subsequent lifecycle updates (Suspend, Resume, Delete, Expiry updates)
     
@@ -54,17 +69,17 @@ sequenceDiagram
     deactivate Integrator
 
 
-    note left of Integrator: Note that subsequent updates are initiated <br/> by the EPP and not the Integrator.
+    note left of Integrator: Note that subsequent lifecycle <br/> updates are initiated <br/> by the EPP and not the Integrator.
 
 
     end
 
 ```
 
-# Creating a payment
-A full overview of all available fields for a payment can be found in the [Payments Request](https://github.com/BankAxept/bankaxept-epayment-development-kit/blob/main/openapi/integrator/merchant/bankaxept.yaml) component part our API spec.
+## Creating a payment
+A full overview of all available fields for a payment can be found in the [Payments Request](/assets/swagger/swagger_integrator_token_merchant_bankaxept/) component part our API spec.
 
-## Standard flow
+### Payment Standard flow
 
 Below is the Payment request's happy flow. Note that the PaymentId which
 subsequent operations are performed with is contained in the asynchronous callback.
@@ -104,14 +119,23 @@ sequenceDiagram
     end 
 ```
 
-## Creating a payment guidelines.
+### Creating a payment guidelines.
 
-``messageId``: The ``messageId``field is considered the Integrator's unique identifier of a PaymentRequest, and can be used in the case of a [Rollback Request](https://github.com/BankAxept/bankaxept-epayment-development-kit/blob/main/openapi/integrator/merchant/bankaxept.yaml)
+``messageId``: The ``messageId``field is considered the Integrator's unique identifier of a PaymentRequest, and can be used in the case of a [Rollback Request](/assets/swagger/swagger_integrator_token_merchant_bankaxept/).
 of an ongoing payment. The ePaymentPlatform performs duplicate controls on the ``messageId`` field, and acts idempotent on requests with the same ``messageId``. Therefore, it *must* be unique pr separate payment request. Meaning that if multiple are done for the same Order (for example a retry due to a previously failed payment request.), a new ``messageId`` must be used.
 
 ``merchantOrderReference``: The ``merchantOrderReference``field is considered a reference to the Merchant's Order which might be distinct from the Integrator's own ``messageId``.
 
-## Callbacks
+### Callbacks
 
-### Payment Callbacks
-The required Callback API for an ePayment Platform Payment may be found [in the Partner Yaml](https://github.com/BankAxept/bankaxept-epayment-development-kit/blob/main/openapi/integrator/merchant/partner.yaml) definition.
+As an integrator processing payments you must integrate the [Payment Callback API](/assets/swagger/swagger_integrator_merchant_partner_bankaxept/) to receive asynchronous updates on the status of your payments.
+
+## Settlement and Cutoff
+To create a Settlement you must send a [Cutoff request](/assets/swagger/swagger_integrator_token_merchant_bankaxept/). 
+The Cutoff request must contain a `merchantId` and `batchNumber` which will trigger a settlement for all transactions tied to the corresponding `batchNumber`.
+The `batchNumber` is tied to a payment request and is returned in the asynchronous callback to the Integrator's Callback Server once a payment is successfully processed.
+In the case of an error or timeout (for example due to a network issue), the request may be retried.
+
+We recommend settling pr merchant once a day.
+
+Once a Settlement is successfully created the ePaymentPlatform will asynchronously send a callback to the Integrator's Callback Server with the result of the Settlement.
