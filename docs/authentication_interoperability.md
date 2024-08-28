@@ -33,7 +33,7 @@ currency : set by Wallet.
 ### Wallet requirements.
 Any request must contain `encryptedCardholderAuthenticationData` which matches the `verifiedCardholderAuthenticationSignedData` object once decrypted.
 
-The `verifiedCardholderAuthenticationSignedData` object must be encrypted using the provided public certificate from EPP as received in point 7 in [Setting up your EPP integration](#setting-up-your-epp-integration).
+The `verifiedCardholderAuthenticationSignedData` object must be encrypted using the provided public certificate from EPP as received in point 7 in [Setting up your EPP integration](getting/started/#setting-up-your-epp-integration).
 The `verifiedCardholderAuthenticationSignedData` object can be reviewed in our [components overiew](assets/swagger/swagger_epp_components.md).
 
 The `ISS` field is received from EPP and acts as a correlation to the Authentication provider that was configured to your Profile.
