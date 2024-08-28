@@ -131,10 +131,12 @@ of an ongoing payment. The ePaymentPlatform performs duplicate controls on the `
 As an integrator processing payments you must integrate the [Payment Callback API](/assets/swagger/swagger_integrator_merchant_partner_bankaxept/) to receive asynchronous updates on the status of your payments.
 
 ## Settlement and Cutoff
-To create a Settlement you must send a [Cutoff request](/assets/swagger/swagger_integrator_token_merchant_bankaxept/). 
+To create a Settlement you must send a [Cutoff request](/assets/swagger/swagger_integrator_merchant_bankaxept/). 
 The Cutoff request must contain a `merchantId` and `batchNumber` which will trigger a settlement for all transactions tied to the corresponding `batchNumber`.
 The `batchNumber` is tied to a payment request and is returned in the asynchronous callback to the Integrator's Callback Server once a payment is successfully processed.
 In the case of an error or timeout (for example due to a network issue), the request may be retried.
+
+Once a Cutoff request is received the `batchNumber` will increase for all subsequent payment requests.
 
 We recommend settling pr merchant once a day.
 

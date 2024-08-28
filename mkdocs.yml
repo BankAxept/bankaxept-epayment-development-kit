@@ -13,7 +13,7 @@ nav:
   - Welcome: README.md
   - Documentation:
       - Introduction: getting_started.md
-      - Authentication: authentication_interoperability.md
+      - Authentication (D-SCA): authentication_interoperability.md
       - Tokenization and Payment: enrollment_and_payment.md
   - API Specs:
       - EPP Access Token API: assets/swagger/swagger_integrator_accesstoken_bankaxept.md
