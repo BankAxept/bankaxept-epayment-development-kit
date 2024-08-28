@@ -73,7 +73,7 @@ This is then encoded in a JWS token that is signed by the Authentication Provide
 Enrollment used as example, same fundamental structure applies for payment.
 ```mermaid
 erDiagram
-  EnrolmentCardholderAuthenticationData ||--|| verifiedCardholderAuthenticationSignedData : "JWS token"
+  EnrolmentCardholderAuthenticationData ||--|| verifiedCardholderAuthenticationSignedData : "JWS token signed by Authentication Provider"
   EnrolmentCardholderAuthenticationData {
         object EnrollmentData
         string iss
@@ -110,4 +110,56 @@ sequenceDiagram
     ePaymentPlatform ->> ePaymentPlatform: Verify request
     note right of ePaymentPlatform: Verify IAT timestamp, ISS Matching, <br/> AuthenticationProvider signature and Digest match.
 
+```
+
+The combined data structure for a request can also be considered as seen below. Enrollment used as example, same fundamental structure applies for payment. 
+The green color indicates Integrator, while the blue color indicates Authentication provider.
+
+```mermaid
+%%{init: {
+  "theme": "default",
+  "themeCSS": [
+    ".er.relationshipLabel { fill: black; }", 
+    ".er.relationshipLabelBox { fill: white; }", 
+    ".er.entityBox { fill: lightgray; }",
+    "[id^=entity-EnrollmentRequest] .er.entityBox { fill: lightgreen;} ",
+    "[id^=entity-encryptedEnrolmentCardholderAuthenticationData] .er.entityBox { fill: lightgreen;} ",
+    "[id^=entity-EnrolmentCardholderAuthenticationData] .er.entityBox { fill: lightgreen;} ",
+    "[id^=entity-verifiedCardholderAuthenticationSignedData] .er.entityBox { fill: powderblue;} ",
+    "[id^=entity-PermissionGrant] .er.entityBox { fill: powderblue;} ",
+    "[id^=entity-Digest] .er.entityBox { fill: powderblue;} "
+    ]
+}}%%
+erDiagram
+    EnrollmentRequest ||--|| encryptedEnrolmentCardholderAuthenticationData : "Encrypts data using EPP public key"
+    encryptedEnrolmentCardholderAuthenticationData {
+        object EnrolmentCardholderAuthenticationData
+        
+    }
+    encryptedEnrolmentCardholderAuthenticationData ||--|| EnrolmentCardholderAuthenticationData : "Encrypted data"
+    EnrolmentCardholderAuthenticationData ||--|| verifiedCardholderAuthenticationSignedData : "JWS token signed by Authentication Provider"
+    EnrolmentCardholderAuthenticationData {
+        object EnrollmentData
+        string iss "ISS is received from EPP, and identifies the Wallet"
+        integer iat "An Epoch timestamp that is validated as being less than 15 minutes old"
+        string verifiedCardholderAuthenticationSignedData
+    }
+    verifiedCardholderAuthenticationSignedData {
+        object PermissionGrant
+    }
+    verifiedCardholderAuthenticationSignedData ||--|| PermissionGrant : "Decodes to"
+    PermissionGrant ||--|| Digest : "B64-encoded SHA-256 hash"
+    PermissionGrant {
+        string type
+        string iss "ISS is received from EPP, and identifies the Authentication Provider"
+        integer iat "An Epoch timestamp that is validated as being less than 15 minutes old"
+        string nonce
+        string sub
+        string permissionId
+        string Digest "The input in the Digest need to match similar values in the EnrollmentRequest"    }
+    Digest {
+      string nonce
+      string acountNumber
+      string tokenRequestorName
+    }
 ```

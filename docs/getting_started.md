@@ -15,7 +15,9 @@ hints of how to utilize this platform.
 ```
 
 # Introduction
-EPaymentPlatform (EPP) is a Payment API for integrators (Integrator) utilizing BankAxept online payments. It is based on a core principle of asynchronous exchange of information where the transactions created can be identified using an EPP defined PaymentId and an Integrator defined MessageId. Traditional transaction operations can thereafter be performed as seen according to the `Operations` section.
+EPaymentPlatform (EPP) is a Payment API for integrators (Integrator) utilizing BankAxept online payments. 
+It is based on a core principle of asynchronous exchange of information where the transactions created can be identified using an EPP defined `PaymentId` and an Integrator defined `MessageId`. 
+Traditional transaction operations can thereafter be performed as seen according to the `Operations` section.
 
 ## Setting up your EPP integration
 
