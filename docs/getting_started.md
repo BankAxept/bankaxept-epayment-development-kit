@@ -114,15 +114,14 @@ The following changes are considered backwards compatible.
 ### Expanding a request with an optional field.
 
 As long as a field is optional it is considered backwards compatible to add it to a request. This means that the integrator can choose to ignore the field if it is not needed.
-This should be unproblematic, but bear this constraint in mind any automation and validation tied to our Swagger files.
+This should be unproblematic, but bear this constraint in mind regarding any automation and validation tied to our Swagger files.
 
 ### Expanding a response with an optional field.
 
 As long as a field is optional it is considered backwards compatible to add it to a response. This means that the integrator can choose to ignore the field if it is not needed.
-This should be unproblematic, but bear this constraint in mind any automation and validation tied to our Swagger files. As well as overly strict
-response deserialization.
+This should be unproblematic, but bear this constraint in mind regarding any automation and validation tied to our Swagger files. As well as overly strict response deserialization.
 
-Response parsing must be robust and ignore any unknown fields.
+`Response parsing must be robust and ignore any unknown fields.`
 
 ### Relaxing validation rules
 
