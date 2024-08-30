@@ -1,5 +1,3 @@
-
-
 <p align="center">
 <img alt="BankAxept_Logo.svg" src="../assets/images/bankaxept_logo.svg" width="300"/>
 </p>
@@ -41,11 +39,11 @@ The request should contain the secret used to generate the bCrypt based hash as 
 The resulting access token has a 1-hour lifetime. We recommend refreshing it 5 minutes before end of life. The resulting `access_token` can then be used to authorize
 towards all other endpoints by putting it in the `Authorization` header as Bearer token.
 
-### Authentication provider and Wallet provider flow and interoperation.
+### Authentication provider and Wallet provider flow and interoperation
 
 Please see our [Authentication Provider setup and guidelines](/authentication_interoperability) 
 
-## End to end setup of profile diagram.
+## End to end setup of profile diagram
 
 ```mermaid
 sequenceDiagram
@@ -84,19 +82,19 @@ sequenceDiagram
 | Authentication Provider  | Inform the EPP team which Authentication Provider you will be utilizing                                                                       |
 | ISS                      | Once the your profile is set up your will receive the Issuer ID corresponding to the your Integrator or Authentication Provider profile.      |
 | EPP public key           | Is sent by EPP during setup, needed to encrypt parts of requests.                                                                             |
-| Token Requestor Name     | Is sent by EPP during setup, needs to be part of enrollment requests..                                                                        |
+| Token Requestor Name     | Is sent by EPP during setup, needs to be part of enrollment requests.                                                                         |
 
 
-## Integration guidelines.
+## Integration guidelines
 
 This section contains general guidelines for integrating with the EPP.
 
 ### Context ID 
 All requests support an `X-Correlation-Id` header which can be used to correlate requests and responses. This is especially useful if you always ensure to set this header to a unique value for each request.
-The `X-Correlation-Id` is returned in the corresponding callback, allowing you an additional mechanism to correlate the callback with the original request. It is *very* highly recommended to use this header for enabling traceability and support. 
+The `X-Correlation-Id` is returned in the corresponding callback, allowing you an additional mechanism to correlate the callback with the original request. It is **required** to use this header for enabling traceability and support. 
 
 ### MessageId
-The system acts idempotent on any `messageId`. It is *very* highly recommended that you use a robust UUID generator to ensure that each request has a unique `messageId`. 
+The system acts idempotent on any `messageId`. It is **required** that you use a robust UUID generator (or similar mechanism) to ensure that each request has a unique `messageId`. 
 
 #### MessageId uniqueness & Callbacks
 EPP creates a UUID that is used as a `messageId` for each callback that is used to distinguish between different requests. This `messageId` is considered to be part of the message exchange between EEP and the Integrator.

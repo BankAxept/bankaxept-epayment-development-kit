@@ -5,7 +5,7 @@
 In order to perform a payment a card first needs to be enrolled and tokenized. First you must gather the necessary information to perform an enrollment. This data is then sent to the ePayment Platform for tokenization.
 The account number and NIN is used to identify the card that is to be tokenized. The EPP will then asynchronously send a callback to the Integrator's Callback Server with the result of the enrollment, as well as any lifecycle changes.
 
-The resulting Payment Token are then used as a reference to the account in subsequent payment requests.
+The resulting Payment Token is then used as a reference to the account in subsequent payment requests.
 
 In the case of a end customer revoking/deleting their payment source a request should be sent to the ePayment Platform to delete the token.
 
@@ -13,10 +13,10 @@ In the case of a end customer revoking/deleting their payment source a request s
 
 ### Tokenization
 
-Once you have requested a token you should expect the asynchronous call to your Callback Server. your Callback Server must comply with our
+Once you have requested a token you should expect the asynchronous call to your Callback Server. Your Callback Server must comply with our
 [Integration Specification](/assets/swagger/swagger_integrator_token_requestor_bankaxept/).
 
-The tokenization request includes `tokenRequestorReference`. A reference set by the token requestor to uniquely identify an enrolment request. 
+The tokenization request must include a `tokenRequestorReference`. A reference set by the Token Requestor to uniquely identify an enrolment request. 
 EPP uses this reference in all communication with the token requestor about the enrolment status. It is recommended that a unique value per enrolment is used. However, it is not a requirement.
 
 ### Token lifecycle
@@ -53,7 +53,6 @@ sequenceDiagram
 
 
     alt subsequent token deletion (For example, end customer deletion)
-
         Integrator->>ePaymentPlatform: Post Token Deletion
         activate ePaymentPlatform
         ePaymentPlatform-->>Integrator: 200 OK.
@@ -119,12 +118,12 @@ sequenceDiagram
     end 
 ```
 
-### Creating a payment guidelines.
+### Creating a payment guidelines
 
-``messageId``: The ``messageId``field is considered the Integrator's unique identifier of a PaymentRequest, and can be used in the case of a [Rollback Request](/assets/swagger/swagger_integrator_token_merchant_bankaxept/).
-of an ongoing payment. The ePaymentPlatform performs duplicate controls on the ``messageId`` field, and acts idempotent on requests with the same ``messageId``. Therefore, it *must* be unique pr separate payment request. Meaning that if multiple are done for the same Order (for example a retry due to a previously failed payment request.), a new ``messageId`` must be used.
+`messageId`: The `messageId`field is considered the Integrator's unique identifier of a PaymentRequest, and can be used in the case of a [Rollback Request](/assets/swagger/swagger_integrator_token_merchant_bankaxept/).
+of an ongoing payment. The ePaymentPlatform performs duplicate controls on the `messageId` field, and acts idempotent on requests with the same `messageId`. Therefore, it *must* be unique pr separate payment request. Meaning that if multiple are done for the same Order (for example a retry due to a previously failed payment request.), a new `messageId` must be used.
 
-``merchantOrderReference``: The ``merchantOrderReference``field is considered a reference to the Merchant's Order which might be distinct from the Integrator's own ``messageId``.
+`merchantOrderReference`: The `merchantOrderReference`field is considered a reference to the Merchant's Order which might be distinct from the Integrator's own `messageId`.
 
 ### Callbacks
 
