@@ -84,7 +84,6 @@ sequenceDiagram
 | EPP public key           | Is sent by EPP during setup, needed to encrypt parts of requests.                                                                             |
 | Token Requestor Name     | Is sent by EPP during setup, needs to be part of enrollment requests.                                                                         |
 
-
 ## Integration guidelines
 
 This section contains general guidelines for integrating with the EPP.
@@ -101,8 +100,34 @@ EPP creates a UUID that is used as a `messageId` for each callback that is used 
 This means that you should not re-use this `messageId` for any other requests.
 
 ### Asynchronous retry policy
-Any Asynchronous Requests will be retried if the Response from the Integrator is anything other than ``200 OK``.
+Any Asynchronous Requests will be retried if the Response from the Integrator is anything other than `200 OK`.
 
 Retries will be performed first after 10 seconds, and thereafter with an exponential backoff for 24 hours. After 24 hours the retry attempts will stop.
 
 The backoff will extend additionally at a rate of `1.5^X` seconds where X is the number of retries until a max retry interval of `10 minutes` is reached.
+
+## API Lifecycle
+
+We strive to keep our API backwards compatible in order to minimize the impact on our integrators. 
+The following changes are considered backwards compatible.
+
+### Expanding a request with an optional field.
+
+As long as a field is optional it is considered backwards compatible to add it to a request. This means that the integrator can choose to ignore the field if it is not needed.
+This should be unproblematic, but bear this constraint in mind any automation and validation tied to our Swagger files.
+
+### Expanding a response with an optional field.
+
+As long as a field is optional it is considered backwards compatible to add it to a response. This means that the integrator can choose to ignore the field if it is not needed.
+This should be unproblematic, but bear this constraint in mind any automation and validation tied to our Swagger files. As well as overly strict
+response deserialization.
+
+Response parsing must be robust and ignore any unknown fields.
+
+### Relaxing validation rules
+
+For example making the required length of a string shorter. This is considered backwards compatible as long as the integrator can still send the same data as before.
+
+### Correcting bugs/errors that does not change intended behavior.
+
+Correcting a bug, for example an incorrect/malformed error returned in an edge case, is considered backwards compatible as long as the integrator can still send the same data as before.

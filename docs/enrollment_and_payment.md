@@ -1,5 +1,3 @@
-
-
 ## Enrolling a card
 
 In order to perform a payment a card first needs to be enrolled and tokenized. First you must gather the necessary information to perform an enrollment. This data is then sent to the ePayment Platform for tokenization.
@@ -8,8 +6,6 @@ The account number and NIN is used to identify the card that is to be tokenized.
 The resulting Payment Token is then used as a reference to the account in subsequent payment requests.
 
 In the case of a end customer revoking/deleting their payment source a request should be sent to the ePayment Platform to delete the token.
-
- 
 
 ### Tokenization
 
@@ -22,7 +18,6 @@ EPP uses this reference in all communication with the token requestor about the 
 ### Token lifecycle
 
 As updates occur with the underlying payment source EPP will send updates according to our [Token Requestor Callback API](/assets/swagger/swagger_integrator_token_requestor_callback/) specification.
-
 
 | Lifecyle update(s) | Description                                                                            |
 |--------------------|----------------------------------------------------------------------------------------|
@@ -140,3 +135,4 @@ Once a Cutoff request is received the `batchNumber` will increase and the new va
 We recommend settling pr merchant once a day.
 
 Once a Settlement is successfully created the ePaymentPlatform will asynchronously send a callback to the Integrator's Callback Server with the result of the Settlement.
+
