@@ -132,4 +132,3 @@ Once a Cutoff request is received the `batchNumber` will increase and the new va
 We recommend settling pr merchant once a day.
 
 Once a Settlement is successfully created the ePaymentPlatform will asynchronously send a callback to the Integrator's Callback Server with the result of the Settlement.
-
