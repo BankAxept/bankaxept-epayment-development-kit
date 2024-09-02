@@ -46,7 +46,6 @@ sequenceDiagram
     deactivate Integrator
     note left of Integrator: The callback contains a token <br/> which is used in subsequent Payment Requests.
 
-
     alt subsequent token deletion (For example, end customer deletion)
         Integrator->>ePaymentPlatform: Post Token Deletion
         activate ePaymentPlatform
@@ -62,9 +61,7 @@ sequenceDiagram
     Integrator-->>ePaymentPlatform: 200 OK.
     deactivate Integrator
 
-
     note left of Integrator: Note that subsequent lifecycle <br/> updates are initiated <br/> by the EPP and not the Integrator.
-
 
     end
 
