@@ -39,6 +39,16 @@ The request should contain the secret used to generate the bCrypt based hash as 
 The resulting access token has a 1-hour lifetime. We recommend refreshing it 5 minutes before end of life. The resulting `access_token` can then be used to authorize
 towards all other endpoints by putting it in the `Authorization` header as Bearer token.
 
+### bCrypt guidelines
+
+We recommend using Spring for up to date bCrypt generation. 
+For example the following command will result in a satisfactory bCrypt hash.
+
+```
+# brew tap spring-io/tap && brew install spring-boot
+spring encodepassword -a bcrypt <secret> 
+```
+
 ### Authentication provider and Wallet provider flow and interoperation
 
 Please see our [Authentication Provider setup and guidelines](/authentication_interoperability) 
@@ -100,7 +110,7 @@ EPP creates a UUID that is used as a `messageId` for each callback that is used 
 This means that you should not re-use this `messageId` for any other requests.
 
 ### Asynchronous retry policy
-Any Asynchronous Requests will be retried if the Response from the Integrator is anything other than `200 OK`.
+Any Asynchronous Requests will be retried if the Response from the Integrator is anything other than `2xx`.
 
 Retries will be performed first after 10 seconds, and thereafter with an exponential backoff for 24 hours. After 24 hours the retry attempts will stop.
 
@@ -124,7 +134,6 @@ This should be unproblematic, but bear this constraint in mind regarding any aut
 `Response parsing must be robust and ignore any unknown fields.`
 
 ### Relaxing validation rules
-
 For example making the required length of a string shorter. This is considered backwards compatible as long as the integrator can still send the same data as before.
 
 ### Correcting bugs/errors that does not change intended behavior.
