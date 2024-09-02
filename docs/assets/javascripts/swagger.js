@@ -13,11 +13,11 @@ const swaggerUrls = {
     },
     "swagger-integrator-token-requestor-callback": {
         name: "BankAxept ePayment Token Requestor API - Merchant Server",
-        url: "https://raw.githubusercontent.com/BankAxept/bankaxept-epayment-development-kit/281edd38f98ed953eb5f943d386a8bd4567e8e82/openapi/integrator/token-requestor/partner.yaml"
+        url: "https://raw.githubusercontent.com/BankAxept/bankaxept-epayment-development-kit/main/openapi/integrator/token-requestor/partner.yaml"
     },
     "swagger-integrator-token-requestor-bankaxept": {
         name: "BankAxept ePayment Token Requestor API - ePayment Server",
-        url: "https://raw.githubusercontent.com/BankAxept/bankaxept-epayment-development-kit/281edd38f98ed953eb5f943d386a8bd4567e8e82/openapi/integrator/token-requestor/bankaxept.yaml"
+        url: "https://raw.githubusercontent.com/BankAxept/bankaxept-epayment-development-kit/main/openapi/integrator/token-requestor/bankaxept.yaml"
     },
     "swagger-integrator-accesstoken-bankaxept": {
         name: "BankAxept ePayment Authentication components",

@@ -1,1 +1,1 @@
-<div id="swagger-integrator-wallet-bankaxept" swagger-src="https://raw.githubusercontent.com/BankAxept/bankaxept-epayment-development-kit/main/openapi/integrator/wallet/bankaxept.yaml"></div>
+<div id="swagger-integrator-wallet-bankaxept"></div>
