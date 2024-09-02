@@ -1,7 +1,7 @@
-## Enrolling a card
+## Enroling a card
 
-In order to perform a payment a card first needs to be enrolled and tokenized. First you must gather the necessary information to perform an enrollment. This data is then sent to the ePayment Platform for tokenization.
-The account number and NIN is used to identify the card that is to be tokenized. The EPP will then asynchronously send a callback to the Integrator's Callback Server with the result of the enrollment, as well as any lifecycle changes.
+In order to perform a payment, a card needs to be enroled and tokenised first. First you must gather the necessary information to perform an enrolment. This data is then sent to the ePayment Platform for tokenization.
+The account number and NIN is used to identify the card that is to be tokenized. The EPP will then asynchronously send a callback to the Integrator's Callback Server with the result of the enrolment, as well as any lifecycle changes.
 
 The resulting Payment Token is then used as a reference to the account in subsequent payment requests.
 
@@ -12,7 +12,7 @@ In the case of a end customer revoking/deleting their payment source a request s
 Once you have requested a token you should expect the asynchronous call to your Callback Server. Your Callback Server must comply with our
 [Integration Specification](/assets/swagger/swagger_integrator_token_requestor_bankaxept/).
 
-The tokenization request must include a `tokenRequestorReference`. A reference set by the Token Requestor to uniquely identify an enrolment request. 
+The tokenization request must include a `tokenRequestorReference`. It acts as a reference set by the Token Requestor to uniquely identify an enrolment request. 
 EPP uses this reference in all communication with the token requestor about the enrolment status. It is recommended that a unique value per enrolment is used. However, it is not a requirement.
 
 ### Token lifecycle
@@ -26,21 +26,21 @@ As updates occur with the underlying payment source EPP will send updates accord
 | Deletions          | The token should be considered deleted and not used again.                             |
 | Expiry updates     | An update extending the expiry of a token.                                             |
 
-### Enrollment Standard flow
+### Enrolment Standard flow
 
 ```mermaid
 sequenceDiagram 
     participant Integrator
     participant ePaymentPlatform
     
-    Integrator ->> ePaymentPlatform: Request enrollment
+    Integrator ->> ePaymentPlatform: Request enrolment
     activate ePaymentPlatform
     ePaymentPlatform-->>Integrator: 200 OK.
     deactivate ePaymentPlatform
     
-    ePaymentPlatform->> ePaymentPlatform: Resolve Enrollment Status
+    ePaymentPlatform->> ePaymentPlatform: Resolve enrolment Status
     
-    ePaymentPlatform->>Integrator: Asynchronous Enrollment result callback
+    ePaymentPlatform->>Integrator: Asynchronous enrolment result callback
     activate Integrator
     Integrator-->>ePaymentPlatform: 200 OK.
     deactivate Integrator

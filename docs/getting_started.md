@@ -15,14 +15,14 @@ hints of how to utilize this platform.
 # Introduction
 EPaymentPlatform (EPP) is a Payment API for integrators (Integrator) utilizing BankAxept online payments. 
 It is based on a core principle of asynchronous exchange of information where the transactions created can be identified using an EPP defined `PaymentId` and an Integrator defined `MessageId`. 
-Traditional transaction operations can thereafter be performed as seen according to the `Operations` section.
+Subsequent transaction operations (Capture, Refund etc) can thereafter be performed as seen according to the `Operations` section.
 
 ## Setting up your EPP integration
 
-In order to set up your EPP integration and start requesting payments the following operations need to 
+In order to set up your EPP integration and start requesting payments, the following operations need to 
 be performed.
 
-1. Through your BankAxept contact point you should retrieve a unique identifier (ClientId) that uniquely identifies you as an integrator.
+1. Through your BankAxept contact point you should retrieve your unique identifier (ClientId) as an integrator.
 2. Provide a list of IPs that you will be operating from, enabling us to append them to our Allow List. Any additional IPs need to be transmitted to the BankAxept ePayment team contact before being utilized.
 3. Provide a `callBackURL` which we will utilize as our address prefix for all callbacks.
 4. Provide the certified Authentication Provider which you  will use to Authenticate payments. 
@@ -35,7 +35,7 @@ be performed.
 ## Authorization
 
 Once the set-up steps are performed you can then integrate with the [Client Authorization Service](assets/swagger/swagger_integrator_accesstoken_bankaxept.mdl).
-The request should contain the secret used to generate the bCrypt based hash as well as you're ClientId. This should be sent as a [Basic token](https://en.wikipedia.org/wiki/Basic_access_authentication)
+The request should contain the secret used to generate the bCrypt based hash as well as your ClientId. This should be sent as a [Basic token](https://en.wikipedia.org/wiki/Basic_access_authentication)
 The resulting access token has a 1-hour lifetime. We recommend refreshing it 5 minutes before end of life. The resulting `access_token` can then be used to authorize
 towards all other endpoints by putting it in the `Authorization` header as Bearer token.
 
@@ -92,7 +92,7 @@ sequenceDiagram
 | Authentication Provider  | Inform the EPP team which Authentication Provider you will be utilizing                                                                       |
 | ISS                      | Once the your profile is set up your will receive the Issuer ID corresponding to the your Integrator or Authentication Provider profile.      |
 | EPP public key           | Is sent by EPP during setup, needed to encrypt parts of requests.                                                                             |
-| Token Requestor Name     | Is sent by EPP during setup, needs to be part of enrollment requests.                                                                         |
+| Token Requestor Name     | Is sent by EPP during setup, needs to be part of enrolment requests.                                                                          |
 
 ## Integration guidelines
 
