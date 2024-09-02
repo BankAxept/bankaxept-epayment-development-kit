@@ -110,7 +110,7 @@ EPP creates a UUID that is used as a `messageId` for each callback that is used 
 This means that you should not re-use this `messageId` for any other requests.
 
 ### Asynchronous retry policy
-Any Asynchronous Requests will be retried if the Response from the Integrator is anything other than `2xx`.
+Any Asynchronous Requests will be retried if the Response from the Integrator is anything other than `2xx` or `4xx`. In the case of a `4xx` the response will be interpreted as a final state and not retried.
 
 Retries will be performed first after 10 seconds, and thereafter with an exponential backoff for 24 hours. After 24 hours the retry attempts will stop.
 
