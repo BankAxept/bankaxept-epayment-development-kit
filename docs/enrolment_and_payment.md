@@ -1,11 +1,11 @@
 ## Enroling a card
 
-In order to perform a payment, a card needs to be enroled and tokenised first. First you must gather the necessary information to perform an enrolment. This data is then sent to the ePayment Platform for tokenization.
+In order to perform a payment, a card needs to be enroled and tokenized first. First you must gather the necessary information to perform an enrolment. This data is then sent to the ePayment Platform for tokenization.
 The account number and NIN is used to identify the card that is to be tokenized. The EPP will then asynchronously send a callback to the Integrator's Callback Server with the result of the enrolment, as well as any lifecycle changes.
 
 The resulting Payment Token is then used as a reference to the account in subsequent payment requests.
 
-In the case of a end customer revoking/deleting their payment source a request should be sent to the ePayment Platform to delete the token.
+In the case of an end customer revoking/deleting their payment source a request should be sent to the ePayment Platform to delete the token.
 
 ### Tokenization
 

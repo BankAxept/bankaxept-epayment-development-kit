@@ -15,7 +15,7 @@ hints of how to utilize this platform.
 # Introduction
 EPaymentPlatform (EPP) is a Payment API for integrators (Integrator) utilizing BankAxept online payments. 
 It is based on a core principle of asynchronous exchange of information where the transactions created can be identified using an EPP defined `PaymentId` and an Integrator defined `MessageId`. 
-Subsequent transaction operations (Capture, Refund etc.) can thereafter be performed as seen according to the `Operations` section.
+Subsequent transaction operations (Capture, Refund etc.) can thereafter be performed as seen according to the [Payments Request](/assets/swagger/swagger_integrator_token_merchant_bankaxept/) component part our API spec.
 
 ## Setting up your EPP integration
 
