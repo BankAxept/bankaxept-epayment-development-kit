@@ -1,0 +1,94 @@
+site_name: BankAxept ePayment Platform documentation
+site_dir: _site
+site_url: https://test.com/
+repo_url: https://github.com/BankAxept/bankaxept-epayment-development-kit/
+repo_name: BankAxept/bankaxept-epayment-development-kit
+docs_dir: docs
+plugins:
+  - mermaid2:
+      arguments:
+        theme: forest
+  - search
+nav:
+  - Welcome: README.md
+  - Documentation:
+      - Introduction: getting_started.md
+      - Authentication (D-SCA): authentication_interoperability.md
+      - Tokenization and Payment: enrolment_and_payment.md
+  - API Specs:
+      - EPP Access Token API: assets/swagger/swagger_integrator_accesstoken_bankaxept.md
+      - EPP Token Requestor API: assets/swagger/swagger_integrator_token_requestor_bankaxept.md
+      - EPP Token Requestor API (callback): assets/swagger/swagger_integrator_token_requestor_callback.md
+      - EPP Merchant API: assets/swagger/swagger_integrator_merchant_bankaxept.md
+      - EPP Merchant API (Callbacks): assets/swagger/swagger_integrator_partner_bankaxept.md
+      - EPP API components: assets/swagger/swagger_epp_components.md
+extra_javascript:
+  - https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js
+  - assets/javascripts/swagger.js
+extra_css:
+  - https://unpkg.com/swagger-ui-dist@3/swagger-ui.css
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.instant
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.tabs.links
+    - content.code.annotation
+    - content.code.copy
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+      primary: deep-purple
+      accent: purple
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+      primary: deep-purple
+      accent: purple
+  markdown_extensions:
+    - abbr
+    - admonition
+    - attr_list
+    - def_list
+    - footnotes
+    - md_in_html
+    - toc:
+        permalink: true
+    - tables
+    - meta
+    - codehilite
+    - pymdownx.arithmatex:
+        generic: true
+    - pymdownx.betterem:
+        smart_enable: all
+    - pymdownx.caret
+    - pymdownx.details
+    - pymdownx.emoji:
+        emoji_index: tag:yaml.org,2002:python/name:materialx.emoji.twemoji
+        emoji_generator: tag:yaml.org,2002:python/name:materialx.emoji.to_svg
+    - pymdownx.highlight
+    - pymdownx.inlinehilite
+    - pymdownx.keys
+    - pymdownx.mark
+    - pymdownx.smartsymbols
+    - pymdownx.superfences:
+        custom_fences:
+          - name: mermaid
+            class: mermaid
+            format: tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format
+    - pymdownx.snippets
+    - pymdownx.tabbed:
+        alternate_style: true
+    - pymdownx.tasklist:
+        custom_checkbox: true
+    - pymdownx.tilde
+  copyright: Copyright &copy; 2023 ePayment team

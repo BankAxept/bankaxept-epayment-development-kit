@@ -15,19 +15,8 @@ paths:
     post:
       summary: Request a new payment
       description: >-
-        Payments creates a payment with a unique reference (id). It is always the consumer (cardholder) that initiates a
-        payment. When the payment is initiated, a payment request will appear in the Wallet app the cardholder has
-        selected to pay with. The cardholder can choose to accept or deny the request. After the cardholder has accepted
-        the payment request in the wallet app, he is requested to perform an authentication with the authentication
-        method the cardholder's issuer requires. The BankAxept ePayment Payment API supports two types of payment requests,
-        m-commerce payment requests (MCOM) and e-commerce payments requests (ECOM). The main difference is that in the
-        ECOM case the consumer is prompted for his mobile phone number and the consumer must manually open the Wallet
-        App. In the MCOM case, the consumer's mobile phone number is initially not known to the merchant. So instead, in
-        this case, the API returns a Payment request token. This token is used to build an URL, which the merchant can
-        use to call the Wallet App from their App. The Payment request token is then a parameter to the BankAxept URL.
-        Once the payment request has reached a final state, the merchant-provided Callback URL will be called by
-        BankAxept. Even though this callback contains the payment status information, the merchant server should
-        retrieve the result of the payment request directly from the BankAxept.
+        Payments creates a payment with a unique reference (paymentId). The result of the payment
+        processing will be returned asynchronously as defined in the Getting Started Guide
       operationId: requestPayment
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'

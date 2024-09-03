@@ -16,6 +16,13 @@ paths:
       tags:
         - Client Authorization Service
       summary: Authenticate with the BankAxept ePayment system and receive an Authorization token.
+      parameters:
+        - in: header
+          name: authorization
+          schema:
+            type: string
+            format: Basic base64(clientId:clientSecret)
+          required: true
       requestBody:
         content:
           application/x-www-form-urlencoded:
