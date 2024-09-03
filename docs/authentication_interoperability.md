@@ -13,23 +13,29 @@ We recommend using a robust signing algorithm such as `RS256`.
 The `Digest` field in the `PermissionGrant` object is a `Base64` encoded SHA-256 hash of the following datapoints.
 
 #### For enrolment:
-````
-nonce: Must be the same as the corresponding nonce in the PermissionGrant object.
-accountNumber: The Account Number of the enrolment session. 
-tokenRequestorName: The Token Requestor Name
-````
 
-The Token Requestor Name is part of the information exchange as seen in our [checklist](getting_started.md#checklist-for-information-exchange).
+> nonce: Must be the same as the corresponding nonce in the PermissionGrant object.
+> 
+> accountNumber: The Account Number of the enrolment session.
+> 
+> tokenRequestorName: The Token Requestor Name
+
+
+The Token Requestor Name is part of the information exchange as seen in our [checklist](./getting_started.md#checklist-for-information-exchange).
 
 #### For payment:
 
-````
-nonce: Must be the same as the corresponding nonce in the PermissionGrant object.
-merchantReference: Set by Wallet.
-merchantDisplayName: Set by Wallet.
-amount: Set by Wallet.
-currency: Set by Wallet.
-````
+
+> nonce: Must be the same as the corresponding nonce in the PermissionGrant object.
+> 
+> merchantReference: Set by Wallet.
+> 
+> merchantDisplayName: Set by Wallet.
+> 
+> amount: Set by Wallet.
+> 
+> currency: Set by Wallet.
+
 
 ### Wallet requirements
 Any request must contain `encryptedCardholderAuthenticationData` which matches the `verifiedCardholderAuthenticationSignedData` object once decrypted.
