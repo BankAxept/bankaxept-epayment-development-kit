@@ -19,7 +19,7 @@ accountNumber: The Account Number of the enrolment session.
 tokenRequestorName: The Token Requestor Name
 ````
 
-The Token Requestor Name is part of the information exchange as seen in our [checklist](getting_started.md#checklist-for-information-exchange).
+The Token Requestor Name is part of the information exchange as seen in our [checklist](./getting_started.md#checklist-for-information-exchange).
 
 #### For payment:
 
