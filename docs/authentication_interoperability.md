@@ -6,7 +6,7 @@ providing an encrypted data object in any enrolment/payment request that contain
 ### Authentication Provider requirements
 In order to facilitate an authenticated payment the Authentication Provider must provide a signed JWS token that is verified by EPP.
 This JWS needs to contain a `PermissionGrant` object that is encoded in the JWS token. It must have
-the structure as seen in the [components overiew](swagger/epp_components).
+the structure as seen in the [components overiew](./swagger/epp_components).
 
 We recommend using a robust signing algorithm such as `RS256`.
 
@@ -35,7 +35,7 @@ currency: Set by Wallet.
 Any request must contain `encryptedCardholderAuthenticationData` which matches the `verifiedCardholderAuthenticationSignedData` object once decrypted.
 
 The `verifiedCardholderAuthenticationSignedData` object must be encrypted using the provided public certificate from EPP as received in point 7 in [Setting up your EPP integration](getting_started/#setting-up-your-epp-integration).
-The `verifiedCardholderAuthenticationSignedData` object can be reviewed in our [components overiew](swagger/epp_components).
+The `verifiedCardholderAuthenticationSignedData` object can be reviewed in our [components overiew](./swagger/epp_components).
 
 The `ISS` field is received from EPP and acts as a correlation to the Authentication provider that was configured to your Profile.
 
@@ -44,7 +44,7 @@ This needs to be encoded in the Authentication Provider's `PermissionGrant` obje
 
 ## Illustrated EPP-Wallet-Authentication Provider interoperability
 
-First a `PermissionGrant` object is created. Its structure can be reviewed in the [components overiew](swagger/epp_components).
+First a `PermissionGrant` object is created. Its structure can be reviewed in the [components overiew](./swagger/epp_components).
 This object is then encoded in a signed JWS token that is signed using the private key of the Authentication Provider. The signature is then validated in EPP.
 
 Enrolment used as example, same fundamental structure applies for payment.
