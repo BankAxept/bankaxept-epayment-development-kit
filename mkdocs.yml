@@ -16,12 +16,12 @@ nav:
       - Authentication (D-SCA): authentication_interoperability.md
       - Tokenization and Payment: enrolment_and_payment.md
   - API Specs:
-      - EPP Access Token API: assets/swagger/swagger_integrator_accesstoken_bankaxept.md
-      - EPP Token Requestor API: assets/swagger/swagger_integrator_token_requestor_bankaxept.md
-      - EPP Token Requestor API (callback): assets/swagger/swagger_integrator_token_requestor_callback.md
-      - EPP Merchant API: assets/swagger/swagger_integrator_merchant_bankaxept.md
-      - EPP Merchant API (Callbacks): assets/swagger/swagger_integrator_partner_bankaxept.md
-      - EPP API components: assets/swagger/swagger_epp_components.md
+      - EPP Access Token API: swagger/integrator_accesstoken_bankaxept.md
+      - EPP Token Requestor API: swagger/integrator_token_requestor_bankaxept.md
+      - EPP Token Requestor API (callback): swagger/integrator_token_requestor_callback.md
+      - EPP Merchant API: swagger/integrator_merchant_bankaxept.md
+      - EPP Merchant API (Callbacks): swagger/integrator_partner_bankaxept.md
+      - EPP API components: swagger/epp_components.md
 extra_javascript:
   - https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js
   - assets/javascripts/swagger.js
