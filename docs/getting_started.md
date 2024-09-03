@@ -2,15 +2,15 @@
 <img alt="BankAxept_Logo.svg" src="../assets/images/bankaxept_logo.svg" width="300"/>
 </p>
 
-```
-Welcome to the Getting Started guide for the BankAxept 
-Epayment Platform (EPP).
 
-This text is intended to give both clear descriptions and 
-guidance for integrators and consumers of EPP. It includes an
-overview of all critical features as well as some general
-hints of how to utilize this platform.
-```
+> Welcome to the Getting Started guide for the BankAxept 
+> Epayment Platform (EPP). 
+> 
+> This text is intended to give both clear descriptions and 
+> guidance for integrators and consumers of EPP. It includes an
+> overview of all critical features as well as some general
+> hints of how to utilize this platform.
+
 
 # Introduction
 EPaymentPlatform (EPP) is a Payment API for integrators (Integrator) utilizing BankAxept online payments.
