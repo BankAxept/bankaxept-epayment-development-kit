@@ -34,7 +34,7 @@ be performed.
 
 ## Authorization
 
-Once the set-up steps are performed you can then integrate with the [Client Authorization Service](assets/swagger/swagger_integrator_accesstoken_bankaxept.mdl).
+Once the set-up steps are performed you can then integrate with the [Client Authorization Service](assets/swagger/swagger_integrator_accesstoken_bankaxept.md).
 The request should contain the secret used to generate the bCrypt based hash as well as your ClientId. This should be sent as a [Basic token](https://en.wikipedia.org/wiki/Basic_access_authentication)
 The resulting access token has a 1-hour lifetime. We recommend refreshing it 5 minutes before end of life. The resulting `access_token` can then be used to authorize
 towards all other endpoints by putting it in the `Authorization` header as Bearer token.
