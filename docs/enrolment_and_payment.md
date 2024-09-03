@@ -10,14 +10,14 @@ In the case of an end customer revoking/deleting their payment source a request 
 ### Tokenization
 
 Once you have requested a token you should expect the asynchronous call to your Callback Server. Your Callback Server must comply with our
-[Integration Specification](/assets/swagger/swagger_integrator_token_requestor_bankaxept/).
+[Integration Specification](swagger/integrator_token_requestor_bankaxept/).
 
 The tokenization request must include a `tokenRequestorReference`. It acts as a reference set by the Token Requestor to uniquely identify an enrolment request. 
 EPP uses this reference in all communication with the token requestor about the enrolment status. It is recommended that a unique value per enrolment is used. However, it is not a requirement.
 
 ### Token lifecycle
 
-As updates occur with the underlying payment source EPP will send updates according to our [Token Requestor Callback API](/assets/swagger/swagger_integrator_token_requestor_callback/) specification.
+As updates occur with the underlying payment source EPP will send updates according to our [Token Requestor Callback API](swagger/integrator_token_requestor_callback/) specification.
 
 | Lifecyle update(s) | Description                                                                            |
 |--------------------|----------------------------------------------------------------------------------------|
@@ -68,7 +68,7 @@ sequenceDiagram
 ```
 
 ## Creating a payment
-A full overview of all available fields for a payment can be found in the [Payments Request](/assets/swagger/swagger_integrator_token_merchant_bankaxept/) component part our API spec.
+A full overview of all available fields for a payment can be found in the [Payments Request](swagger/integrator_token_merchant_bankaxept/) component part our API spec.
 
 ### Payment Standard flow
 
@@ -112,17 +112,17 @@ sequenceDiagram
 
 ### Creating a payment guidelines
 
-`messageId`: The `messageId`field is considered the Integrator's unique identifier of a PaymentRequest, and can be used in the case of a [Rollback Request](/assets/swagger/swagger_integrator_token_merchant_bankaxept/).
+`messageId`: The `messageId`field is considered the Integrator's unique identifier of a PaymentRequest, and can be used in the case of a [Rollback Request](swagger/integrator_token_merchant_bankaxept/).
 of an ongoing payment. The ePaymentPlatform performs duplicate controls on the `messageId` field, and acts idempotent on requests with the same `messageId`. Therefore, it *must* be unique pr separate payment request. Meaning that if multiple are done for the same Order (for example a retry due to a previously failed payment request.), a new `messageId` must be used.
 
 `merchantOrderReference`: The `merchantOrderReference`field is considered a reference to the Merchant's Order which might be distinct from the Integrator's own `messageId`.
 
 ### Callbacks
 
-As an integrator processing payments you must integrate the [Payment Callback API](/assets/swagger/swagger_integrator_merchant_partner_bankaxept/) to receive asynchronous updates on the status of your payments.
+As an integrator processing payments you must integrate the [Payment Callback API](swagger/integrator_merchant_partner_bankaxept/) to receive asynchronous updates on the status of your payments.
 
 ## Settlement and Cutoff
-To create a Settlement you must send a [Cutoff request](/assets/swagger/swagger_integrator_merchant_bankaxept/). 
+To create a Settlement you must send a [Cutoff request](swagger/integrator_merchant_bankaxept/). 
 The Cutoff request must contain a `merchantId` and `batchNumber` which will trigger a settlement for all transactions tied to the corresponding `batchNumber`.
 The `batchNumber` is tied to a payment request and is returned in the asynchronous callback to the Integrator's Callback Server once a payment is successfully processed.
 In the case of an error or timeout (for example due to a network issue), the request may be retried.

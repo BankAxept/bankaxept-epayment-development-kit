@@ -13,35 +13,35 @@ hints of how to utilize this platform.
 ```
 
 # Introduction
-EPaymentPlatform (EPP) is a Payment API for integrators (Integrator) utilizing BankAxept online payments. 
-It is based on a core principle of asynchronous exchange of information where the transactions created can be identified using an EPP defined `PaymentId` and an Integrator defined `MessageId`. 
-Subsequent transaction operations (Capture, Refund etc.) can thereafter be performed as seen according to the [Payments Request](/assets/swagger/swagger_integrator_token_merchant_bankaxept/) component part our API spec.
+EPaymentPlatform (EPP) is a Payment API for integrators (Integrator) utilizing BankAxept online payments.
+It is based on a core principle of asynchronous exchange of information where the transactions created can be identified using an EPP defined `PaymentId` and an Integrator defined `MessageId`.
+Subsequent transaction operations (Capture, Refund etc.) can thereafter be performed as seen according to the [Payments Request](swagger/integrator_merchant_bankaxept.md) component part our API spec.
 
 ## Setting up your EPP integration
 
-In order to set up your EPP integration and start requesting payments, the following operations need to 
+In order to set up your EPP integration and start requesting payments, the following operations need to
 be performed.
 
 1. Through your BankAxept contact point you should retrieve your unique identifier (ClientId) as an integrator.
 2. Provide a list of IPs that you will be operating from, enabling us to append them to our Allow List. Any additional IPs need to be transmitted to the BankAxept ePayment team contact before being utilized.
 3. Provide a `callBackURL` which we will utilize as our address prefix for all callbacks.
-4. Provide the certified Authentication Provider which you  will use to Authenticate payments. 
-5. Create a bCrypt based hash of a secret of your choice. We recommend reading up on [bCrypt](https://en.wikipedia.org/wiki/Bcrypt#) to understand the mechanisms involved. 
-6. Send the resulting IPs, CallbackUrl and bCrypt hash to your BankAxept ePayment team contact. 
+4. Provide the certified Authentication Provider which you  will use to Authenticate payments.
+5. Create a bCrypt based hash of a secret of your choice. We recommend reading up on [bCrypt](https://en.wikipedia.org/wiki/Bcrypt#) to understand the mechanisms involved.
+6. Send the resulting IPs, CallbackUrl and bCrypt hash to your BankAxept ePayment team contact.
 7. Receive EPP's Public Certificate for encryption of sensitive data.
-8. Generate an access token as described in the [Authorization](#authorization) section 
+8. Generate an access token as described in the [Authorization](#authorization) section
 9. Utilize the access token to perform payments as described in the [Creating a Payment](#creating-a-payment) section
 
 ## Authorization
 
-Once the set-up steps are performed you can then integrate with the [Client Authorization Service](assets/swagger/swagger_integrator_accesstoken_bankaxept.md).
+Once the set-up steps are performed you can then integrate with the [Client Authorization Service](swagger/integrator_accesstoken_bankaxept).
 The request should contain the secret used to generate the bCrypt based hash as well as your ClientId. This should be sent as a [Basic token](https://en.wikipedia.org/wiki/Basic_access_authentication)
 The resulting access token has a 1-hour lifetime. We recommend refreshing it 5 minutes before end of life. The resulting `access_token` can then be used to authorize
 towards all other endpoints by putting it in the `Authorization` header as Bearer token.
 
 ### bCrypt guidelines
 
-We recommend using Spring for up to date bCrypt generation. 
+We recommend using Spring for up to date bCrypt generation.
 For example the following command will result in a satisfactory bCrypt hash.
 
 ```
@@ -51,7 +51,7 @@ spring encodepassword -a bcrypt <secret>
 
 ### Authentication provider and Wallet provider flow and interoperation
 
-Please see our [Authentication Provider setup and guidelines](/authentication_interoperability) 
+Please see our [Authentication Provider setup and guidelines](/authentication_interoperability)
 
 ## End to end setup of profile diagram
 
@@ -61,7 +61,7 @@ sequenceDiagram
     actor ePaymentRepresentative
     participant Integrator
     participant ePaymentPlatform
-    
+
     IntegratorRepresentative ->> ePaymentRepresentative: Request ClientId.
     ePaymentRepresentative -->> IntegratorRepresentative: Return ClientId
 
@@ -72,11 +72,11 @@ sequenceDiagram
     IntegratorRepresentative ->> ePaymentRepresentative: Provide set of IPs, Authentication Provider and CallbackUrl.
     ePaymentRepresentative ->> ePaymentPlatform: Configure Allow List IPs, Authentication Provider, bCrypt hash and CallbackUrl
     ePaymentRepresentative -->> IntegratorRepresentative: Send EPP public certificate, ISS value, <br/> Token Requestor Name and the AuthenticationProvider-ISS field
-    
+
     Note over IntegratorRepresentative,ePaymentRepresentative: Manual setup completed
-    
+
     Integrator ->> ePaymentPlatform: Generate access token.
-    ePaymentPlatform ->> ePaymentPlatform: Verify request 
+    ePaymentPlatform ->> ePaymentPlatform: Verify request
     Note right of ePaymentPlatform: Matching ClientId and performing <br/> a bCrypt hash on the secret
     ePaymentPlatform -->> Integrator: Return Access token
 ```
@@ -98,12 +98,12 @@ sequenceDiagram
 
 This section contains general guidelines for integrating with the EPP.
 
-### Context ID 
+### Context ID
 All requests support an `X-Correlation-Id` header which can be used to correlate requests and responses. This is especially useful if you always ensure to set this header to a unique value for each request.
-The `X-Correlation-Id` is returned in the corresponding callback, allowing you an additional mechanism to correlate the callback with the original request. It is **required** to use this header for enabling traceability and support. 
+The `X-Correlation-Id` is returned in the corresponding callback, allowing you an additional mechanism to correlate the callback with the original request. It is **required** to use this header for enabling traceability and support.
 
 ### MessageId
-The system acts idempotent on any `messageId`. It is **required** that you use a robust UUID generator (or similar mechanism) to ensure that each request has a unique `messageId`. 
+The system acts idempotent on any `messageId`. It is **required** that you use a robust UUID generator (or similar mechanism) to ensure that each request has a unique `messageId`.
 
 #### MessageId uniqueness & Callbacks
 EPP creates a UUID that is used as a `messageId` for each callback that is used to distinguish between different requests. This `messageId` is considered to be part of the message exchange between EEP and the Integrator.
@@ -118,7 +118,7 @@ The backoff will extend additionally at a rate of `1.5^X` seconds where X is the
 
 ## API Lifecycle
 
-We strive to keep our API backwards compatible in order to minimize the impact on our integrators. 
+We strive to keep our API backwards compatible in order to minimize the impact on our integrators.
 The following changes are considered backwards compatible.
 
 ### Expanding a request with an optional field.
