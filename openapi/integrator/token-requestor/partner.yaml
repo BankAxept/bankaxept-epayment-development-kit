@@ -177,7 +177,6 @@ components:
         * Rejected - Enrolment was rejected.
         * Failed - Enrolment failed.
         * InvalidFundingPan - No eligible card found.
-        * CardNotActivated - Card is not activated.
         * CardExpired - Card has expired.
         * CardNotActivated - Card is not activated.
       enum:
@@ -185,7 +184,6 @@ components:
         - Rejected
         - Failed
         - InvalidFundingPan
-        - CardNotActivated
         - CardExpired
         - CardNotActivated
 
