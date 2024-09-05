@@ -35,5 +35,5 @@ jobs:
         if: steps.release.outputs.release_created
       - run: mvn --color always -ntp deploy
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: steps.release.outputs.release_created
