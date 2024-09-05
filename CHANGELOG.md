@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v1.1.0...v1.1.1) (2024-09-05)
+
+
+### Bug Fixes
+
+* Fix duplicate enrolment status reason ([#169](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/169)) ([6442763](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/6442763f478b5f53411b3c8ece43f604917ac881))
+
 ## [1.1.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/1.0.3...v1.1.0) (2024-09-05)
 
 
