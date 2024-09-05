@@ -14,7 +14,8 @@
 
 # Introduction
 EPaymentPlatform (EPP) is a Payment API for integrators (Integrator) utilizing BankAxept online payments.
-It is based on a core principle of asynchronous exchange of information where the transactions created can be identified using an EPP defined `PaymentId` and an Integrator defined `MessageId`.
+It is based on a core principle of asynchronous exchange of information where the transactions created can be identified using an EPP defined `PaymentId` and an integrator defined `CorrelationId`.  
+Requests also are idempotent on an Integrator defined `MessageId` as seen in our [MessageId section](#messageid).
 Subsequent transaction operations (Capture, Refund etc.) can thereafter be performed as seen according to the [Payments Request](./swagger/integrator_merchant_bankaxept.md) component part our API spec.
 
 ## Setting up your EPP integration
@@ -35,7 +36,7 @@ be performed.
 ## Authorization
 
 Once the set-up steps are performed you can then integrate with the [Client Authorization Service](./swagger/integrator_accesstoken_bankaxept.md).
-The request should contain the secret used to generate the bCrypt based hash as well as your ClientId. This should be sent as a [Basic token](https://en.wikipedia.org/wiki/Basic_access_authentication)
+The request should contain the secret used to generate the bCrypt based hash as well as your ClientId. This should be sent as a [Basic Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication)
 The resulting access token has a 1-hour lifetime. We recommend refreshing it 5 minutes before end of life. The resulting `access_token` can then be used to authorize
 towards all other endpoints by putting it in the `Authorization` header as Bearer token.
 
@@ -62,23 +63,21 @@ sequenceDiagram
     participant Integrator
     participant ePaymentPlatform
 
-    IntegratorRepresentative ->> ePaymentRepresentative: Request ClientId.
-    ePaymentRepresentative -->> IntegratorRepresentative: Return ClientId
-
     Integrator ->> Integrator: Create bCrypt hash from self defined secret.
     Integrator ->> IntegratorRepresentative: Transmit resulting bCrypt hash.
-    IntegratorRepresentative ->> ePaymentRepresentative: Transmit resulting bCrypt hash
+    IntegratorRepresentative ->> ePaymentRepresentative: Transmit resulting bCrypt hash.
 
     IntegratorRepresentative ->> ePaymentRepresentative: Provide set of IPs, Authentication Provider and CallbackUrl.
-    ePaymentRepresentative ->> ePaymentPlatform: Configure Allow List IPs, Authentication Provider, bCrypt hash and CallbackUrl
-    ePaymentRepresentative -->> IntegratorRepresentative: Send EPP public certificate, ISS value, <br/> Token Requestor Name and the AuthenticationProvider-ISS field
+    ePaymentPlatform ->> ePaymentPlatform: create ClientId identifying the Integrator.
+    ePaymentRepresentative ->> ePaymentPlatform: Configure Allow List IPs, Authentication Provider, bCrypt hash and CallbackUrl.
+    ePaymentRepresentative -->> IntegratorRepresentative: Send EPP public certificate, ISS value, <br/> Token Requestor Name and the AuthenticationProvider-ISS field <br/> and ClientId.
 
-    Note over IntegratorRepresentative,ePaymentRepresentative: Manual setup completed
+    Note over IntegratorRepresentative,ePaymentRepresentative: Manual setup completed.
 
     Integrator ->> ePaymentPlatform: Generate access token.
-    ePaymentPlatform ->> ePaymentPlatform: Verify request
-    Note right of ePaymentPlatform: Matching ClientId and performing <br/> a bCrypt hash on the secret
-    ePaymentPlatform -->> Integrator: Return Access token
+    ePaymentPlatform ->> ePaymentPlatform: Verify request.
+    Note right of ePaymentPlatform: Matching ClientId and performing <br/> a bCrypt hash on the secret.
+    ePaymentPlatform -->> Integrator: Return Access token.
 ```
 
 ### Checklist for information exchange
@@ -98,16 +97,16 @@ sequenceDiagram
 
 This section contains general guidelines for integrating with the EPP.
 
-### Context ID
+### Correlation ID
 All requests support an `X-Correlation-Id` header which can be used to correlate requests and responses. This is especially useful if you always ensure to set this header to a unique value for each request.
 The `X-Correlation-Id` is returned in the corresponding callback, allowing you an additional mechanism to correlate the callback with the original request. It is **required** to use this header for enabling traceability and support.
 
 ### MessageId
-The system acts idempotent on any `messageId`. It is **required** that you use a robust UUID generator (or similar mechanism) to ensure that each request has a unique `messageId`.
+The system acts idempotent on any `messageId`. It is **required** that you use a robust UUID generator (UUIDv4 or similar mechanism) to ensure that each request has a unique `messageId`.
 
 #### MessageId uniqueness & Callbacks
 EPP creates a UUID that is used as a `messageId` for each callback that is used to distinguish between different requests. This `messageId` is considered to be part of the message exchange between EEP and the Integrator.
-This means that you should not re-use this `messageId` for any other requests.
+This means that the EPP requires you to act idempotent on the `messageId` in the callback. This is to ensure that you do not perform the same operation multiple times.
 
 ### Asynchronous retry policy
 Any Asynchronous Requests will be retried if the Response from the Integrator is anything other than `2xx` or `4xx`. In the case of a `4xx` the response will be interpreted as a final state and not retried.
@@ -115,6 +114,15 @@ Any Asynchronous Requests will be retried if the Response from the Integrator is
 Retries will be performed first after 10 seconds, and thereafter with an exponential backoff for 24 hours. After 24 hours the retry attempts will stop.
 
 The backoff will extend additionally at a rate of `1.5^X` seconds where X is the number of retries until a max retry interval of `10 minutes` is reached.
+
+## Versioning
+
+The dependency version of this repository follows the `MAJOR.MINOR.PATCH` format.
+
+* **Major version**: This version is used in the URI, like `/v1/`, and indicates breaking changes to the API. Internally, the URI is utilized to route to the correct internal execution.
+* **Minor and Patch versions**: These versions remain transparent in the API and are used internally for backward-compatible additions and updates.
+
+Diverging from the above versioning scheme requires approval from all integrators.
 
 ## API Lifecycle
 

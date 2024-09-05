@@ -50,6 +50,9 @@ This needs to be encoded in the Authentication Provider's `PermissionGrant` obje
 
 ## Illustrated EPP-Wallet-Authentication Provider interoperability
 
+The Permission Grant with corresponding Digest validation is based on the [Open Banking Europe](https://www.openbankingeurope.eu/media/2096/obe-json-web-signature-profile-for-open-banking.pdf) and [Berlin Group NextGen PSD2 guidelines](https://www.berlin-group.org/nextgenpsd2-downloads) guidelines. This ensures the integrity
+of the user's authentication and the enrolment/payment.
+
 First a `PermissionGrant` object is created. Its structure can be reviewed in the [components overiew](./swagger/epp_components.md).
 This object is then encoded in a signed JWS token that is signed using the private key of the Authentication Provider. The signature is then validated in EPP.
 
@@ -103,7 +106,7 @@ sequenceDiagram
     
     Integrator ->> AuthenticationProvider: Request JWS token. Providing Digest input.
     note right of AuthenticationProvider: Note that the required Digest input is different <br/>in enrolment and payment requests.
-    AuthenticationProvider ->> AuthenticationProvider: Create Digest encrypted hash.
+    AuthenticationProvider ->> AuthenticationProvider: Create Digest cryptographic hash.
     AuthenticationProvider ->> AuthenticationProvider: Create PermissionGrant object.
     AuthenticationProvider ->> AuthenticationProvider: Create and Sign JWS token. Using AuthenticationProvider private key.
     AuthenticationProvider ->> Integrator: Return JWS token.
@@ -153,16 +156,16 @@ erDiagram
     verifiedCardholderAuthenticationSignedData ||--|| PermissionGrant : "Decodes to"
     PermissionGrant ||--|| Digest : "Base64-encoded SHA-256 hash"
     PermissionGrant {
-        string type
+        string type "for enrollment: 'approveAccount.v1'. For payment: 'payment.v1'"
         string iss "ISS is received from EPP, and identifies the Authentication Provider"
         integer iat "An Epoch timestamp that is validated as being less than 15 minutes old"
-        string nonce
-        string sub
-        string permissionId
-        string Digest "The input in the Digest need to match similar values in the EnrolmentRequest"    }
+        string nonce "The nonce for the permission statement"
+        string sub "The primary identifier of the subject that granted the permission."
+        string permissionId "Unique id of the permission request"
+        string Digest "The input in the Digest need to match corresponding values in the EnrolmentRequest"    }
     Digest {
-      string nonce
-      string acountNumber
-      string tokenRequestorName
+      string nonce "The nonce for the permission statement"
+      string acountNumber "The Account Number of the enrolment session"
+      string tokenRequestorName "The Token Requestor Name"
     }
 ```
