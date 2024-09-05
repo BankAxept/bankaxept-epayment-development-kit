@@ -130,3 +130,29 @@ Once a Cutoff request is received the `batchNumber` will increase and the new va
 We recommend settling pr merchant once a day.
 
 Once a Settlement is successfully created the ePaymentPlatform will asynchronously send a callback to the Integrator's Callback Server with the result of the Settlement.
+
+## After the payment request
+After the payment request has resolved with the asynchronous confirmation callback, the Integrator can perform the following operations:
+Note that all operations require both a `paymentId` and a unique `messageId` to be performed.
+
+### Rollback
+By utilizing the rollback request the Integrator can cancel an ongoing payment. The `messageId` field is used to identify the payment to be rolled back. 
+
+General guidelines on when to rollback a payment: 
+
+* The Payment Request has been sent to the ePaymentPlatform but the Integrator has had technical issues receiving the callback *and* the Integrator believes it would be in the end customer's best interest to cancel the payment.
+* The Payment Request has been sent but a `5xx`is received from the ePaymentPlatform.
+* The Payment Request has been sent and successfully been processed, but for whatever reason the goods or services are not delivered to the end customer as expected.
+* A partial capture has been performed and no other operations are to be performed on the payment.
+
+### Capture
+Must be performed 7 days within the Payment Request. The `paymentId` is used to identify the payment to be captured. Where 7 days is defined as `7*24 hours` from the time the Payment Request was sent.
+May be performed with a partial amount.
+
+> Note that in the case of a Payment Request being sent with `autoCapture` set to `true` the EPP will perform a Capture operation to finalize the payment immediately.
+
+### Refund
+May only be performed with an amount lower than previously captured amount.
+
+#### Rollback of refund
+A refund that requires a rollback `must` be roll-backed within 1 day (24 hours) and for the full amount of the performed refund. 

@@ -102,7 +102,7 @@ All requests support an `X-Correlation-Id` header which can be used to correlate
 The `X-Correlation-Id` is returned in the corresponding callback, allowing you an additional mechanism to correlate the callback with the original request. It is **required** to use this header for enabling traceability and support.
 
 ### MessageId
-The system acts idempotent on any `messageId`. It is **required** that you use a robust UUID generator (UUIDv4 or similar mechanism) to ensure that each request has a unique `messageId`.
+The system acts idempotent on any `messageId`. It is **required** that you use a robust uniqueness mechanism (For example UUIDv4 or similar mechanism) to ensure that each request has a unique `messageId`.
 
 #### MessageId uniqueness & Callbacks
 EPP creates a UUID that is used as a `messageId` for each callback that is used to distinguish between different requests. This `messageId` is considered to be part of the message exchange between EEP and the Integrator.
