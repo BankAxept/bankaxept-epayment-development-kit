@@ -147,7 +147,6 @@ General guidelines on when to rollback a payment:
 When you want to release any remaining un-captured funds related the transaction. This might be because:
 
 * The Payment Request has been sent and successfully been processed, but for whatever reason the goods or services are not delivered to the end customer as expected.
-* A partial capture has been performed and no other operations are to be performed on the payment.
 
 ### Capture
 Must be performed 7 days within the Payment Request. The `paymentId` is used to identify the payment to be captured. Where 7 days is defined as `7*24 hours` from the time the Payment Request was sent.
