@@ -30,7 +30,7 @@ The Token Requestor Name is part of the information exchange as seen in our [che
 > 
 > merchantReference: Set by Wallet.
 > 
-> merchantDisplayName: Set by Wallet.
+> creditorName: Merchant display name. Set by Wallet.
 > 
 > amount: Set by Wallet.
 > 
@@ -168,4 +168,64 @@ erDiagram
       string acountNumber "The Account Number of the enrolment session"
       string tokenRequestorName "The Token Requestor Name"
     }
+```
+
+
+### Digest validation examples
+
+While the exact implementation may vary per Integrator/Coding language the resulting digest logic must match the following result
+
+#### Bash example
+
+```bash
+echo -n '{"nonce":"550e8400-e29b-41d4-a716-446655440000","id":"merchantReference","payments":[{"paymentId":"merchantReference","amount":"100","currency":"NOK","creditorName":"merchantDisplayName"}]}' \
+| sha256sum - \
+| awk '{print $1}' \
+| xxd -r -p \
+| base64 \
+| tr -d '=' \
+| tr '/+' '_-'
+```
+
+Script explanation: A SHA-256 hash is created from the JSON object. The resulting hash is then converted to binary and encoded as a Base64 string. First `tr` is used to remove padding. Then `tr` is used to make the Base64 URL safe.
+
+#### Java example
+
+```java
+
+record PaymentPermissionStatement(
+    String nonce,
+    String id,
+    List<PaymentPermissionStatement.Payment> payments
+) {
+
+  record Payment(
+      String paymentId,
+      String amount,
+      String currency,
+      String creditorName
+  ) {}
+
+  String digest() throws NoSuchAlgorithmException, JsonProcessingException {
+    return Base64.getUrlEncoder()
+        .withoutPadding()
+        .encodeToString(MessageDigest.getInstance("SHA-256").digest(new ObjectMapper().writeValueAsBytes(this)));
+  }
+
+}
+```
+
+Follow by   
+
+```java
+    new PaymentPermissionStatement(
+        "550e8400-e29b-41d4-a716-446655440000",
+        "merchantReference",
+        List.of(new Payment(
+            "merchantReference",
+            "100",
+            "NOK",
+            "merchantDisplayName"
+        ))
+    ).digest();
 ```
