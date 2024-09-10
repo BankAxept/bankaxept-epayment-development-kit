@@ -169,3 +169,20 @@ erDiagram
       string tokenRequestorName "The Token Requestor Name"
     }
 ```
+
+
+### Digest validaiton
+
+While the exact implementation may vary per Integrator/Coding language the resulting digest logic must match the following result
+
+```bash
+echo -n '{"nonce":"550e8400-e29b-41d4-a716-446655440000","id":"merchantReference","payments":[{"paymentId":"merchantReference","amount":"100","currency":"NOK","creditorName":"merchantDisplayName"}]}' \
+| sha256sum - \
+| awk '{print $1}' \
+| xxd -r -p \
+| base64 \
+| tr -d '=' \
+| tr '/+' '_-'
+```
+
+Script explanation: A SHA-256 hash is created from the JSON object. The resulting hash is then converted to binary and encoded as a Base64 string. The `tr` command is used to remove the padding characters `=` and replace the characters `/` and `+` with `_` and `-` respectively.
