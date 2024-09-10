@@ -30,7 +30,7 @@ The Token Requestor Name is part of the information exchange as seen in our [che
 > 
 > merchantReference: Set by Wallet.
 > 
-> merchantDisplayName: Set by Wallet.
+> creditorName: Merchant display name. Set by Wallet.
 > 
 > amount: Set by Wallet.
 > 
