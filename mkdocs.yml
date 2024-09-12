@@ -16,6 +16,7 @@ nav:
       - Introduction: getting_started.md
       - Authentication (D-SCA): authentication_interoperability.md
       - Tokenization and Payment: enrolment_and_payment.md
+      - API Policy: api_policy.md
   - API Specs:
       - EPP Access Token API: swagger/integrator_accesstoken_bankaxept.md
       - EPP Token Requestor API: swagger/integrator_token_requestor_bankaxept.md
