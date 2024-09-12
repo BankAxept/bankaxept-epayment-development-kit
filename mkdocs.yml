@@ -8,6 +8,7 @@ plugins:
   - mermaid2:
       arguments:
         theme: forest
+        securityLevel: 'loose'
   - search
 nav:
   - Welcome: README.md
@@ -23,8 +24,10 @@ nav:
       - EPP Merchant API (Callbacks): swagger/integrator_partner_bankaxept.md
       - EPP API components: swagger/epp_components.md
 extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js
   - https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js
   - assets/javascripts/swagger.js
+  - assets/javascripts/mermaid-init.js
 extra_css:
   - https://unpkg.com/swagger-ui-dist@3/swagger-ui.css
 theme:
