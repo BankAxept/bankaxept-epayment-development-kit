@@ -126,7 +126,8 @@ We expect the Integrator to know their own applications and user behavior best a
 
 `
 Please note that the following guidelines are based on the assumption that there are no network issues or other external factors that might affect the response time.
-Nor does it estimate any additional network time outside of EPP.`
+Nor does it estimate any additional network time outside of EPP.
+`
 
 1. For payments the expected resolution time is 50-300 ms.
 2. For payments if we have not reached a resolution within 6.6 seconds we will return a 'AuthorisationFailed' callback. We will then perform a technical reversal immediately on the payment in question.
