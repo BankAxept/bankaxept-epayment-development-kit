@@ -108,6 +108,11 @@ The system acts idempotent on any `messageId`. It is **required** that you use a
 EPP creates a UUID that is used as a `messageId` for each callback that is used to distinguish between different requests. This `messageId` is considered to be part of the message exchange between EEP and the Integrator.
 This means that the EPP requires you to act idempotent on the `messageId` in the callback. This is to ensure that you do not perform the same operation multiple times.
 
+### Authentication of callbacks
+
+In order to authenticate the callbacks you receive from EPP, you should utilize Mutual TLS. This may be done by utilizing the public key provided by EPP during setup. 
+The same public key will be utilized in the certificate used for sending the callback. 
+
 ### Asynchronous retry policy
 Any Asynchronous Requests will be retried if the Response from the Integrator is anything other than `2xx` or `4xx`. In the case of a `4xx` the response will be interpreted as a final state and not retried.
 
@@ -115,35 +120,17 @@ Retries will be performed first after 10 seconds, and thereafter with an exponen
 
 The backoff will extend additionally at a rate of `1.5^X` seconds where X is the number of retries until a max retry interval of `10 minutes` is reached.
 
-## Versioning
+### Timeouts and expected response times
+These data points are intended to give the Integrator an idea of expected behavior to optimize based on their own use case.
+We expect the Integrator to know their own applications and user behavior best and therefore do not give any strict guidelines on how to handle timeouts.
 
-The dependency version of this repository follows the `MAJOR.MINOR.PATCH` format.
+`
+Please note that the following guidelines are based on the assumption that there are no network issues or other external factors that might affect the response time.
+Nor does it estimate any additional network time outside of EPP.
+`
 
-* **Major version**: This version is used in the URI, like `/v1/`, and indicates breaking changes to the API. Internally, the URI is utilized to route to the correct internal execution.
-* **Minor and Patch versions**: These versions remain transparent in the API and are used internally for backward-compatible additions and updates.
-
-Diverging from the above versioning scheme requires approval from all integrators.
-
-## API Lifecycle
-
-We strive to keep our API backwards compatible in order to minimize the impact on our integrators.
-The following changes are considered backwards compatible.
-
-### Expanding a request with an optional field.
-
-As long as a field is optional it is considered backwards compatible to add it to a request. This means that the integrator can choose to ignore the field if it is not needed.
-This should be unproblematic, but bear this constraint in mind regarding any automation and validation tied to our Swagger files.
-
-### Expanding a response with an optional field.
-
-As long as a field is optional it is considered backwards compatible to add it to a response. This means that the integrator can choose to ignore the field if it is not needed.
-This should be unproblematic, but bear this constraint in mind regarding any automation and validation tied to our Swagger files. As well as overly strict response deserialization.
-
-`Response parsing must be robust and ignore any unknown fields.`
-
-### Relaxing validation rules
-For example making the required length of a string shorter. This is considered backwards compatible as long as the integrator can still send the same data as before.
-
-### Correcting bugs/errors that does not change intended behavior.
-
-Correcting a bug, for example an incorrect/malformed error returned in an edge case, is considered backwards compatible as long as the integrator can still send the same data as before.
+1. For payments the expected resolution time is 50-300 ms.
+2. For payments, if we have not reached a resolution within 6.6 seconds, we will return a 'AuthorisationFailed' callback. We will then perform a technical reversal immediately on the payment in question.
+3. The outbound callback request is expected to leave EPP within 1000 ms of the synchronous request resolving.
+4. EPP times out waiting for a callback response after 10 seconds.
+5. An enrollment request times out within 1 hour. If the request has not been resolved within this time frame the request will be considered failed and a callback will be sent to the Integrator.
