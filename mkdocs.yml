@@ -8,7 +8,6 @@ plugins:
   - mermaid2:
       arguments:
         theme: forest
-        securityLevel: 'loose'
   - search
 nav:
   - Welcome: README.md

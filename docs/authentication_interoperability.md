@@ -189,6 +189,12 @@ echo -n '{"nonce":"550e8400-e29b-41d4-a716-446655440000","id":"merchantReference
 
 Script explanation: A SHA-256 hash is created from the JSON object. The resulting hash is then converted to binary and encoded as a Base64 string. First `tr` is used to remove padding. Then `tr` is used to make the Base64 URL safe.
 
+The script above should produce the following output: 
+
+`QomjM9YUvFcj0bd0Xjr39uMTaKzb1D54H_YAbHicy4Q`
+
+You may use this to verify your own implementation.
+
 #### Java example
 
 ```java
