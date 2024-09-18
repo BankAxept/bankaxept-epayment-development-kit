@@ -37,14 +37,23 @@ const loadSwaggerUIBundle = function (id, url) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const observer = new MutationObserver(function (mutationsList, observer) {
+    const loadAllSwaggerUIBundles = function () {
         Object.keys(swaggerUrls).forEach(id => {
             const swaggerElement = document.getElementById(id);
             if (swaggerElement !== null && !swaggerElement.hasChildNodes()) {
                 loadSwaggerUIBundle(id, swaggerUrls[id]);
             }
         });
+    };
+
+    // Initial load
+    loadAllSwaggerUIBundles();
+
+    // Observe for future changes
+    const observer = new MutationObserver(function (mutationsList, observer) {
+        loadAllSwaggerUIBundles();
     });
+
     const targetNode = document.body;
     const config = {childList: true, subtree: true};
     observer.observe(targetNode, config);

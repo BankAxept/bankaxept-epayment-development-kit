@@ -30,6 +30,7 @@ extra_javascript:
   - assets/javascripts/mermaid-init.js
 extra_css:
   - https://unpkg.com/swagger-ui-dist@3/swagger-ui.css
+  - assets/stylesheets/custom-swagger.css
 theme:
   name: material
   features:

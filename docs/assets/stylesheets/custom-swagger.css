@@ -1,0 +1,80 @@
+/*
+Align Swagger with Mkdocs Light mode
+*/
+body[data-md-color-scheme="default"] span[style="color: rgb(162, 252, 162);"] {
+    color: #006f00 !important;
+}
+
+/*
+Align Swagger with Mkdocs Dark mode
+*/
+body[data-md-color-scheme="slate"] .md-content {
+    color: white !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content * {
+    color: inherit !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content .opblock-section-header {
+    background: #3C4142 !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content .swagger-ui input {
+    background: #2B2B2B !important;
+}
+
+body[data-md-color-scheme="slate"] span[style="color: rgb(162, 252, 162);"] {
+    color: #00d062 !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content h3#operations-tag-default {
+    background: #3C4142 !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content .swagger-ui section.models {
+    background: #3C4142 !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content h3#operations-tag-default {
+    background: #3C4142 !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content h3#operations-tag-Client_Authorization_Service {
+    background: #3C4142 !important;
+}
+
+
+body[data-md-color-scheme="slate"] .md-content .swagger-ui select {
+    background: #3C4142 !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content .scheme-container {
+    background: #3C4142 !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content .model-container {
+    background: #141313 !important;
+}
+
+/*
+Align all arrow SVGs with MkDocs dark mode
+*/
+body[data-md-color-scheme="slate"] .md-content .models-control, .expand-operation, .model-box-control svg {
+    fill: white !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content .arrow {
+    fill: white !important;
+}
+
+body[data-md-color-scheme="slate"] .md-content .model-toggle {
+    filter: brightness(0) saturate(100%) invert(100%);
+}
+
+/*
+Font
+*/
+.swagger-ui code {
+    font-family: monospace;
+}
