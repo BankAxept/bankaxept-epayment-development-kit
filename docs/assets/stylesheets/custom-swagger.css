@@ -8,9 +8,10 @@ body[data-md-color-scheme="default"] span[style="color: rgb(162, 252, 162);"] {
 /*
 Align Swagger with Mkdocs Dark mode
 */
-body[data-md-color-scheme="slate"] .md-content{
+body[data-md-color-scheme="slate"] .md-content {
     color: white !important;
 }
+
 body[data-md-color-scheme="slate"] .md-content * {
     color: inherit !important;
 }
@@ -51,8 +52,10 @@ body[data-md-color-scheme="slate"] .md-content .model-container {
     background: #141313 !important;
 }
 
-/*Align all arrow SVGs with MkDocs dark mode*/
-body[data-md-color-scheme="slate"] .md-content .models-control,.expand-operation,.model-box-control svg {
+/*
+Align all arrow SVGs with MkDocs dark mode
+*/
+body[data-md-color-scheme="slate"] .md-content .models-control, .expand-operation, .model-box-control svg {
     fill: white !important;
 }
 
@@ -67,6 +70,6 @@ body[data-md-color-scheme="slate"] .md-content .model-toggle {
 /*
 Font
 */
-.swagger-ui code{
+.swagger-ui code {
     font-family: monospace;
 }
