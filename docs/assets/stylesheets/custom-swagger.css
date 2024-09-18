@@ -36,9 +36,14 @@ body[data-md-color-scheme="slate"] .md-content .swagger-ui section.models {
     background: #3C4142 !important;
 }
 
-body[data-md-color-scheme="slate"] .md-content h3#operations-tag-default, h3#operations-tag-Client_Authorization_Service {
+body[data-md-color-scheme="slate"] .md-content h3#operations-tag-default {
     background: #3C4142 !important;
 }
+
+body[data-md-color-scheme="slate"] .md-content h3#operations-tag-Client_Authorization_Service {
+    background: #3C4142 !important;
+}
+
 
 body[data-md-color-scheme="slate"] .md-content .swagger-ui select {
     background: #3C4142 !important;
