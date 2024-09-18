@@ -130,7 +130,7 @@ Nor does it estimate any additional network time outside of EPP.
 `
 
 1. For payments the expected resolution time is 50-300 ms.
-2. For payments, if we have not reached a resolution within 6.6 seconds we will return a 'AuthorisationFailed' callback. We will then perform a technical reversal immediately on the payment in question.
+2. For payments, if we have not reached a resolution within 6.6 seconds we will return a `AuthorisationFailed` callback. We will then perform a technical reversal immediately on the payment in question.
 3. The outbound callback request is expected to leave EPP within 1000 ms of the synchronous request resolving.
 4. EPP times out waiting for a callback response after 10 seconds.
 5. An enrollment request times out within 1 hour. If the request has not been resolved within this time frame the request will be considered failed and a callback will be sent to the Integrator.
