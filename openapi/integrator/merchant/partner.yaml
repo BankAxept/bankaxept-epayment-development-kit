@@ -220,13 +220,27 @@ components:
 
     CutOffResponse:
       type: object
+      required:
+        - batchNumber
+        - merchantId
+        - messageId
+        - status
       properties:
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
+        currentBatchNumber:
+          type: integer
+          format: int64
+          example: 1032
+          description: >-
+            Indicates the current settlement batch for a merchant.
+            This information is provided only if the status is Declined.
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
         merchantId:
           $ref: '../components.yaml#/components/schemas/merchantId'
+        status:
+          $ref: '#/components/schemas/CutOffStatus'
         creditAmount:
           type: integer
           format: int64
@@ -275,6 +289,17 @@ components:
         - Approved
         - Declined
         - Failed
+
+    CutOffStatus:
+      type: string
+      example: Approved
+      description: |
+        Code specifying the result of the operation:
+        * Approved - CutOff request was approved.
+        * Declined - CutOff request was declined.
+      enum:
+        - Approved
+        - Declined
 
     stan:
       type: string
