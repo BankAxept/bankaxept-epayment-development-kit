@@ -176,16 +176,39 @@ components:
         * Accepted - Enrolment was accepted.
         * Rejected - Enrolment was rejected.
         * Failed - Enrolment failed.
-        * InvalidFundingPan - No eligible card found.
-        * CardExpired - Card has expired.
-        * CardNotActivated - Card is not activated.
       enum:
         - Accepted
         - Rejected
         - Failed
-        - InvalidFundingPan
-        - CardExpired
-        - CardNotActivated
+
+    ErrorCode:
+      type: string
+      example: Accepted
+      description: |
+        Code specifying the result of the operation:
+        * ENROLMENT_OPERATION_FAILED -
+        * ILLEGAL_OPERATION
+        * TIMEOUT
+        * UNKNOWN_CARD -
+        * CARD_NOT_ACTIVATED -
+        * CARD_EXPIRED - 
+        * CARD_SUSPENDED - 
+        * CARD_REVOKED -
+        * NO_ELIGIBLE_CARDS_FOUND _
+        * FPAN_PROV_COUNT_EXCEEDED -
+        * INVALID_FUNDING_PAN -
+      enum:
+        - Enrolment_Operation_Failed
+        - Illegal_Operation
+        - Timeout
+        - Unknown_Card
+        - Card_Not_Activated
+        - Card_Expired
+        - Card_Suspended
+        - Card_Revoked
+        - No_Eligible_Cards_Found
+        - Fpan_Prov_Count_Exceeded
+        - Invalid_Funding_Pan
 
     TokenUpdateData:
       type: object
