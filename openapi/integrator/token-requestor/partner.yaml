@@ -183,7 +183,7 @@ components:
 
     ErrorCode:
       type: string
-      example: CARD_NOT_ACTIVATED
+      example: CardNotActivated
       description: |
         Code specifying the result of the operation:
         * EnrolmentOperationFailed - Retryable.
