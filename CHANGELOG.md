@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v1.1.1...v1.2.0) (2024-10-14)
+
+
+### Features
+
+* Remove enrolment statuses and add errocodes by aligning to new structure ([#180](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/180)) ([1ec7955](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/1ec7955a9ba2578cece0cbb66609c63e88ca17a5))
+
 ## [1.1.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v1.1.0...v1.1.1) (2024-09-05)
 
 
