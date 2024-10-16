@@ -156,6 +156,8 @@ components:
           $ref: '../components.yaml#/components/schemas/nin'
         status:
           $ref: '#/components/schemas/EnrolmentStatus'
+        errorCode:
+          $ref: '#/components/schemas/ErrorCode'
         paymentToken:
           $ref: '../components.yaml#/components/schemas/PaymentToken'
         accountNumberLastFourDigits:
