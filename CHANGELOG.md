@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v1.2.0...v1.2.1) (2024-10-16)
+
+
+### Bug Fixes
+
+* Add ErrorCode as a property to CardEnrolmentResponse ([#184](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/184)) ([3780ad9](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/3780ad975eab24632a25da9374074a2ee8b3f00b))
+
 ## [1.2.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v1.1.1...v1.2.0) (2024-10-14)
 
 
