@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v1.2.1...v2.0.0) (2024-11-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* Add status and current batch number to cut off response ([#178](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/178))
+
+### Features
+
+* Add status and current batch number to cut off response ([#178](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/178)) ([7f7f6ae](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/7f7f6aed011c595d29c0553b7efe9763f2c93fcc))
+
+
+### Dependency Updates
+
+* bump io.swagger.parser.v3:swagger-parser from 2.1.22 to 2.1.23 ([#187](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/187)) ([e11e01b](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/e11e01bfe5cba4fca8e8cbd3c339bf241e892484))
+
 ## [1.2.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v1.2.0...v1.2.1) (2024-10-16)
 
 
