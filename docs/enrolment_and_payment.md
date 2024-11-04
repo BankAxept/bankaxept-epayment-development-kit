@@ -20,7 +20,7 @@ bank identifier is the first 4 digits of the bank account number.
 
 This might be sent as an array of bank identifiers to verify multiple banks accounts at once.
 
-As a synchronous response you will get all of the bank identifiers inr your request that are eligible for enrolment.
+As a synchronous response you will get all the bank identifiers in your request that are eligible for enrolment.
 
 While the list of eligible banks is being constantly updated a 1 hour cache or similar is recommended to avoid
 unnecessary calls. Evaluate as needed pr your system.
