@@ -7,14 +7,14 @@ Provider.
 
 ### Authentication Provider requirements
 
-In order to facilitate an authenticated payment the Authentication Provider must provide a signed JWS token that is
+To facilitate an authenticated payment, the Authentication Provider must provide a signed JWS token
 verified by EPP.
 This JWS needs to contain a `PermissionGrant` object that is encoded in the JWS token. It must have
-the structure as seen in the [components overiew](./swagger/epp_components.md).
+the structure as seen in the [Components overview](./swagger/epp_components.md).
 
 You must use a robust signing algorithm. We accept `ES256` or `PS256` as the signing algorithm.
 
-The `Digest` field in the `PermissionGrant` object is a `Base64` encoded SHA-256 hash of the following datapoints.
+The `Digest` field in the `PermissionGrant` object is a `Base64` encoded SHA-256 hash of the following data points.
 
 #### For enrolment:
 
@@ -23,7 +23,6 @@ The `Digest` field in the `PermissionGrant` object is a `Base64` encoded SHA-256
 > accountNumber: The Account Number of the enrolment session.
 >
 > tokenRequestorName: The Token Requestor Name
-
 
 The Token Requestor Name is part of the information exchange as seen in
 our [checklist](./getting_started.md#checklist-for-information-exchange).
@@ -40,6 +39,18 @@ our [checklist](./getting_started.md#checklist-for-information-exchange).
 >
 > currency: Set by Wallet.
 
+#### Authentication field guidelines.
+
+Some values from (./getting-started.md#checklist-for-information-exchange) must be used to create the DSCA digest
+and
+encrypted data object.
+
+| Value                   | Usage                                                                                                                                                                         |
+|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Token Requestor Name    | Used in enrolment for the digest.TokenRequestorName value                                                                                                                     |
+| Encryption Issuer       | The id of the Token Requestor assigned to you. To be used in the `EnrolmentCardholderAuthenticationData.iss` field and in the `PaymentCardholderAuthenticationData.iss`field. |
+| Permission Grant Issuer | The Authentication Provider Id, this is to be placed in the PermissionGrant.Iss field                                                                                         |
+
 ### Wallet requirements
 
 Any request must contain `encryptedCardholderAuthenticationData` which matches the
@@ -48,7 +59,7 @@ Any request must contain `encryptedCardholderAuthenticationData` which matches t
 The `verifiedCardholderAuthenticationSignedData` object must be encrypted using the provided public certificate from EPP
 as received in point 7 in [setting up your EPP integration](./getting_started.md#setting-up-your-epp-integration).
 The `verifiedCardholderAuthenticationSignedData` object can be reviewed in
-our [components overiew](./swagger/epp_components.md).
+our [Components overview](./swagger/epp_components.md).
 
 The `ISS` field is received from EPP and acts as a correlation to the Authentication provider that was configured to
 your Profile.
@@ -61,16 +72,37 @@ This needs to be encoded in the Authentication Provider's `PermissionGrant` obje
 
 The Permission Grant with corresponding Digest validation is based on
 the [Open Banking Europe](https://www.openbankingeurope.eu/media/2096/obe-json-web-signature-profile-for-open-banking.pdf)
-and [Berlin Group NextGen PSD2 guidelines](https://www.berlin-group.org/nextgenpsd2-downloads) guidelines. This ensures
-the integrity
-of the user's authentication and the enrolment/payment.
+and [Berlin Group NextGen PSD2 guidelines](https://www.berlin-group.org/nextgenpsd2-downloads).
+This ensures the integrity of the user's authentication and the enrolment/payment.
 
 First a `PermissionGrant` object is created. Its structure can be reviewed in
-the [components overiew](./swagger/epp_components.md).
-This object is then encoded in a signed JWS token that is signed using the private key of the Authentication Provider.
+the [Components overview](./swagger/epp_components.md).
+This object is then encoded in a signed JWS token signed using the private key of the Authentication Provider.
 The signature is then validated in EPP.
 
-Enrolment used as example, same fundamental structure applies for payment.
+This leads to the following sequence.
+Note that in some scenarios, the Authentication Provider and the Integrator might
+be the same organizational entity depending on your operating model.
+
+```mermaid
+sequenceDiagram
+    participant Integrator
+    participant AuthenticationProvider
+    participant ePaymentPlatform
+    Integrator ->> AuthenticationProvider: Request JWS token. Providing Digest input.
+    note right of AuthenticationProvider: Note that the required Digest input is different <br/>in enrolment and payment requests.
+    AuthenticationProvider ->> AuthenticationProvider: Create Digest cryptographic hash.
+    AuthenticationProvider ->> AuthenticationProvider: Create PermissionGrant object.
+    AuthenticationProvider ->> AuthenticationProvider: Create and Sign JWS token. Using AuthenticationProvider private key.
+    AuthenticationProvider ->> Integrator: Return JWS token.
+    Integrator ->> Integrator: Encrypt required data resulting in corresponding encryptedCardholderAuthenticationData.
+    note left of Integrator: Note that the required <br/>encryptedCardholderAuthenticationData <br/> input is different in enrolment<br/> and payment requests. <br/> Encrypt using EPP public key.
+    Integrator ->> ePaymentPlatform: enrolment/Payment Request.
+    ePaymentPlatform ->> ePaymentPlatform: Verify request
+    note right of ePaymentPlatform: Verify IAT timestamp, ISS Matching, <br/> AuthenticationProvider signature and Digest match.
+```
+
+### Enrolment example
 
 ```mermaid
 erDiagram
@@ -91,8 +123,8 @@ erDiagram
     }
 ```
 
-This is then encoded in a JWS token that is signed by the Authentication Provider's private key. The JWS token is then
-sent to EPP for validation as part of the Integrator's Payment/enrolment request.
+This is then encoded in a JWS token signed by the Authentication Provider's private key.
+The JWS token is then sent to EPP for validation as part of the Integrator's Payment/enrolment request.
 
 Enrolment used as example, same fundamental structure applies for payment.
 
@@ -113,28 +145,8 @@ erDiagram
 This data object must then be encrypted using the public certificate provided by EPP.
 This is then made a part of every enrolment/payment request towards EPP in the `encryptedCardholderAuthenticationData`.
 
-This leads to the following sequence.
-
-```mermaid
-sequenceDiagram
-    participant Integrator
-    participant AuthenticationProvider
-    participant ePaymentPlatform
-    Integrator ->> AuthenticationProvider: Request JWS token. Providing Digest input.
-    note right of AuthenticationProvider: Note that the required Digest input is different <br/>in enrolment and payment requests.
-    AuthenticationProvider ->> AuthenticationProvider: Create Digest cryptographic hash.
-    AuthenticationProvider ->> AuthenticationProvider: Create PermissionGrant object.
-    AuthenticationProvider ->> AuthenticationProvider: Create and Sign JWS token. Using AuthenticationProvider private key.
-    AuthenticationProvider ->> Integrator: Return JWS token.
-    Integrator ->> Integrator: Encrypt required data resulting in corresponding encryptedCardholderAuthenticationData.
-    note left of Integrator: Note that the required <br/>encryptedCardholderAuthenticationData <br/> input is different in enrolment<br/> and payment requests. <br/> Encrypt using EPP public key.
-    Integrator ->> ePaymentPlatform: enrolment/Payment Request.
-    ePaymentPlatform ->> ePaymentPlatform: Verify request
-    note right of ePaymentPlatform: Verify IAT timestamp, ISS Matching, <br/> AuthenticationProvider signature and Digest match.
-```
-
-The combined data structure for a request can also be considered as seen below. Enrolment used as example, same
-fundamental structure applies for payment.
+The combined data structure for a request can also be considered as seen below.
+Enrolment used as an example, the same fundamental structure applies for payment.
 The green color indicates Integrator, while the blue color indicates Authentication provider.
 
 ```mermaid
@@ -153,11 +165,11 @@ The green color indicates Integrator, while the blue color indicates Authenticat
     ]
 }}%%
 erDiagram
-    EnrolmentRequest ||--|| encryptedEnrolmentCardholderAuthenticationData: "Encrypts data using EPP public key"
-    encryptedEnrolmentCardholderAuthenticationData {
+    EnrolmentRequest ||--|| encryptedCardholderAuthenticationData: "Encrypts data using EPP public key"
+    encryptedCardholderAuthenticationData {
         object EnrolmentCardholderAuthenticationData
     }
-    encryptedEnrolmentCardholderAuthenticationData ||--|| EnrolmentCardholderAuthenticationData: "Encrypted data"
+    encryptedCardholderAuthenticationData ||--|| EnrolmentCardholderAuthenticationData: "Encrypted data"
     EnrolmentCardholderAuthenticationData ||--|| verifiedCardholderAuthenticationSignedData: "JWS token signed by Authentication Provider"
     EnrolmentCardholderAuthenticationData {
         object EnrolmentData
@@ -186,12 +198,124 @@ erDiagram
     }
 ```
 
-### Digest validation examples
+#### Payment example
 
-While the exact implementation may vary per Integrator/Coding language the resulting digest logic must match the
+Payment PermissionGrant.
+
+```mermaid
+erDiagram
+    PermissionGrant ||--|| Digest: "Base64-encoded SHA-256 hash"
+    PermissionGrant {
+        string type
+        int iat
+        string iss
+        string nonce
+        string sub
+        string permissionId
+        string Digest
+    }
+    Digest {
+        string nonce
+        string merchantReference "The merchant reference from the root of the payment request"
+        List payments "Relevant payments"
+    }
+    Digest ||--|| Payments: "Contains"
+    Payments {
+        string merchantReference "The merchant reference from the root of the payment request"
+        string displayName "The merchant display name from the root of the payment request"
+        string amount "The amount from the root of the payment request. IMPORTANT: The amount must be given with fractional digits The decimal separator is a dot!"
+        string currency "The currency from the root of the payment request"
+    }
+```
+
+**IMPORTANT NOTE**: The Amount must be given with fractional digits.
+The decimal separator is a dot.
+This is different from the Minor Units format in the root of the Payment Request.
+
+EncryptedPaymentCardholderAuthenticationData should result in the following PaymentCardholderAuthenticationData object.
+
+```mermaid
+erDiagram
+    PaymentCardholderAuthenticationData ||--|| verifiedCardholderAuthenticationSignedData: "JWS token signed by Authentication Provider"
+    PaymentCardholderAuthenticationData {
+        object paymentToken
+        string iss
+        integer iat
+        string verifiedCardholderAuthenticationSignedData
+    }
+    verifiedCardholderAuthenticationSignedData {
+        object PermissionGrant
+    }
+```
+
+This data object must then be encrypted using the public certificate provided by EPP.
+This is then made a part of every enrolment/payment request towards EPP in the `encryptedCardholderAuthenticationData`.
+
+The combined data structure for a request can also be considered as seen below.
+The green color indicates Integrator, while the blue color indicates Authentication provider.
+
+```mermaid
+%%{init: {
+  "theme": "default",
+  "themeCSS": [
+    ".er.relationshipLabel { fill: black; }", 
+    ".er.relationshipLabelBox { fill: white; }", 
+    ".er.entityBox { fill: lightgray; }",
+    "[id^=entity-PaymentRequest] .er.entityBox { fill: lightgreen;} ",
+    "[id^=entity-encryptedEnrolmentCardholderAuthenticationData] .er.entityBox { fill: lightgreen;} ",
+    "[id^=entity-EnrolmentCardholderAuthenticationData] .er.entityBox { fill: lightgreen;} ",
+    "[id^=entity-verifiedCardholderAuthenticationSignedData] .er.entityBox { fill: powderblue;} ",
+    "[id^=entity-PermissionGrant] .er.entityBox { fill: powderblue;} ",
+    "[id^=entity-Digest] .er.entityBox { fill: powderblue;} "
+    ]
+}}%%
+erDiagram
+    PaymentRequest ||--|| encryptedCardholderAuthenticationData: "Encrypts data using EPP public key"
+    encryptedCardholderAuthenticationData {
+        object EnrolmentCardholderAuthenticationData
+    }
+    encryptedCardholderAuthenticationData ||--|| PaymentCardholderAuthenticationData: "Encrypted data"
+    PaymentCardholderAuthenticationData ||--|| verifiedCardholderAuthenticationSignedData: "JWS token signed by Authentication Provider"
+    PaymentCardholderAuthenticationData {
+        object paymentToken
+        string iss "ISS is received from EPP, and identifies the Wallet"
+        integer iat "An Epoch timestamp that is validated as being less than 15 minutes old"
+        string verifiedCardholderAuthenticationSignedData
+    }
+    verifiedCardholderAuthenticationSignedData {
+        object PermissionGrant
+    }
+    verifiedCardholderAuthenticationSignedData ||--|| PermissionGrant: "Decodes to"
+    PermissionGrant ||--|| Digest: "Base64-encoded SHA-256 hash"
+    PermissionGrant {
+        string type "for enrollment: 'approveAccount.v1'. For payment: 'payment.v1'"
+        string iss "ISS is received from EPP, and identifies the Authentication Provider"
+        integer iat "An Epoch timestamp that is validated as being less than 15 minutes old"
+        string nonce "The nonce for the permission statement"
+        string sub "The primary identifier of the subject that granted the permission."
+        string permissionId "Unique id of the permission request"
+        string Digest "The input in the Digest need to match corresponding values in the EnrolmentRequest"
+    }
+    Digest {
+        string nonce
+        string merchantReference "The merchant reference from the root of the payment request"
+        List payments "Relevant payments"
+    }
+    Digest ||--|| Payments: "Contains"
+    Payments {
+        string merchantReference "The merchant reference from the root of the payment request"
+        string displayName "The merchant display name from the root of the payment request"
+        string amount "The amount from the root of the payment request. IMPORTANT: The amount must be given with fractional digits The decimal separator is a dot!"
+        string currency "The currency from the root of the payment request"
+    }
+```
+
+## Digest validation examples
+
+While the exact implementation may vary per Integrator/Coding language, the resulting digest logic must match the
 following result
 
-#### Bash example
+#### Bash example Payment
 
 ```bash
 echo -n '{"nonce":"550e8400-e29b-41d4-a716-446655440000","id":"merchantReference","payments":[{"paymentId":"merchantReference","amount":"100","currency":"NOK","creditorName":"merchantDisplayName"}]}' \
@@ -212,7 +336,25 @@ The script above should produce the following output:
 
 You may use this to verify your own implementation.
 
-#### Java example
+#### Bash example Enrolment
+
+```bash
+echo -n '{"nonce":"a05b53be-718e-4df2-80ac-83696b711111”,”accountNumber”:”1000000001","merchantName”:”test-enrolment-name"}' \
+| sha256sum - \
+| awk '{print $1}' \
+| xxd -r -p \
+| base64 \
+| tr -d '=' \
+| tr '/+' '_-'
+```
+
+The script above should produce the following output:
+
+`VSYBjYtrHT6pPxuIU68MDxC5T77jG_fNbWxBbeEHqWk`
+
+You may use this to verify your own implementation.
+
+#### Java example for Payment
 
 ```java
 
@@ -247,11 +389,10 @@ Follow by
                 "merchantReference",
         List.of(new Payment(
                 "merchantReference",
-            "100",
+                "100.50",
                 "NOK",
                 "merchantDisplayName"
-))
-        ).
+))).
 
 digest();
 ```
