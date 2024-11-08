@@ -189,15 +189,15 @@ components:
       description: |
         Code specifying the result of the operation:
         * EnrolmentOperationFailed - Retryable.
-        * IllegalOperation - Retryable.
         * Timeout - Retryable.
+        * IllegalOperation - Not Retryable. Review configuration of integration.
         * UnknownCard - Card is not known. Recommend contacting card issuer.
         * CardNotActivated - Card is not activated for use. Recommend activating card. Often by performing an offline transaction first in the case of a new card.
-        * CardExpired - Card is expired. Recommend updating to a new card. 
+        * CardExpired - Card is expired. Recommend updating to a new card.
         * CardSuspended - Card is suspended. Recommend contacting card issuer.
-        * CardRevoked - Card is revoked. Recommend contacting card issuer. 
+        * CardRevoked - Card is revoked. Recommend contacting card issuer.
         * NoEligibleCardsFound - No eligible cards found. Recommend contacting card issuer.
-        * FpanProvCountExceeded - Card enroled too many times. 
+        * FpanProvCountExceeded - Card enroled too many times.
         * InvalidFundingPan - Invalid funding PAN. Recommend contacting card issuer.
       enum:
         - EnrolmentOperationFailed
