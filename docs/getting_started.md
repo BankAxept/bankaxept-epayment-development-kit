@@ -122,8 +122,8 @@ not perform the same operation multiple times.
 
 ### Authentication of callbacks
 
-In order to authenticate the callbacks you receive from EPP, you should utilize Mutual TLS. This may be done by
-utilizing the public certificate provided by EPP during setup.
+In order to authenticate the callbacks you receive from EPP we enforce Mutual TLS. Both in Test and Production
+environments. This may be done by utilizing the public certificate provided by EPP during setup.
 
 ### Asynchronous retry policy
 
