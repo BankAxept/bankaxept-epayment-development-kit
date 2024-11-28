@@ -131,6 +131,13 @@ used.
 `merchantOrderReference`: The `merchantOrderReference`field is considered a reference to the Merchant's Order which
 might be distinct from the Integrator's own `messageId`.
 
+### Connection to enrolment and payment
+
+Regardless of how you choose to implement the connection between the enrolment and payment, either using a third party
+vendor or doing it all inside a single entity the `paymentToken` field
+must have the **exact** same values as the `paymentToken` field in the enrolment callback for PSN and PAN.
+As well as the same NNIN as used in Enrolment in the`PermissionGrant.sub` field which has the `nnin:123456789` format.
+
 ### Callbacks
 
 As an integrator processing payments you must integrate
@@ -190,6 +197,8 @@ May be performed with a partial amount.
 ### Refund
 
 May only be performed with an amount lower than or equal to the previously captured amount.
+The standard support is that a refund must be performed within 30 days, though this may vary based on your agreement
+with BankAxept.
 
 #### Rollback of refund
 
