@@ -131,10 +131,10 @@ used.
 `merchantOrderReference`: The `merchantOrderReference`field is considered a reference to the Merchant's Order which
 might be distinct from the Integrator's own `messageId`.
 
-#### Amount based scenarios
+#### Amount based test scenarios
 
-When the payment request is sent with amounts between 1.00 and 1.99 then custom response codes will be triggered
-according to the NISOK specification.
+When the payment request is sent with amounts between 1.00 and 1.99, then custom response codes will be triggered
+according to the NISOK specification. This only affects the test environment.
 Therefore, this range should only be used for intended testing purposes.
 
 ### Connection to enrolment and payment

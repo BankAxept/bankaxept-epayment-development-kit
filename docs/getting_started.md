@@ -136,7 +136,7 @@ not perform the same operation multiple times.
 In order to authenticate the callbacks you receive from EPP we enforce Mutual TLS. Both in Test and Production
 environments. This may be done by utilizing the public certificate provided by EPP during setup.
 
-As an integrator you must support HTTP1.1
+As an integrator you must support HTTP/1.1
 
 ### Asynchronous retry policy
 
