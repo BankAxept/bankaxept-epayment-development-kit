@@ -318,3 +318,24 @@ components:
       maxLength: 6
       description: >-
         A code from the issuer identifying a successful authorisation.
+
+    ErrorCode:
+      type: string
+      example: Declined
+      description: |
+        Code specifying the cause of failure for the Refund or Capture operation:
+        * Unavailable - Retryable.
+        * InitiationFailed - Retryable.
+        * Failed - Not Retryable. Review configuration of integration.
+        * Incomprehensible - Retryable, possible network issue or ongoing incident.
+        * Blocked - Transaction is blocked, recommend contacting issuer.
+        * TransactionNotPermitted - Not permitted, review configuration integration. For example length of time since original transaction.
+        * Declined - Not retryable. Declined by business rules.
+      enum:
+        - Unavailable
+        - InitiationFailed
+        - Failed
+        - Incomprehensible
+        - TransactionNotPermitted
+        - Blocked
+        - Declined
