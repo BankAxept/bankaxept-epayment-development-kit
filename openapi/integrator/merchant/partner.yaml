@@ -180,6 +180,8 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         status:
           $ref: '#/components/schemas/CaptureStatus'
+        errorCode:
+          $ref: '#/components/schemas/ErrorCode'
         timeCreated:
           type: string
           format: date-time
@@ -204,6 +206,8 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         status:
           $ref: '#/components/schemas/RefundStatus'
+        errorCode:
+          $ref: '#/components/schemas/ErrorCode'
         timeCreated:
           type: string
           format: date-time
@@ -323,6 +327,7 @@ components:
       type: string
       example: Declined
       description: |
+        Only provided in Failure/Declined scenarios. 
         Code specifying the cause of failure for the Refund or Capture operation:
         * Unavailable - Retryable.
         * InitiationFailed - Retryable.
