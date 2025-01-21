@@ -146,9 +146,8 @@ As well as the same NNIN as used in Enrolment in the`PermissionGrant.sub` field 
 
 ### Merchant Name guidelines.
 
-In order to comply with our message format constraints `merchantDisplayName` must be using UTF-8, that would be the
-ASCII characters (U+0000 - U+007F) and the extended characters (U+0080 - U+00FF). Failure to align will result in input
-validation errors.
+In order to comply with our message format constraints `merchantDisplayName` must be matching the constraints specified
+in our [API specification](./swagger/integrator_merchant_bankaxept.md).
 
 In addition when you are operating as a SuperMerchant (given that you are permitted thusly as part of you configuration)
 you must include `superMerchantIdentifier*` where superMerchantIdentifier is a unique identifier for the SuperMerchant.
