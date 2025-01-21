@@ -144,6 +144,16 @@ vendor or doing it all inside a single entity the `paymentToken` field
 must have the **exact** same values as the `paymentToken` field in the enrolment callback for PSN and PAN.
 As well as the same NNIN as used in Enrolment in the`PermissionGrant.sub` field which has the `nnin:123456789` format.
 
+### Merchant Name guidelines.
+
+In order to comply with our message format constraints `merchantDisplayName` must be using UTF-8, that would be the
+ASCII characters (U+0000 - U+007F) and the extended characters (U+0080 - U+00FF). Failure to align will result in input
+validation errors.
+
+In addition when you are operating as a SuperMerchant (given that you are permitted thusly as part of you configuration)
+you must include `superMerchantIdentifier*` where superMerchantIdentifier is a unique identifier for the SuperMerchant.
+The value should be the same as used in other equivalent setups.
+
 ### Callbacks
 
 As an integrator processing payments you must integrate
