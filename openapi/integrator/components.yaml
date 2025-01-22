@@ -225,8 +225,7 @@ components:
       description: >-
         The merchant's name, as shown to the cardholder, on receipts and on bank statements.
         This must be the exact string that was entered with the merchant enrollment.
-        Must be using UTF-8, constrained to the
-        ASCII characters (U+0000 - U+007F) and the extended characters (U+0080 - U+00FF)
+        Must be within the range ASCII range (U+0000 - U+00FF)
     merchantReference:
       type: string
       maxLength: 80
