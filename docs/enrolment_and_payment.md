@@ -150,8 +150,7 @@ In order to comply with our message format constraints `merchantDisplayName` mus
 in our [API specification](./swagger/integrator_merchant_bankaxept.md).
 
 In addition when you are operating as a Super Merchant (given that you are permitted thusly as part of your
-configuration)
-you must include `superMerchantIdentifier*` where `superMerchantIdentifier`
+configuration) you must include `superMerchantIdentifier*` where `superMerchantIdentifier`
 is a unique identifier for the Super Merchant.
 For example: `$walletName*$merchantName`.
 The value should be the same as used in other equivalent setups.
