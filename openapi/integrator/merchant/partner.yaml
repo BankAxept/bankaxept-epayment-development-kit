@@ -95,7 +95,7 @@ paths:
     post:
       operationId: cutOffResponse
       requestBody:
-        required: true
+        required: false
         content:
           application/json;charset=UTF-8:
             schema:
