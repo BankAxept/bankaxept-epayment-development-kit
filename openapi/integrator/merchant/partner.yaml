@@ -95,7 +95,7 @@ paths:
     post:
       operationId: cutOffResponse
       requestBody:
-        required: false
+        required: true
         content:
           application/json;charset=UTF-8:
             schema:
@@ -224,7 +224,6 @@ components:
         - batchNumber
         - merchantId
         - messageId
-        - status
       properties:
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
