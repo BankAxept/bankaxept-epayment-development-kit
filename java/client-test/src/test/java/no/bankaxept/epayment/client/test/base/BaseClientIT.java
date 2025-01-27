@@ -44,7 +44,7 @@ public class BaseClientIT {
       JWTClaimsSet claims = jwt.getJWTClaimsSet();
       return claims.getAudience();
     } catch (ParseException e) {
-      return List.of();
+      throw new RuntimeException(e);
     }
   }
 
