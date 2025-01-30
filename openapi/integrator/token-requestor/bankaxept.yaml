@@ -3,7 +3,7 @@ info:
   version: 0.3.0
   title: BankAxept ePayment Token Requestor API - ePayment Platform
   description: BankAxept ePayment Token Requestor APIs - ePayment Platform side
-  
+
 servers:
   - url: https://api.epp-stoetest.cloud/token-requestor
 
@@ -90,6 +90,40 @@ paths:
                 example: ["9998", "0001"]
         '400':
           description: Invalid input format
+  /v1/card-eligibility:
+    post:
+      summary: Check card eligibility
+      description: Check if a card is eligible for enrolment in ePayment Platform.
+      operationId: cardEligibility
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CardEligibilityRequest'
+      responses:
+        '204':
+          description: CardEligibility request processed successfully and the card is eligible for enrollment.
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardEligibilityError"
+        '422':
+          description: The server was unable to process the request because it contains invalid data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardEligibilityError"
+        '500':
+          description: Internal Server Error, request can be retried later.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardEligibilityError"
 
 components:
   schemas:
@@ -108,6 +142,17 @@ components:
           $ref: '../components.yaml#/components/schemas/tokenRequestorReference'
         encryptedCardholderAuthenticationData:
           $ref: '#/components/schemas/encryptedEnrolmentCardholderAuthenticationData'
+
+    CardEligibilityRequest:
+      type: object
+      required:
+        - tokenRequestorId
+        - encryptedEnrolmentData
+      properties:
+        encryptedEnrolmentData:
+          $ref: '#/components/schemas/encryptedEnrolmentCardholderAuthenticationData'
+        tokenRequestorId:
+          $ref: '../components.yaml#/components/schemas/tokenRequestorId'
 
     EnrolmentCardholderAuthenticationData:
       type: object
@@ -155,3 +200,26 @@ components:
       description: >-
         The Enrolment and Cardholder Authentication Data is encrypted according to the Java Web Encryption specification defined in RFC-7516.
         See schema EnrolmentCardholderAuthenticationData for decrypted data format.
+
+    CardEligibilityError:
+      type: object
+      properties:
+        errorCode:
+          $ref: '#/components/schemas/cardEligibilityErrorCode'
+        errorMessage:
+          type: string
+
+    cardEligibilityErrorCode:
+      type: string
+      example: 'CARD_EXPIRED'
+      description: Error response from DES
+      enum:
+        - MISSING_PARAM
+        - UNKNOWN_TOKENREQUESTOR
+        - INVALID_DATA
+        - CARD_EXPIRED
+        - CARD_SUSPENDED
+        - CARD_REVOKED
+        - INVALID_FUNDING_PAN
+        - ILLEGAL_OPERATION
+        - UNEXPECTED_SERVER_ERROR
