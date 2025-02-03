@@ -217,6 +217,16 @@ May only be performed with an amount lower than or equal to the previously captu
 The standard support is that a refund must be performed within 30 days, though this may vary based on your agreement
 with BankAxept.
 
+#### Possible failure reasons Capture and Refund
+
+As an integrator you should expect there to be corner cases where a capture or refund might fail.
+
+This might be due to, but not limited to:
+
+* Deletion of payment source.
+* Risk/AML checks.
+* Deletion or suspension of the customer relationship between end user and issuer bank.
+
 #### Rollback of refund
 
 A refund that requires a rollback `must` be roll-backed within 1 day (24 hours) and for the full amount of the performed
