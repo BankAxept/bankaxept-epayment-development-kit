@@ -111,19 +111,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CardEligibilityError"
+                $ref: "#/components/schemas/EligibilityError"
         '422':
           description: The server was unable to process the request because it contains invalid data.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CardEligibilityError"
+                $ref: "#/components/schemas/EligibilityError"
         '500':
           description: Internal Server Error, request can be retried later.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CardEligibilityError"
+                $ref: "#/components/schemas/EligibilityError"
 
 components:
   schemas:
@@ -201,18 +201,19 @@ components:
         The Enrolment and Cardholder Authentication Data is encrypted according to the Java Web Encryption specification defined in RFC-7516.
         See schema EnrolmentCardholderAuthenticationData for decrypted data format.
 
-    CardEligibilityError:
+    EligibilityError:
       type: object
       properties:
         errorCode:
-          $ref: '#/components/schemas/cardEligibilityErrorCode'
+          $ref: '#/components/schemas/eligibilityErrorCode'
         errorMessage:
           type: string
 
-    cardEligibilityErrorCode:
+    eligibilityErrorCode:
       type: string
-      example: 'CARD_EXPIRED'
-      description: Error response from DES
+      example: 'NON_ELIGIBLE'
+      description: >-
+        Describes if the eligibility check failed due to non-eligible card or system failure.
       enum:
         - NON_ELIGIBLE
         - FAILED
