@@ -214,12 +214,5 @@ components:
       example: 'CARD_EXPIRED'
       description: Error response from DES
       enum:
-        - MISSING_PARAM
-        - UNKNOWN_TOKENREQUESTOR
-        - INVALID_DATA
-        - CARD_EXPIRED
-        - CARD_SUSPENDED
-        - CARD_REVOKED
-        - INVALID_FUNDING_PAN
-        - ILLEGAL_OPERATION
-        - UNEXPECTED_SERVER_ERROR
+        - NON_ELIGIBLE
+        - FAILED
