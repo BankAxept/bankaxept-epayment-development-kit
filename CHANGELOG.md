@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.0.0...v2.0.1) (2025-02-10)
+
+
+### Bug Fixes
+
+* Add error codes for Refund and Capture operations ([#202](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/202)) ([1b501e9](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/1b501e986704c10b023c8d5c709657c6900944d8))
+
 ## [2.0.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v1.2.1...v2.0.0) (2024-11-01)
 
 
