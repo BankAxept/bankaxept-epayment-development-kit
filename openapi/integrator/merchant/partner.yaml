@@ -204,6 +204,8 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         status:
           $ref: '#/components/schemas/RefundStatus'
+        declineReason:
+          $ref: '#/components/schemas/RefundDeclineReason'
         timeCreated:
           type: string
           format: date-time
@@ -318,3 +320,17 @@ components:
       maxLength: 6
       description: >-
         A code from the issuer identifying a successful authorisation.
+
+    RefundDeclineReason:
+      type: string
+      example: Declined
+      description: |
+        Only provided in Declined scenarios. 
+        Code specifying the cause of Decline for the Refund operation:
+        * DeclinedByIssuer - Transaction is declined by Issuer, recommend contacting issuer.
+        * None - No additional information given. 
+        * ServiceNotAllowedForMerchant - Not permitted, review configuration integration. For example length of time since original transaction or activation of functionality on BAX account.
+      enum:
+        - DeclinedByIssuer
+        - None
+        - ServiceNotAllowedForMerchant
