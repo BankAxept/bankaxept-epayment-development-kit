@@ -78,14 +78,14 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   }
 
   private MappingBuilder DeletionEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return post(urlPathEqualTo("/v1/payment-tokens/" + tokenId + "/deletion"))
+    return post(urlPathEqualTo("/token-requestor/v1/payment-tokens/" + tokenId + "/deletion"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
         .willReturn(responseBuilder);
   }
 
   private MappingBuilder EnrolmentEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return post(urlPathEqualTo("/v1/payment-tokens"))
+    return post(urlPathEqualTo("/token-requestor/v1/payment-tokens"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
         .withRequestBody(matchingJsonPath("tokenRequestorId", equalTo(tokenRequestorIdExample)))
@@ -95,7 +95,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   }
 
   private MappingBuilder eligibleBanksEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return get(urlPathEqualTo("/v1/eligible-banks"))
+    return get(urlPathEqualTo("/token-requestor/v1/eligible-banks"))
         .withQueryParams(Map.of("bankIdentifier", matching("[0-9]{4}")))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .willReturn(responseBuilder);

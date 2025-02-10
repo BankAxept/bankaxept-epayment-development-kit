@@ -125,7 +125,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     }
 
     private MappingBuilder paymentMapping(OffsetDateTime transactionTime) {
-      return post(urlPathEqualTo("/v1/payments"))
+      return post(urlPathEqualTo("/merchant/v1/payments"))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern("1"))
           .withRequestBody(matchingJsonPath("merchantId", equalTo("10030005")))
@@ -169,7 +169,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         String messageId,
         ResponseDefinitionBuilder responseBuilder
     ) {
-      return delete(urlPathEqualTo(String.format("/v1/payments/messages/%s", messageId)))
+      return delete(urlPathEqualTo(String.format("/merchant/v1/payments/messages/%s", messageId)))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .willReturn(responseBuilder);
@@ -199,7 +199,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         String correlationId,
         ResponseDefinitionBuilder responseBuilder
     ) {
-      return post(urlPathEqualTo(String.format("/v1/payments/%s/captures", paymentId)))
+      return post(urlPathEqualTo(String.format("/merchant/v1/payments/%s/captures", paymentId)))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
@@ -225,7 +225,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
         String correlationId,
         ResponseDefinitionBuilder responseBuilder
     ) {
-      return post(urlPathEqualTo(String.format("/v1/payments/%s/cancellation", paymentId)))
+      return post(urlPathEqualTo(String.format("/merchant/v1/payments/%s/cancellation", paymentId)))
           .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
           .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
           .willReturn(responseBuilder);
@@ -262,7 +262,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
           String correlationId,
           ResponseDefinitionBuilder responseBuilder
       ) {
-        return post(urlPathEqualTo(String.format("/v1/payments/%s/refunds", paymentId)))
+        return post(urlPathEqualTo(String.format("/merchant/v1/payments/%s/refunds", paymentId)))
             .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
             .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
             .withRequestBody(matchingJsonPath("messageId", equalTo("74313af1-e2cc-403f-85f1-6050725b01b6")))
@@ -290,7 +290,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
           String correlationId,
           ResponseDefinitionBuilder responseBuilder
       ) {
-        return delete(urlPathEqualTo(String.format("/v1/payments/%s/refunds/messages/%s", paymentId, messageId)))
+        return delete(urlPathEqualTo(String.format("/merchant/v1/payments/%s/refunds/messages/%s", paymentId, messageId)))
             .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
             .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
             .willReturn(responseBuilder);
@@ -317,7 +317,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
           String correlationId,
           ResponseDefinitionBuilder responseBuilder
       ) {
-        return put(urlPathEqualTo(String.format("/v1/settlements/%s/%s", merchantId, batchNumber)))
+        return put(urlPathEqualTo(String.format("/merchant/v1/settlements/%s/%s", merchantId, batchNumber)))
             .withHeader("Authorization", new EqualToPattern("Bearer a-token"))
             .withHeader("X-Correlation-Id", new EqualToPattern(correlationId))
             .willReturn(responseBuilder);

@@ -3,8 +3,6 @@ package no.bankaxept.epayment.client.test.tokenrequestor;
 import static no.bankaxept.epayment.client.test.Verifier.verifyBadRequest;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
