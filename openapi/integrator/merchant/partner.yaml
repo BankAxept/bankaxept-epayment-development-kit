@@ -180,8 +180,6 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         status:
           $ref: '#/components/schemas/CaptureStatus'
-        errorCode:
-          $ref: '#/components/schemas/ErrorCode'
         timeCreated:
           type: string
           format: date-time
@@ -206,8 +204,8 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         status:
           $ref: '#/components/schemas/RefundStatus'
-        errorCode:
-          $ref: '#/components/schemas/ErrorCode'
+        declineReason:
+          $ref: '#/components/schemas/RefundDeclineReason'
         timeCreated:
           type: string
           format: date-time
@@ -323,24 +321,16 @@ components:
       description: >-
         A code from the issuer identifying a successful authorisation.
 
-    ErrorCode:
+    RefundDeclineReason:
       type: string
       example: Declined
       description: |
-        Only provided in Failure/Declined scenarios. 
-        Code specifying the cause of failure for the Refund or Capture operation:
-        * Unavailable - Retryable.
-        * InitiationFailed - Retryable.
-        * Failed - Not Retryable. Review configuration of integration.
-        * Incomprehensible - Retryable, possible network issue or ongoing incident.
-        * Blocked - Transaction is blocked, recommend contacting issuer.
-        * TransactionNotPermitted - Not permitted, review configuration integration. For example length of time since original transaction or activation of functionality on BAX account.
-        * Declined - Not retryable. Declined by business rules.
+        Only provided in Declined scenarios. 
+        Code specifying the cause of Decline for the Refund operation:
+        * None - No additional information given. 
+        * DeclinedByIssuer - Transaction is declined by Issuer, recommend contacting issuer.
+        * ServiceNotAllowedForMerchant - Not permitted, review configuration integration. For example length of time since original transaction or activation of functionality on BAX account.
       enum:
-        - Unavailable
-        - InitiationFailed
-        - Failed
-        - Incomprehensible
-        - TransactionNotPermitted
-        - Blocked
-        - Declined
+        - DeclinedByIssuer
+        - None
+        - ServiceNotAllowedForMerchant
