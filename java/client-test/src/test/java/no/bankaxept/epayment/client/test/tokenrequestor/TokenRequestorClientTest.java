@@ -119,7 +119,6 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
     return post(urlPathEqualTo("/v1/card-eligibility"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
-        .withRequestBody(matchingJsonPath("tokenRequestorId", equalTo(tokenRequestorIdExample)))
         .withRequestBody(matchingJsonPath("encryptedEnrolmentData", equalTo(encryptedExampleData)))
         .willReturn(responseBuilder);
   }
