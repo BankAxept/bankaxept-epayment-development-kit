@@ -33,6 +33,34 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
+  /v1/payments/cancellations:
+    description: Response to a cancellation request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      operationId: cancellationResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CancellationResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
   /v1/payments/captures:
     description: Response to a capture request
     parameters:
@@ -159,10 +187,26 @@ components:
         - AuthorisationApproved
         - Rejected
         - RolledBack
-        - Cancelled
         - AuthenticationFailed
         - AuthorisationFailed
         - AuthorisationDeclined
+
+    CancellationResponse:
+      type: object
+      required:
+        - messageId
+        - paymentId
+        - merchantReference
+        - status
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        paymentId:
+          $ref: '../components.yaml#/components/schemas/paymentId'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        status:
+          $ref: '#/components/schemas/CancellationStatus'
 
     CaptureResponse:
       type: object
@@ -267,6 +311,19 @@ components:
         debitReversalCount:
           type: integer
           format: int64
+
+    CancellationStatus:
+      type: string
+      example: Approved
+      description: |
+        Code specifying the result of the operation:
+        * Approved - Cancellation request was approved.
+        * Declined - Cancellation request was declined.
+        * Failed - Cancellation request failed.
+      enum:
+        - Approved
+        - Declined
+        - Failed
 
     CaptureStatus:
       type: string

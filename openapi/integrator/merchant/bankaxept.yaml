@@ -121,6 +121,12 @@ paths:
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
         - $ref: '../components.yaml#/components/parameters/paymentId'
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CancellationRequest'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -301,6 +307,14 @@ components:
 
     PermissionGrant:
       $ref: '../components.yaml#/components/schemas/PermissionGrant'
+
+    CancellationRequest:
+      type: object
+      required:
+        - messageId
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
 
     CaptureRequest:
       type: object
