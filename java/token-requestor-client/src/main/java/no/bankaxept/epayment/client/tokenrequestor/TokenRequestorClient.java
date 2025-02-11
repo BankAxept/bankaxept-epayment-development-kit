@@ -16,7 +16,7 @@ import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.base.SimulationRequest;
 import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
-import no.bankaxept.epayment.client.tokenrequestor.bankaxept.CardEligibilityRequest;
+import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EligibilityRequest;
 import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 
 public class TokenRequestorClient {
@@ -75,7 +75,7 @@ public class TokenRequestorClient {
         HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> cardEligibility(CardEligibilityRequest request, String correlationId) {
+  public Flow.Publisher<RequestStatus> cardEligibility(EligibilityRequest request, String correlationId) {
     return new MapOperator<>(
         baseClient.post(
             "/v1/card-eligibility",

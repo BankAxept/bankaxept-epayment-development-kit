@@ -21,7 +21,7 @@ import java.util.UUID;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.test.AbstractBaseClientWireMockTest;
 import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
-import no.bankaxept.epayment.client.tokenrequestor.bankaxept.CardEligibilityRequest;
+import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EligibilityRequest;
 import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,11 +86,9 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
 
   }
 
-  private CardEligibilityRequest createCardEligibilityRequest() {
-    return new CardEligibilityRequest()
-        .tokenRequestorId(tokenRequestorIdExample)
+  private EligibilityRequest createCardEligibilityRequest() {
+    return new EligibilityRequest()
         .encryptedEnrolmentData(encryptedExampleData);
-
   }
 
   private MappingBuilder DeletionEndpoint(ResponseDefinitionBuilder responseBuilder) {

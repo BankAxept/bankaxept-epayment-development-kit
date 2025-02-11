@@ -102,7 +102,7 @@ paths:
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/CardEligibilityRequest'
+              $ref: '#/components/schemas/EligibilityRequest'
       responses:
         '204':
           description: CardEligibility request processed successfully and the card is eligible for enrollment.
@@ -143,16 +143,13 @@ components:
         encryptedCardholderAuthenticationData:
           $ref: '#/components/schemas/encryptedEnrolmentCardholderAuthenticationData'
 
-    CardEligibilityRequest:
+    EligibilityRequest:
       type: object
       required:
-        - tokenRequestorId
         - encryptedEnrolmentData
       properties:
         encryptedEnrolmentData:
           $ref: '#/components/schemas/encryptedEnrolmentCardholderAuthenticationData'
-        tokenRequestorId:
-          $ref: '../components.yaml#/components/schemas/tokenRequestorId'
 
     EnrolmentCardholderAuthenticationData:
       type: object
