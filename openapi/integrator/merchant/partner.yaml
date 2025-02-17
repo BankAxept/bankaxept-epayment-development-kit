@@ -179,7 +179,6 @@ components:
         * AuthorisationApproved - Payment was authorised.
         * Rejected - Payment request was rejected.
         * RolledBack - Payment request was rolled back.
-        * Cancelled - Payment request was cancelled.
         * AuthenticationFailed - Authentication validation failed.
         * AuthorisationFailed - Payment authorisation failed.
         * AuthorisationDeclined - Payment authorisation was declined.
