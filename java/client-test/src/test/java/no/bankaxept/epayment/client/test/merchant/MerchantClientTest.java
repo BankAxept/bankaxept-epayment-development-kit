@@ -23,6 +23,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.merchant.Amount;
+import no.bankaxept.epayment.client.merchant.CancellationRequest;
 import no.bankaxept.epayment.client.merchant.CaptureRequest;
 import no.bankaxept.epayment.client.merchant.CutOffRequest;
 import no.bankaxept.epayment.client.merchant.MerchantClient;
@@ -215,7 +216,11 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(CancelEndpointMapping("payment-id", "1", created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cancelPayment("payment-id", "1")))
+      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cancelPayment(
+          "payment-id",
+              new CancellationRequest().messageId("87a898af-2506-416e-9e99-c7c7b8f3f615"),
+              "1"
+          )))
           .expectNext(RequestStatus.Accepted)
           .verifyComplete();
     }

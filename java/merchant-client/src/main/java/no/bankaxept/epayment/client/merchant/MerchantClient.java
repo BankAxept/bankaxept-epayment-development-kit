@@ -84,12 +84,13 @@ public class MerchantClient {
     );
   }
 
-  public Flow.Publisher<RequestStatus> cancelPayment(String paymentId, String correlationId) {
+  public Flow.Publisher<RequestStatus> cancelPayment(String paymentId, CancellationRequest request, String correlationId) {
     return new MapOperator<>(
         baseClient.post(
             String.format("/v1/payments/%s/cancellation", paymentId),
-            new SinglePublisher<>("", executor),
-            correlationId
+            new SinglePublisher<>(json(request), executor),
+            correlationId,
+            findSimulationHeader(request)
         ),
         HttpResponse::requestStatus
     );
