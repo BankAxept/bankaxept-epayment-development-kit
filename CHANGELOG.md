@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.0.1...v2.0.2) (2025-02-17)
+
+
+### Bug Fixes
+
+* Add merchant cancellation callback API ([#212](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/212)) ([0a38aed](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/0a38aeda97c6bdef4f9a2ef544127ad216fc2471))
+
 ## [2.0.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.0.0...v2.0.1) (2025-02-10)
 
 
