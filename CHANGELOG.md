@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.0.2...v2.1.0) (2025-02-21)
+
+
+### Features
+
+* Add card eligibility endpoint ([#208](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/208)) ([28591cc](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/28591cc15e40ed966a40b716023da6bc43d60d0d))
+
 ## [2.0.2](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.0.1...v2.0.2) (2025-02-17)
 
 
