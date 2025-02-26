@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.1.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.0.2...v2.1.0) (2025-02-21)
+
+
+### Features
+
+* Add card eligibility endpoint ([#208](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/208)) ([28591cc](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/28591cc15e40ed966a40b716023da6bc43d60d0d))
+
+## [2.0.2](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.0.1...v2.0.2) (2025-02-17)
+
+
+### Bug Fixes
+
+* Add merchant cancellation callback API ([#212](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/212)) ([0a38aed](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/0a38aeda97c6bdef4f9a2ef544127ad216fc2471))
+
+## [2.0.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.0.0...v2.0.1) (2025-02-10)
+
+
+### Bug Fixes
+
+* Add error codes for Refund and Capture operations ([#202](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/202)) ([1b501e9](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/1b501e986704c10b023c8d5c709657c6900944d8))
+
 ## [2.0.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v1.2.1...v2.0.0) (2024-11-01)
 
 

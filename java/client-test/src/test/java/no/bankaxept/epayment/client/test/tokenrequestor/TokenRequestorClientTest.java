@@ -21,6 +21,7 @@ import java.util.UUID;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.test.AbstractBaseClientWireMockTest;
 import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
+import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EligibilityRequest;
 import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,12 +70,25 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
         .verifyComplete();
   }
 
+  @Test
+  public void cardEligibilitySuccessful() {
+    stubFor(cardEligibilityEndpoint(created()));
+    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cardEligibility(createCardEligibilityRequest(), someCorrelationId)))
+        .expectNext(RequestStatus.Accepted)
+        .verifyComplete();
+  }
+
   private EnrolCardRequest createEnrolmentRequest() {
     return new EnrolCardRequest()
         .tokenRequestorId(tokenRequestorIdExample)
         .messageId(messageIdExample)
         .encryptedCardholderAuthenticationData(encryptedExampleData);
 
+  }
+
+  private EligibilityRequest createCardEligibilityRequest() {
+    return new EligibilityRequest()
+        .encryptedEnrolmentData(encryptedExampleData);
   }
 
   private MappingBuilder DeletionEndpoint(ResponseDefinitionBuilder responseBuilder) {
@@ -98,6 +112,14 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
     return get(urlPathEqualTo("/v1/eligible-banks"))
         .withQueryParams(Map.of("bankIdentifier", matching("[0-9]{4}")))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
+        .willReturn(responseBuilder);
+  }
+
+  private MappingBuilder cardEligibilityEndpoint(ResponseDefinitionBuilder responseBuilder) {
+    return post(urlPathEqualTo("/v1/card-eligibility"))
+        .withHeader("Authorization", new EqualToPattern(bearerToken()))
+        .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
+        .withRequestBody(matchingJsonPath("encryptedEnrolmentData", equalTo(encryptedExampleData)))
         .willReturn(responseBuilder);
   }
 

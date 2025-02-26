@@ -144,6 +144,17 @@ vendor or doing it all inside a single entity the `paymentToken` field
 must have the **exact** same values as the `paymentToken` field in the enrolment callback for PSN and PAN.
 As well as the same NNIN as used in Enrolment in the`PermissionGrant.sub` field which has the `nnin:123456789` format.
 
+### Merchant name guidelines
+
+In order to comply with our message format constraints `merchantDisplayName` must be matching the constraints specified
+in our [API specification](./swagger/integrator_merchant_bankaxept.md).
+
+In addition when you are operating as a Super Merchant (given that you are permitted thusly as part of your
+configuration) you must include `superMerchantIdentifier*` where `superMerchantIdentifier`
+is a unique identifier for the Super Merchant.
+For example: `$walletName*$merchantName`.
+The value should be the same as used in other equivalent setups.
+
 ### Callbacks
 
 As an integrator processing payments you must integrate
@@ -205,6 +216,16 @@ May be performed with a partial amount.
 May only be performed with an amount lower than or equal to the previously captured amount.
 The standard support is that a refund must be performed within 30 days, though this may vary based on your agreement
 with BankAxept.
+
+#### Possible failure reasons Capture and Refund
+
+As an integrator you should expect there to be corner cases where a capture or refund might fail.
+
+This might be due to, but not limited to:
+
+* Deletion of payment source.
+* Risk/AML checks.
+* Deletion or suspension of the customer relationship between end user and issuer bank.
 
 #### Rollback of refund
 
