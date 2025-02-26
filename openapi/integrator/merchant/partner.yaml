@@ -383,10 +383,10 @@ components:
       description: |
         Only provided in Declined scenarios. 
         Code specifying the cause of Decline for the Refund operation:
-        * DeclinedByIssuer - Transaction is declined by Issuer, recommend contacting issuer.
-        * None - No additional information given. 
+        * DeclinedByIssuer - Transaction is declined by Issuer, recommend contacting issuer
         * ServiceNotAllowedForMerchant - Not permitted, review configuration integration. For example length of time since original transaction or activation of functionality on BAX account.
+        * Unspecified - No additional information available.
       enum:
         - DeclinedByIssuer
-        - None
+        - Unspecified
         - ServiceNotAllowedForMerchant
