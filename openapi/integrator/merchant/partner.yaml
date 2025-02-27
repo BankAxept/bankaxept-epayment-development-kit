@@ -230,6 +230,8 @@ components:
             The time and date the request was created. The date fields use the YYYY-MM-DDThh:mm:ss.sssZ date ISO 8601 format. Times are returned in the UTC time zone.
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
+        pspStanReference:
+          $ref: '#/components/schemas/PspStanReference'
 
     RefundResponse:
       type: object
@@ -262,6 +264,8 @@ components:
           $ref: '#/components/schemas/authorisationCode'
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
+        pspStanReference:
+          $ref: '#/components/schemas/PspStanReference'
 
     CutOffResponse:
       type: object
@@ -347,6 +351,12 @@ components:
         - Approved
         - Declined
         - Failed
+
+    PspStanReference:
+      type: string
+      example: 1234567
+      description: |
+        Globally unique reference representing representing the transaction operation in the payment network.
 
     CutOffStatus:
       type: string
