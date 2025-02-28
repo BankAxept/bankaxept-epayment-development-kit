@@ -88,7 +88,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
 
   private EligibilityRequest createCardEligibilityRequest() {
     return new EligibilityRequest()
-        .encryptedEnrolmentData(encryptedExampleData);
+        .encryptedCardholderAuthenticationData(encryptedExampleData);
   }
 
   private MappingBuilder DeletionEndpoint(ResponseDefinitionBuilder responseBuilder) {
@@ -119,7 +119,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
     return post(urlPathEqualTo("/v1/card-eligibility"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .withHeader("X-Correlation-Id", new EqualToPattern(someCorrelationId))
-        .withRequestBody(matchingJsonPath("encryptedEnrolmentData", equalTo(encryptedExampleData)))
+        .withRequestBody(matchingJsonPath("encryptedCardholderAuthenticationData", equalTo(encryptedExampleData)))
         .willReturn(responseBuilder);
   }
 

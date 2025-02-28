@@ -37,7 +37,6 @@ public class TokenRequestorClientIT {
 
   private Flow.Publisher<RequestStatus> enrolCardRequest(TokenRequestorClient client) {
     var correlationId = UUID.randomUUID().toString();
-    System.out.println("Correlation id: " + correlationId);
     return client.enrolCard(new EnrolCardRequest(), correlationId);
   }
 
