@@ -19,7 +19,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven
       - name: Build with Maven
         env:
           AUTHORIZATION_SERVER_URL: 'https://api.epp-stoetest.cloud/access-token/v1/accesstoken'
