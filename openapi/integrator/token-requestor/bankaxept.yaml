@@ -146,9 +146,9 @@ components:
     EligibilityRequest:
       type: object
       required:
-        - encryptedEnrolmentData
+        - encryptedCardholderAuthenticationData
       properties:
-        encryptedEnrolmentData:
+        encryptedCardholderAuthenticationData:
           $ref: '#/components/schemas/encryptedEnrolmentCardholderAuthenticationData'
 
     EnrolmentCardholderAuthenticationData:
