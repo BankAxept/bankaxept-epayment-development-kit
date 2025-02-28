@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.1.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.1.0...v2.1.1) (2025-02-28)
+
+
+### Bug Fixes
+
+* Add error codes for refund declines ([#219](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/219)) ([532111a](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/532111a79e02b89fe3eda9a5566a7ec9d8af3416))
+* Rename request field in card eligibility endpoint ([#222](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/222)) ([766b519](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/766b51930e681c2470233ee3a6e573faf01569fc))
+
+
+### Dependency Updates
+
+* bump io.swagger.parser.v3:swagger-parser from 2.1.23 to 2.1.25 ([#203](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/203)) ([fe69efd](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/fe69efd31dfbb09f8ab80ec03316929162936f12))
+* bump org.springframework.boot:spring-boot-starter-parent ([#218](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/218)) ([ddc07b2](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/ddc07b2b67e8e72c2a51bf53ab05d8a5ebbe930f))
+
 ## [2.1.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.0.2...v2.1.0) (2025-02-21)
 
 
