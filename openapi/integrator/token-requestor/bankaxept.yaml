@@ -107,13 +107,13 @@ paths:
         '204':
           description: CardEligibility request processed successfully and the card is eligible for enrollment.
         '400':
-          description: Bad request
+          description: The server was unable to process the request because it contains invalid data.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/EligibilityError"
         '422':
-          description: The server was unable to process the request because it contains invalid data.
+          description: The card is not eligible for enrolment in ePayment Platform.
           content:
             application/json:
               schema:
