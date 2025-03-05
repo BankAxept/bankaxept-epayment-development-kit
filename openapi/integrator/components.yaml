@@ -283,7 +283,7 @@ components:
         The network reference is a unique identifier for the transaction operation in the network. It will be transmitted for payments with automaticCapture set to true, as well as for capture and refund transaction operations.
       type: string
       example: "74313af1-e2cc-403f-85f1-6050725b01b6"
-      maxLength: 100
+      maxLength: 36
     pan:
       type: string
       pattern: '^[0-9]{19}$'
