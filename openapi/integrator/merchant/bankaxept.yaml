@@ -326,6 +326,8 @@ components:
           $ref: '../components.yaml#/components/schemas/Amount'
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
+        networkReference:
+          $ref: '../components.yaml#/components/schemas/networkReference'
 
     RefundRequest:
       type: object
@@ -341,6 +343,8 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         inStore:
           $ref: '#/components/schemas/inStore'
+        networkReference:
+          $ref: '../components.yaml#/components/schemas/networkReference'
         transactionTime:
           type: string
           format: date-time
@@ -381,4 +385,3 @@ components:
       type: boolean
       default: false
       example: true
-
