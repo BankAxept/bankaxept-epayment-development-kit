@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.1.1...v2.1.2) (2025-03-05)
+
+
+### Bug Fixes
+
+* Add networkReference to PaymentRequest, CaptureRequest and RefundRequest ([#227](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/227)) ([7f3bc6f](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/7f3bc6f3c58b4523b3085e6f2e9d8318de7fc113))
+
 ## [2.1.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.1.0...v2.1.1) (2025-02-28)
 
 
