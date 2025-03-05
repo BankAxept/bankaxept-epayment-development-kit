@@ -296,6 +296,8 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         inStore:
           $ref: '#/components/schemas/inStore'
+        networkReference:
+          $ref: '../components.yaml#/components/schemas/networkReference'
         transactionTime:
           type: string
           format: date-time
