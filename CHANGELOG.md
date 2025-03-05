@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.3](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.1.2...v2.1.3) (2025-03-05)
+
+
+### Bug Fixes
+
+* change networkReference maxLength to 36 ([#230](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/230)) ([2201449](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/22014494a66c59da93c75c1e05f174f5e44fdedf))
+
 ## [2.1.2](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.1.1...v2.1.2) (2025-03-05)
 
 
