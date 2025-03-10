@@ -148,12 +148,8 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         tokenId:
           $ref: '../components.yaml#/components/schemas/tokenId'
-        tokenRequestorId:
-          $ref: '../components.yaml#/components/schemas/tokenRequestorId'
         tokenRequestorReference:
           $ref: '../components.yaml#/components/schemas/tokenRequestorReference'
-        nin:
-          $ref: '../components.yaml#/components/schemas/nin'
         status:
           $ref: '#/components/schemas/EnrolmentStatus'
         errorCode:
