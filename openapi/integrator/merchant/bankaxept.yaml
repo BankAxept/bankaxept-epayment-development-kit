@@ -215,7 +215,7 @@ paths:
       description: |
         The net settlement amount is calculated as:
         > *NetSettlementAmount = (CreditsAmount + CreditsReversalAmount) - (DebitsAmount + DebitsReversalAmount)*
-        
+
       operationId: cutOff
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
