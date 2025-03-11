@@ -212,10 +212,6 @@ paths:
   /v1/settlements/{merchantId}/{batchNumber}:
     put:
       summary: Cut off a settlement batch
-      description: |
-        The net settlement amount is calculated as:
-        > *NetSettlementAmount = (CreditsAmount + CreditsReversalAmount) - (DebitsAmount + DebitsReversalAmount)*
-
       operationId: cutOff
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
