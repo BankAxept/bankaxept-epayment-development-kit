@@ -310,6 +310,11 @@ components:
         debitReversalCount:
           type: integer
           format: int64
+        netSettlementAmount:
+          description: |
+            Calculated as: `netSettlementAmount = (creditAmount + creditReversalAmount) - (debitAmount + debitReversalAmount)`
+          type: integer
+          format: int64
 
     CancellationStatus:
       type: string
