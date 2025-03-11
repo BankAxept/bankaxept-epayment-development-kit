@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.1.3...v2.2.0) (2025-03-11)
+
+
+### Features
+
+* Add netSettlementAmount to the settlement callback response ([#233](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/233)) ([86270a0](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/86270a0557a5bf723c816bfc07dcc991e07a5514))
+
 ## [2.1.3](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.1.2...v2.1.3) (2025-03-05)
 
 
