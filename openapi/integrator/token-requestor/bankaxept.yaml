@@ -211,4 +211,5 @@ components:
         Describes if the eligibility check failed due to non-eligible card or system failure.
       enum:
         - NON_ELIGIBLE
+        - BANK_NOT_ENROLLED
         - FAILED
