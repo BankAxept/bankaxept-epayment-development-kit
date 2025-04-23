@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.2.0...v2.3.0) (2025-04-23)
+
+
+### Features
+
+* Add BANK_NOT_ENROLLED error code to card eligiibility check ([#239](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/239)) ([9b4072f](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/9b4072f3a5847bb77e2803fb07155b109f213c89))
+
 ## [2.2.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.1.3...v2.2.0) (2025-03-11)
 
 
