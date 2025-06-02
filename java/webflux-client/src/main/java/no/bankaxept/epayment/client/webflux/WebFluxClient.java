@@ -33,41 +33,39 @@ public class WebFluxClient implements HttpClient {
   }
 
   @Override
-  public Publisher<HttpResponse> get(String uri, Map<String, List<String>> headers) {
+  public Mono<HttpResponse> get(String uri, Map<String, List<String>> headers) {
     return sendRequest(uri, headers, HttpMethod.GET);
   }
 
   @Override
-  public Publisher<HttpResponse> post(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
+  public Mono<HttpResponse> post(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
     return sendRequest(uri, bodyPublisher, headers, HttpMethod.POST);
   }
 
   @Override
-  public Publisher<HttpResponse> delete(String uri, Map<String, List<String>> headers) {
+  public Mono<HttpResponse> delete(String uri, Map<String, List<String>> headers) {
     return sendRequest(uri, headers, HttpMethod.DELETE);
   }
 
   @Override
-  public Publisher<HttpResponse> put(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
+  public Mono<HttpResponse> put(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
     return sendRequest(uri, bodyPublisher, headers, HttpMethod.PUT);
   }
 
-  private Publisher<HttpResponse> sendRequest(
+  private Mono<HttpResponse> sendRequest(
       String uri,
       Publisher<String> bodyPublisher,
       Map<String, List<String>> headers,
       HttpMethod method
   ) {
-    return JdkFlowAdapter.publisherToFlowPublisher(
-        setupRequest(uri, headers, method)
+    return setupRequest(uri, headers, method)
             .body(BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
-            .exchangeToMono(mapResponse()));
+            .exchangeToMono(mapResponse());
   }
 
-  private Publisher<HttpResponse> sendRequest(String uri, Map<String, List<String>> headers, HttpMethod method) {
-    return JdkFlowAdapter.publisherToFlowPublisher(
-        setupRequest(uri, headers, method)
-            .exchangeToMono(mapResponse()));
+  private Mono<HttpResponse> sendRequest(String uri, Map<String, List<String>> headers, HttpMethod method) {
+    return setupRequest(uri, headers, method)
+            .exchangeToMono(mapResponse());
 
   }
 
