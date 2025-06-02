@@ -10,6 +10,7 @@ import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.wallet.WalletClient;
 import no.bankaxept.epayment.client.wallet.bankaxept.PaymentRequest;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
 
 public class WalletClientIT {
 
@@ -27,7 +28,7 @@ public class WalletClientIT {
     verifyBadRequest(paymentRequest(testClient()), "");
   }
 
-  private Flow.Publisher<RequestStatus> paymentRequest(WalletClient client) {
+  private Mono<RequestStatus> paymentRequest(WalletClient client) {
     var correlationId = UUID.randomUUID().toString();
     System.out.println("Correlation id: " + correlationId);
     return client.requestPayment(new PaymentRequest(), correlationId);

@@ -21,6 +21,7 @@ import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
+import reactor.adapter.JdkFlowAdapter;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -68,7 +69,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
   private void fetchNewToken() {
     if (shutDown)
       return;
-    httpClient.post(url.toString(), new SinglePublisher<>(body, fetchExecutor), headers).subscribe(this);
+    JdkFlowAdapter.publisherToFlowPublisher(httpClient.post(url.toString(), new SinglePublisher<>(body, fetchExecutor), headers)).subscribe(this);
   }
 
   @Override

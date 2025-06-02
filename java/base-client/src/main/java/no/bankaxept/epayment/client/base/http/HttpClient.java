@@ -1,21 +1,23 @@
 package no.bankaxept.epayment.client.base.http;
 
 
+import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Flow;
+import java.util.concurrent.Flow.Publisher;
 
 public interface HttpClient {
-  Flow.Publisher<HttpResponse> get(String uri, Map<String, List<String>> headers);
+  Mono<HttpResponse> get(String uri, Map<String, List<String>> headers);
 
-  Flow.Publisher<HttpResponse> post(
+  Mono<HttpResponse> post(
       String uri,
-      Flow.Publisher<String> bodyPublisher,
+      Publisher<String> bodyPublisher,
       Map<String, List<String>> headers
   );
 
-  Flow.Publisher<HttpResponse> delete(String uri, Map<String, List<String>> headers);
+  Mono<HttpResponse> delete(String uri, Map<String, List<String>> headers);
 
-  Flow.Publisher<HttpResponse> put(String uri, Flow.Publisher<String> bodyPublisher, Map<String, List<String>> headers);
+  Mono<HttpResponse> put(String uri, Flow.Publisher<String> bodyPublisher, Map<String, List<String>> headers);
 
 }

@@ -49,7 +49,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   @Test
   public void enrolment_successful() {
     stubFor(EnrolmentEndpoint(created()));
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.enrolCard(createEnrolmentRequest(), someCorrelationId)))
+    StepVerifier.create(client.enrolCard(createEnrolmentRequest(), someCorrelationId))
         .expectNext(RequestStatus.Accepted)
         .verifyComplete();
   }
@@ -57,7 +57,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   @Test
   public void deletion_successful() {
     stubFor(DeletionEndpoint(created()));
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.deleteToken(tokenId.toString(), someCorrelationId)))
+    StepVerifier.create(client.deleteToken(tokenId.toString(), someCorrelationId))
         .expectNext(RequestStatus.Accepted)
         .verifyComplete();
   }
@@ -65,7 +65,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   @Test
   public void eligibleBanksSuccessful() {
     stubFor(eligibleBanksEndpoint(ok()));
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.eligibleBanks(List.of("9998"))))
+    StepVerifier.create(client.eligibleBanks(List.of("9998")))
         .expectNext(RequestStatus.Repeated)
         .verifyComplete();
   }
@@ -73,7 +73,7 @@ public class TokenRequestorClientTest extends AbstractBaseClientWireMockTest {
   @Test
   public void cardEligibilitySuccessful() {
     stubFor(cardEligibilityEndpoint(created()));
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cardEligibility(createCardEligibilityRequest(), someCorrelationId)))
+    StepVerifier.create(client.cardEligibility(createCardEligibilityRequest(), someCorrelationId))
         .expectNext(RequestStatus.Accepted)
         .verifyComplete();
   }

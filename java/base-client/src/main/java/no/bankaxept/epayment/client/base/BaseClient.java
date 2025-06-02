@@ -18,6 +18,7 @@ import no.bankaxept.epayment.client.base.accesstoken.SuppliedAccessTokenPublishe
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
+import reactor.core.publisher.Mono;
 
 public class BaseClient {
 
@@ -50,14 +51,14 @@ public class BaseClient {
     return filteredHeaders;
   }
 
-  public Flow.Publisher<HttpResponse> get(
+  public Mono<HttpResponse> get(
       String uri,
       Map<String, List<String>> headers
   ) {
     return httpClient.get(uri, filterHeaders(headers, null, false));
   }
 
-  public Flow.Publisher<HttpResponse> post(
+  public Mono<HttpResponse> post(
       String uri,
       Flow.Publisher<String> body,
       String correlationId
@@ -65,7 +66,7 @@ public class BaseClient {
     return post(uri, body, correlationId, Map.of());
   }
 
-  public Flow.Publisher<HttpResponse> post(
+  public Mono<HttpResponse> post(
       String uri,
       Flow.Publisher<String> body,
       String correlationId,
@@ -74,14 +75,14 @@ public class BaseClient {
     return httpClient.post(uri, body, filterHeaders(headers, correlationId, true));
   }
 
-  public Flow.Publisher<HttpResponse> delete(
+  public Mono<HttpResponse> delete(
       String uri,
       String correlationId
   ) {
     return httpClient.delete(uri, filterHeaders(Map.of(), correlationId, false));
   }
 
-  public Flow.Publisher<HttpResponse> put(
+  public Mono<HttpResponse> put(
       String uri,
       Flow.Publisher<String> body,
       String correlationId

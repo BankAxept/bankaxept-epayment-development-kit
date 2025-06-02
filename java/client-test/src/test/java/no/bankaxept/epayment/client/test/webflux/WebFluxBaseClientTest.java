@@ -48,7 +48,7 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
 
     @Test
     public void should_add_all_relevant_headers_with_scheduled_token() {
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
+      StepVerifier.create(baseClient.post("/test", emptyPublisher(), "1"))
           .expectNext(new HttpResponse(200, ""))
           .verifyComplete();
     }
@@ -78,7 +78,7 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
           .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(500));
       removeStub(tokenEndpointMapping(serverError()));
       stubFor(tokenEndpointMapping(validTokenResponse()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(baseClient.post("/test", emptyPublisher(), "1")))
+      StepVerifier.create(baseClient.post("/test", emptyPublisher(), "1"))
           .expectNext(new HttpResponse(200, ""))
           .verifyComplete();        //Added delay for consistency
     }
