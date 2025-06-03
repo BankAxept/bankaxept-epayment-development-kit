@@ -14,6 +14,8 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher {
   private final Sinks.Many<Boolean> triggerRetrySink = Sinks.many().replay().latest();
   private final Sinks.One<Boolean> cancelSignal = Sinks.one();
 
+  private long lastTokenRefreshDelay = 0;
+
   public ScheduledAccessTokenPublisher(
       AccessTokenProvider accessTokenProvider,
       Clock clock
@@ -21,18 +23,22 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher {
     this.accessTokenProvider = accessTokenProvider;
     this.clock = clock;
     this.tokenSink = Sinks.many().replay().latest();
-    triggerRetrySink.asFlux()
+    this.triggerRetrySink.asFlux()
         .takeUntilOther(cancelSignal.asMono())
         .flatMap(b -> tryToUpdateToken())
         .doOnNext(accessToken -> refreshTokenIn(accessToken.secondsUntilTenSecondsBeforeExpiry(clock)) )
         .doOnError(e -> refreshTokenIn(5))
-        .subscribe(tokenSink::tryEmitNext);
+        .subscribe(
+            tokenSink::tryEmitNext,
+            tokenSink::tryEmitError
+        );
+    this.triggerRetrySink.tryEmitNext(true);//first attempt
   }
 
   public Mono<String> getAccessToken(){
     return tokenSink.asFlux()
         .map(AccessToken::getToken)
-        .last();
+        .next();
   }
 
   public void shutDown() {
@@ -56,7 +62,7 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher {
           }
         })
         .map(accessToken -> {
-          if(accessToken.getExpiry().isAfter(clock.instant())){
+          if(!accessToken.getExpiry().isAfter(clock.instant())){
             throw new IllegalStateException("Access token is not valid yet");
           }
           return accessToken;
@@ -64,12 +70,13 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher {
   }
 
   private void refreshTokenIn(long delay) {
+    lastTokenRefreshDelay = delay;
     Mono.just(true)
         .delayElement(Duration.ofSeconds(delay))
         .subscribe(triggerRetrySink::tryEmitNext);
   }
 
-  public void refreshTokenInForTesting(long seconds) {
-    refreshTokenIn(seconds);
+  public long getLastTokenRefreshDelay() {
+    return lastTokenRefreshDelay;
   }
 }
