@@ -12,12 +12,12 @@ public interface HttpClient {
 
   Mono<HttpResponse> post(
       String uri,
-      Publisher<String> bodyPublisher,
+      String body,
       Map<String, List<String>> headers
   );
 
   Mono<HttpResponse> delete(String uri, Map<String, List<String>> headers);
 
-  Mono<HttpResponse> put(String uri, Flow.Publisher<String> bodyPublisher, Map<String, List<String>> headers);
+  Mono<HttpResponse> put(String uri, String body, Map<String, List<String>> headers);
 
 }

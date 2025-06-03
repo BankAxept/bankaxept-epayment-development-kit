@@ -38,8 +38,8 @@ public class WebFluxClient implements HttpClient {
   }
 
   @Override
-  public Mono<HttpResponse> post(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
-    return sendRequest(uri, bodyPublisher, headers, HttpMethod.POST);
+  public Mono<HttpResponse> post(String uri, String body, Map<String, List<String>> headers) {
+    return sendRequest(uri, body, headers, HttpMethod.POST);
   }
 
   @Override
@@ -48,18 +48,18 @@ public class WebFluxClient implements HttpClient {
   }
 
   @Override
-  public Mono<HttpResponse> put(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
-    return sendRequest(uri, bodyPublisher, headers, HttpMethod.PUT);
+  public Mono<HttpResponse> put(String uri, String body, Map<String, List<String>> headers) {
+    return sendRequest(uri, body, headers, HttpMethod.PUT);
   }
 
   private Mono<HttpResponse> sendRequest(
       String uri,
-      Publisher<String> bodyPublisher,
+      String body,
       Map<String, List<String>> headers,
       HttpMethod method
   ) {
     return setupRequest(uri, headers, method)
-            .body(BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
+            .body(BodyInserters.fromValue(body))
             .exchangeToMono(mapResponse());
   }
 

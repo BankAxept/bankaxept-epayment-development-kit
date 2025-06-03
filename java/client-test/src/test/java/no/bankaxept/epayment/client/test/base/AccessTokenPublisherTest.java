@@ -14,12 +14,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Flow;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import no.bankaxept.epayment.client.base.SinglePublisher;
+import no.bankaxept.epayment.client.base.accesstoken.AccessTokenProvider;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
@@ -32,25 +27,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
 class AccessTokenPublisherTest {
 
-  @Spy
-  private ScheduledExecutorService schedulerMock = Executors.newScheduledThreadPool(1);
-
   @Mock
   private HttpClient httpClientMock;
 
-  @Mock
-  private Flow.Subscriber<String> subscriberMock;
-
-  @Mock
-  private Flow.Subscriber<String> anotherSubscriberMock;
+  @Spy
+  private ScheduledAccessTokenPublisher scheduledAccessTokenPublisherSpy;
 
   private AccessTokenPublisher accessTokenProcessor;
+
   private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   @AfterEach
   public void tearDown() {
@@ -59,45 +50,51 @@ class AccessTokenPublisherTest {
 
   @Test
   public void should_schedule_on_startup_then_new_on_success() throws IOException {
-    doReturn(new SinglePublisher<>(new HttpResponse(200, tokenResponse()), executor)).when(httpClientMock)
+    doReturn(Mono.just(new HttpResponse(200, tokenResponse()))).when(httpClientMock)
         .post(any(), any(), any());
     accessTokenProcessor = createPublisher();
-    accessTokenProcessor.subscribe(subscriberMock);
-    verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.SECONDS));
-    verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(3590L), eq(TimeUnit.SECONDS));
-    verify(subscriberMock).onNext("a-token");
+    StepVerifier.create(accessTokenProcessor.getAccessToken())
+        .expectNext("a-token")
+        .verifyComplete();
+    verify(httpClientMock).post(any(), any(), any());
+    scheduledAccessTokenPublisherSpy = (ScheduledAccessTokenPublisher) accessTokenProcessor;
+    verify(scheduledAccessTokenPublisherSpy, Mockito.after(2000)).refreshTokenInForTesting(eq(3590L));
     //To make sure we test the logic for "cached" tokens, we subscribe again after already getting a token
-    accessTokenProcessor.subscribe(anotherSubscriberMock);
-    verify(anotherSubscriberMock).onNext("a-token");
+    StepVerifier.create(accessTokenProcessor.getAccessToken())
+        .expectNext("a-token")
+        .verifyComplete();
   }
 
   @Test
   public void should_schedule_on_startup_then_again_on_error() throws MalformedURLException {
-    doReturn(new SinglePublisher<>(new HttpResponse(500, "error"), executor)).when(httpClientMock)
+    doReturn(Mono.just((new HttpResponse(500, "error")))).when(httpClientMock)
         .post(any(), any(), any());
     accessTokenProcessor = createPublisher();
-    accessTokenProcessor.subscribe(subscriberMock);
-    verify(schedulerMock).schedule(any(Runnable.class), eq(0L), eq(TimeUnit.SECONDS));
-    verify(schedulerMock, Mockito.after(2000)).schedule(any(Runnable.class), eq(5L), eq(TimeUnit.SECONDS));
-    verify(subscriberMock).onError(any());
+    StepVerifier.create(accessTokenProcessor.getAccessToken())
+        .expectError(MalformedURLException.class)
+        .verify();
+
+    verify(httpClientMock).post(any(), any(), any());
+    scheduledAccessTokenPublisherSpy = (ScheduledAccessTokenPublisher) accessTokenProcessor;
+    verify(scheduledAccessTokenPublisherSpy, Mockito.after(2000)).refreshTokenInForTesting(eq(5L));
   }
 
 
   @Test
   public void should_provide_static_token() {
     accessTokenProcessor = new StaticAccessTokenPublisher("static-token");
-    accessTokenProcessor.subscribe(subscriberMock);
-    verify(subscriberMock).onNext("static-token");
+    StepVerifier.create(accessTokenProcessor.getAccessToken())
+        .expectNext("static-token")
+        .verifyComplete();
   }
 
   private ScheduledAccessTokenPublisher createPublisher() throws MalformedURLException {
-    return new ScheduledAccessTokenPublisher.Builder()
+    AccessTokenProvider accessTokenProvider = new AccessTokenProvider.Builder()
         .httpClient(httpClientMock)
         .url(new URL("http://example.com"))
         .clientCredentials("username", "password")
-        .clock(clock)
-        .scheduler(schedulerMock)
         .build();
+    return Mockito.spy(new ScheduledAccessTokenPublisher(accessTokenProvider, clock));
   }
 
   private String tokenResponse() throws IOException {

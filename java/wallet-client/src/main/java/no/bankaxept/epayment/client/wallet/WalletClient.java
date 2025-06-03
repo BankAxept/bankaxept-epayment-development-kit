@@ -46,7 +46,7 @@ public class WalletClient {
   public Mono<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
     return baseClient.post(
             "/v1/payment-tokens",
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId
         ).map(HttpResponse::requestStatus);
   }
@@ -58,7 +58,7 @@ public class WalletClient {
   public Mono<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
     return baseClient.post(
             "/v1/payments",
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId
         ).map(HttpResponse::requestStatus);
   }

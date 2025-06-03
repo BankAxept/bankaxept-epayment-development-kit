@@ -46,7 +46,7 @@ public class TokenRequestorClient {
   public Mono<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
     return baseClient.post(
             "/v1/payment-tokens",
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId,
             findSimulationHeader(request)
         ).map(HttpResponse::requestStatus);
@@ -55,7 +55,7 @@ public class TokenRequestorClient {
   public Mono<RequestStatus> deleteToken(String tokenId, String correlationId) {
     return baseClient.post(
             String.format("/v1/payment-tokens/%s/deletion", tokenId),
-            new SinglePublisher<>("", executor),
+            "",
             correlationId
         ).map(HttpResponse::requestStatus);
   }
@@ -70,7 +70,7 @@ public class TokenRequestorClient {
   public Mono<RequestStatus> cardEligibility(EligibilityRequest request, String correlationId) {
     return baseClient.post(
             "/v1/card-eligibility",
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId
         ).map(HttpResponse::requestStatus);
   }

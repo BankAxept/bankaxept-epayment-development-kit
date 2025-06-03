@@ -1,8 +1,9 @@
 package no.bankaxept.epayment.client.base.accesstoken;
 
-import java.util.concurrent.Flow;
+import reactor.core.publisher.Mono;
 
-public interface AccessTokenPublisher extends Flow.Publisher<String> {
+public interface AccessTokenPublisher {
 
+  Mono<String> getAccessToken();
   default void shutDown() {}
 }

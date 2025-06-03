@@ -56,7 +56,7 @@ public class MerchantClient {
   public Mono<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
     return baseClient.post(
             "/v1/payments",
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId,
             findSimulationHeader(request)
         ).map(HttpResponse::requestStatus);
@@ -69,7 +69,7 @@ public class MerchantClient {
   public Mono<RequestStatus> capturePayment(String paymentId, CaptureRequest request, String correlationId) {
     return baseClient.post(
             String.format("/v1/payments/%s/captures", paymentId),
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId,
             findSimulationHeader(request)
         ).map(HttpResponse::requestStatus);
@@ -78,7 +78,7 @@ public class MerchantClient {
   public Mono<RequestStatus> cancelPayment(String paymentId, CancellationRequest request, String correlationId) {
     return baseClient.post(
             String.format("/v1/payments/%s/cancellation", paymentId),
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId,
             findSimulationHeader(request)
         ).map(HttpResponse::requestStatus);
@@ -87,7 +87,7 @@ public class MerchantClient {
   public Mono<RequestStatus> refundPayment(String paymentId, RefundRequest request, String correlationId) {
     return baseClient.post(
             String.format("/v1/payments/%s/refunds", paymentId),
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId,
             findSimulationHeader(request)
     ).map(HttpResponse::requestStatus);
@@ -99,7 +99,7 @@ public class MerchantClient {
   ) {
     return baseClient.put(
             String.format("/v1/settlements/%s/%s", merchantId, batchNumber),
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId
         ).map(HttpResponse::requestStatus);
   }

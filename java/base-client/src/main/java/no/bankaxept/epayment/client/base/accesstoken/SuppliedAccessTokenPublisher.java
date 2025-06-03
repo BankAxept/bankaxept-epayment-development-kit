@@ -1,19 +1,26 @@
 package no.bankaxept.epayment.client.base.accesstoken;
 
-
-import java.util.concurrent.Flow;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 import java.util.function.Supplier;
 
 public class SuppliedAccessTokenPublisher implements AccessTokenPublisher {
 
-  private final Supplier<String> tokenSupplier;
+  private final Sinks.One<String> tokenSink = Sinks.one();
+  private final Sinks.One<Boolean> cancelSignal = Sinks.one();
 
   public SuppliedAccessTokenPublisher(Supplier<String> tokenSupplier) {
-    this.tokenSupplier = tokenSupplier;
+    Mono.fromSupplier(tokenSupplier).subscribe(tokenSink::tryEmitValue);
   }
 
   @Override
-  public void subscribe(Flow.Subscriber<? super String> subscriber) {
-    subscriber.onNext(tokenSupplier.get());
+  public Mono<String> getAccessToken() {
+    return tokenSink.asMono().takeUntilOther(cancelSignal.asMono());
+  }
+
+  @Override
+  public void shutDown() {
+    AccessTokenPublisher.super.shutDown();
+    cancelSignal.tryEmitValue(true);
   }
 }
