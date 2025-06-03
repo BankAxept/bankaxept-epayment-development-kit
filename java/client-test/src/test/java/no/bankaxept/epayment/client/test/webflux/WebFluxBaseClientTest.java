@@ -48,7 +48,7 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
 
     @Test
     public void should_add_all_relevant_headers_with_scheduled_token() {
-      StepVerifier.create(baseClient.post("/test", emptyPublisher(), "1"))
+      StepVerifier.create(baseClient.post("/test", "", "1"))
           .expectNext(new HttpResponse(200, ""))
           .verifyComplete();
     }
@@ -57,7 +57,7 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
     public void should_fail_if_client_error_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
       stubFor(tokenEndpointMapping(forbidden()));
       baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
-      assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
+      assertThatThrownBy(() -> baseClient.post("/test", "", "1")).isInstanceOf(AccessFailed.class)
           .cause().isInstanceOf(HttpStatusException.class)
           .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(403));
     }
@@ -66,19 +66,19 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
     public void should_fail_if_connection_reset_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
       stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
       baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
-      assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class);
+      assertThatThrownBy(() -> baseClient.post("/test", "", "1")).isInstanceOf(AccessFailed.class);
     }
 
     @Test
     public void new_token_is_fetched_after_error(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
       stubFor(tokenEndpointMapping(serverError()));
       baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
-      assertThatThrownBy(() -> baseClient.post("/test", emptyPublisher(), "1")).isInstanceOf(AccessFailed.class)
+      assertThatThrownBy(() -> baseClient.post("/test", "", "1")).isInstanceOf(AccessFailed.class)
           .cause().isInstanceOf(HttpStatusException.class)
           .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(500));
       removeStub(tokenEndpointMapping(serverError()));
       stubFor(tokenEndpointMapping(validTokenResponse()));
-      StepVerifier.create(baseClient.post("/test", emptyPublisher(), "1"))
+      StepVerifier.create(baseClient.post("/test", "", "1"))
           .expectNext(new HttpResponse(200, ""))
           .verifyComplete();        //Added delay for consistency
     }

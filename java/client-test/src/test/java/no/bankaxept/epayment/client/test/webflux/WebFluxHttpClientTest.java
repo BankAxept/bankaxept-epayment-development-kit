@@ -43,7 +43,7 @@ public class WebFluxHttpClientTest {
     stubFor(post("/test").willReturn(ok()));
     Mono<HttpResponse> monoPublisher = client.post(
         "/test",
-        JdkFlowAdapter.publisherToFlowPublisher(Mono.just("")),
+        "",
         Map.of()
     );
     StepVerifier.create(monoPublisher)
@@ -54,7 +54,7 @@ public class WebFluxHttpClientTest {
   @Test
   public void simple_request_empty_body_no_headers() {
     stubFor(post("/test").willReturn(ok().withBody("response")));
-    var publisher = client.post("/test", JdkFlowAdapter.publisherToFlowPublisher(Mono.empty()), Map.of());
+    var publisher = client.post("/test", "", Map.of());
     StepVerifier.create(publisher)
         .expectNext(new HttpResponse(200, "response"))
         .verifyComplete();
@@ -67,7 +67,7 @@ public class WebFluxHttpClientTest {
         .willReturn(ok().withBody("response-body")));
     var resultPublisher = client.post(
         "/test",
-        JdkFlowAdapter.publisherToFlowPublisher(Mono.just("request-body")),
+        "request-body",
         Map.of("test-header", List.of("test-value"))
     );
     StepVerifier.create(resultPublisher)
