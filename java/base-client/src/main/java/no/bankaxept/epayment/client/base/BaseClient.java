@@ -115,7 +115,7 @@ public class BaseClient {
       return this;
     }
 
-    public Builder withSuppliedToken(Supplier<String> tokenSupplier) {
+    public Builder withSuppliedToken(Mono<String> tokenSupplier) {
       this.tokenPublisher = new SuppliedAccessTokenPublisher(tokenSupplier);
       return this;
     }
