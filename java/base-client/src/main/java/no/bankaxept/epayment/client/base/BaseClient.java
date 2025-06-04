@@ -126,7 +126,7 @@ public class BaseClient {
           .url(authorizationServerUrl)
           .clientCredentials(id, secret)
           .build();
-      this.tokenPublisher = new ScheduledAccessTokenPublisher(accessTokenProvider, Clock.systemUTC());
+      this.tokenPublisher = new ScheduledAccessTokenPublisher(accessTokenProvider, Clock.systemDefaultZone());
       return this;
     }
 

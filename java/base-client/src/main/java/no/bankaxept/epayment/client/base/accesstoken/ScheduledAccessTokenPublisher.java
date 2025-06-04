@@ -47,21 +47,13 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher {
 
   private Mono<AccessToken> tryToUpdateToken(){
     return accessTokenProvider.fetchNewToken()
-        .flatMap(response -> {
+        .map(response -> {
           if (!response.getStatus().is2xxOk()) {
-            return Mono.error(new HttpStatusException(response.getStatus(),
+            throw new HttpStatusException(response.getStatus(),
                 String.format("Could not get access token from %s. HTTP status: %s. HTTP payload: %s",
-                    accessTokenProvider.getUrl().toString(), response.getStatus(), response.getBody())));
+                    accessTokenProvider.getUrl().toString(), response.getStatus(), response.getBody()));
           }
-
-          try {
-            AccessToken token = AccessToken.parse(response.getBody(), clock);
-            return Mono.just(token);
-          } catch (Exception e) {
-            return Mono.error(e);
-          }
-        })
-        .map(accessToken -> {
+          AccessToken accessToken = AccessToken.parse(response.getBody(), clock);
           if(!accessToken.getExpiry().isAfter(clock.instant())){
             throw new IllegalStateException("Access token is not valid yet");
           }
