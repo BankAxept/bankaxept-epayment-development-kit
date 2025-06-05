@@ -7,7 +7,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.removeStub;
 import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -23,6 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.test.StepVerifier;
 import java.net.MalformedURLException;
@@ -57,25 +57,35 @@ public class WebFluxBaseClientTest extends AbstractBaseClientWireMockTest {
     public void should_fail_if_client_error_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
       stubFor(tokenEndpointMapping(forbidden()));
       baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
-      assertThatThrownBy(() -> baseClient.post("/test", "", "1")).isInstanceOf(AccessFailed.class)
-          .cause().isInstanceOf(HttpStatusException.class)
-          .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(403));
+      StepVerifier.create(baseClient.post("/test", "", "1"))
+          .expectErrorSatisfies(throwable -> {
+            assert throwable instanceof HttpStatusException;
+            assert ((HttpStatusException)throwable).getHttpStatus().equals(new HttpStatus(403));
+          })
+          .verify();
     }
 
     @Test
     public void should_fail_if_connection_reset_when_fetching_token(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
       stubFor(tokenEndpointMapping(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
       baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
-      assertThatThrownBy(() -> baseClient.post("/test", "", "1")).isInstanceOf(AccessFailed.class);
+      StepVerifier.create(baseClient.post("/test", "", "1"))
+          .expectErrorSatisfies(throwable -> {
+            assert throwable instanceof WebClientRequestException;
+          })
+          .verify();
     }
 
     @Test
     public void new_token_is_fetched_after_error(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
       stubFor(tokenEndpointMapping(serverError()));
       baseClient = createScheduledBaseClient(wmRuntimeInfo.getHttpPort());
-      assertThatThrownBy(() -> baseClient.post("/test", "", "1")).isInstanceOf(AccessFailed.class)
-          .cause().isInstanceOf(HttpStatusException.class)
-          .hasFieldOrPropertyWithValue("HttpStatus", new HttpStatus(500));
+      StepVerifier.create(baseClient.post("/test", "", "1"))
+          .expectErrorSatisfies(throwable -> {
+            assert throwable instanceof HttpStatusException;
+            assert ((HttpStatusException)throwable).getHttpStatus().equals(new HttpStatus(500));
+          })
+          .verify();
       removeStub(tokenEndpointMapping(serverError()));
       stubFor(tokenEndpointMapping(validTokenResponse()));
       StepVerifier.create(baseClient.post("/test", "", "1"))
