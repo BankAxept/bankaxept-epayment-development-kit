@@ -2,6 +2,7 @@ package no.bankaxept.epayment.client.base.accesstoken;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.util.concurrent.atomic.AtomicBoolean;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
@@ -25,18 +26,22 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher {
     this.tokenSink = Sinks.many().replay().latest();
     this.triggerRetrySink.asFlux()
         .takeUntilOther(cancelSignal.asMono())
-        .flatMap(b -> tryToUpdateToken())
-        .doOnNext(accessToken -> refreshTokenIn(accessToken.secondsUntilTenSecondsBeforeExpiry(clock)) )
-        .doOnError(e -> refreshTokenIn(5))
-        .subscribe(
-            tokenSink::tryEmitNext,
-            tokenSink::tryEmitError
-        );
+        .flatMap(signal -> retryAndSave())
+        .subscribe();
     this.triggerRetrySink.tryEmitNext(true);//first attempt
   }
 
   public Mono<String> getAccessToken(){
+    AtomicBoolean isInfiniteLoop = new AtomicBoolean(false);
     return tokenSink.asFlux()
+        .onErrorResume(previousError -> {
+          if(!isInfiniteLoop.get()){
+            isInfiniteLoop.set(true); // Prevents infinite loop in case of repeated errors
+            return retryAndSave();
+          } else {
+            return Mono.error(previousError);
+          }
+        })
         .map(AccessToken::getToken)
         .next();
   }
@@ -45,7 +50,20 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher {
     cancelSignal.tryEmitValue(true);
   }
 
-  private Mono<AccessToken> tryToUpdateToken(){
+  private Mono<AccessToken> retryAndSave() {
+    return retryFetch()
+        .doOnNext(tokenSink::tryEmitNext)
+        .doOnError(tokenSink::tryEmitError);
+  }
+
+  private Mono<AccessToken> retryFetch() {
+    return Mono.fromCallable(()-> fetchToken())
+        .flatMap(i->i)
+        .doOnNext(accessToken -> refreshTokenIn(accessToken.secondsUntilTenSecondsBeforeExpiry(clock)) )
+        .doOnError(e -> refreshTokenIn(5));
+  }
+
+  private Mono<AccessToken> fetchToken(){
     return accessTokenProvider.fetchNewToken()
         .map(response -> {
           if (!response.getStatus().is2xxOk()) {
