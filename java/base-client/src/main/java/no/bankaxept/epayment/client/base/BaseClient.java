@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.function.Supplier;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenProvider;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
@@ -115,8 +114,8 @@ public class BaseClient {
       return this;
     }
 
-    public Builder withSuppliedToken(Mono<String> tokenSupplier) {
-      this.tokenPublisher = new SuppliedAccessTokenPublisher(tokenSupplier);
+    public Builder withSuppliedToken(AccessTokenPublisher tokenPublisher) {
+      this.tokenPublisher = new SuppliedAccessTokenPublisher(tokenPublisher);
       return this;
     }
 
