@@ -11,7 +11,6 @@ import no.bankaxept.epayment.client.base.accesstoken.AccessTokenProvider;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
-import no.bankaxept.epayment.client.base.accesstoken.SuppliedAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
@@ -115,7 +114,7 @@ public class BaseClient {
     }
 
     public Builder withSuppliedToken(AccessTokenPublisher tokenPublisher) {
-      this.tokenPublisher = new SuppliedAccessTokenPublisher(tokenPublisher);
+      this.tokenPublisher = tokenPublisher;
       return this;
     }
 
