@@ -13,6 +13,7 @@ import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.tokenrequestor.TokenRequestorClient;
 import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
 
 public class TokenRequestorClientIT {
 
@@ -35,7 +36,7 @@ public class TokenRequestorClientIT {
     verifyBadRequest(testClient().eligibleBanks(List.of("090909")), "Invalid bank identifier 090909");
   }
 
-  private Flow.Publisher<RequestStatus> enrolCardRequest(TokenRequestorClient client) {
+  private Mono<RequestStatus> enrolCardRequest(TokenRequestorClient client) {
     var correlationId = UUID.randomUUID().toString();
     return client.enrolCard(new EnrolCardRequest(), correlationId);
   }

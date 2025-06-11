@@ -7,17 +7,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.concurrent.Flow;
-import java.util.function.Supplier;
+import no.bankaxept.epayment.client.base.accesstoken.AccessTokenProvider;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
-import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
-import no.bankaxept.epayment.client.base.accesstoken.EmptyAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.StaticAccessTokenPublisher;
-import no.bankaxept.epayment.client.base.accesstoken.SuppliedAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
+import reactor.core.publisher.Mono;
 
 public class BaseClient {
 
@@ -31,7 +28,7 @@ public class BaseClient {
     this.tokenPublisher = tokenPublisher;
   }
 
-  private Map<String, List<String>> filterHeaders(
+  private Mono<Map<String, List<String>>> filterHeaders(
       Map<String, List<String>> headers,
       String correlationId,
       boolean hasBody
@@ -40,53 +37,59 @@ public class BaseClient {
     if (correlationId != null) {
       filteredHeaders.put("X-Correlation-Id", List.of(correlationId));
     }
-    if (!(tokenPublisher instanceof EmptyAccessTokenPublisher))
-      filteredHeaders.put(
-          "Authorization",
-          List.of("Bearer " + new AccessTokenSubscriber(tokenPublisher).get(tokenTimeout))
-      );
-    if (hasBody && !headers.containsKey("Content-Type"))
-      filteredHeaders.put("Content-Type", List.of("application/json"));
-    return filteredHeaders;
+    return tokenPublisher.getAccessToken().timeout(tokenTimeout)
+            .map(jwt->{
+              filteredHeaders.put(
+                  "Authorization",
+                  List.of("Bearer " + jwt)
+              );
+              if (hasBody && !headers.containsKey("Content-Type"))
+                filteredHeaders.put("Content-Type", List.of("application/json"));
+              return filteredHeaders;
+            });
   }
 
-  public Flow.Publisher<HttpResponse> get(
+  public Mono<HttpResponse> get(
       String uri,
       Map<String, List<String>> headers
   ) {
-    return httpClient.get(uri, filterHeaders(headers, null, false));
+    return filterHeaders(headers, null, false)
+        .flatMap(filteredHeaders-> httpClient.get(uri, filteredHeaders));
   }
 
-  public Flow.Publisher<HttpResponse> post(
+  public Mono<HttpResponse> post(
       String uri,
-      Flow.Publisher<String> body,
+      String body,
       String correlationId
   ) {
     return post(uri, body, correlationId, Map.of());
   }
 
-  public Flow.Publisher<HttpResponse> post(
+  public Mono<HttpResponse> post(
       String uri,
-      Flow.Publisher<String> body,
+      String body,
       String correlationId,
       Map<String, List<String>> headers
   ) {
-    return httpClient.post(uri, body, filterHeaders(headers, correlationId, true));
+    return filterHeaders(headers, correlationId, true)
+        .flatMap(filteredHeaders-> httpClient.post(uri, body, filteredHeaders));
   }
 
-  public Flow.Publisher<HttpResponse> delete(
+  public Mono<HttpResponse> delete(
       String uri,
       String correlationId
   ) {
-    return httpClient.delete(uri, filterHeaders(Map.of(), correlationId, false));
+    return filterHeaders(Map.of(), correlationId, false)
+        .flatMap(filteredHeaders-> httpClient.delete(uri, filteredHeaders));
   }
 
-  public Flow.Publisher<HttpResponse> put(
+  public Mono<HttpResponse> put(
       String uri,
-      Flow.Publisher<String> body,
+      String body,
       String correlationId
   ) {
-    return httpClient.put(uri, body, filterHeaders(Map.of(), correlationId, true));
+    return filterHeaders(Map.of(), correlationId, true)
+        .flatMap(filteredHeaders-> httpClient.put(uri, body, filteredHeaders));
   }
 
   public void shutDown() {
@@ -110,27 +113,28 @@ public class BaseClient {
       return this;
     }
 
-    public Builder withSuppliedToken(Supplier<String> tokenSupplier) {
-      this.tokenPublisher = new SuppliedAccessTokenPublisher(tokenSupplier);
+    public Builder withSuppliedToken(AccessTokenPublisher tokenPublisher) {
+      this.tokenPublisher = tokenPublisher;
       return this;
     }
 
     public Builder withScheduledToken(URL authorizationServerUrl, String id, String secret) {
-      this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
+      AccessTokenProvider accessTokenProvider = new AccessTokenProvider.Builder()
           .httpClient(httpClient)
           .url(authorizationServerUrl)
           .clientCredentials(id, secret)
           .build();
+      this.tokenPublisher = new ScheduledAccessTokenPublisher(accessTokenProvider, Clock.systemDefaultZone());
       return this;
     }
 
     public Builder withScheduledToken(URL authorizationServerUrl, String id, String secret, Clock clock) {
-      this.tokenPublisher = new ScheduledAccessTokenPublisher.Builder()
+      AccessTokenProvider accessTokenProvider = new AccessTokenProvider.Builder()
           .httpClient(httpClient)
           .url(authorizationServerUrl)
           .clientCredentials(id, secret)
-          .clock(clock)
           .build();
+      this.tokenPublisher = new ScheduledAccessTokenPublisher(accessTokenProvider, clock);
       return this;
     }
 

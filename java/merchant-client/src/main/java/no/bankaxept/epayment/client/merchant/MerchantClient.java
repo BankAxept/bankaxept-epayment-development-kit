@@ -11,11 +11,11 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
 import no.bankaxept.epayment.client.base.BaseClient;
-import no.bankaxept.epayment.client.base.MapOperator;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.base.SimulationRequest;
 import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
+import reactor.core.publisher.Mono;
 
 public class MerchantClient {
 
@@ -53,83 +53,62 @@ public class MerchantClient {
     return Map.of();
   }
 
-  public Flow.Publisher<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
-    return new MapOperator<>(
-        baseClient.post(
+  public Mono<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
+    return baseClient.post(
             "/v1/payments",
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId,
             findSimulationHeader(request)
-        ),
-        HttpResponse::requestStatus
-    );
+        ).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> rollbackPayment(String correlationId, String messageId) {
-    return new MapOperator<>(
-        baseClient.delete(String.format("/v1/payments/messages/%s", messageId), correlationId),
-        HttpResponse::requestStatus
-    );
+  public Mono<RequestStatus> rollbackPayment(String correlationId, String messageId) {
+    return baseClient.delete(String.format("/v1/payments/messages/%s", messageId), correlationId).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> capturePayment(String paymentId, CaptureRequest request, String correlationId) {
-    return new MapOperator<>(
-        baseClient.post(
+  public Mono<RequestStatus> capturePayment(String paymentId, CaptureRequest request, String correlationId) {
+    return baseClient.post(
             String.format("/v1/payments/%s/captures", paymentId),
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId,
             findSimulationHeader(request)
-        ),
-        HttpResponse::requestStatus
-    );
+        ).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> cancelPayment(String paymentId, CancellationRequest request, String correlationId) {
-    return new MapOperator<>(
-        baseClient.post(
+  public Mono<RequestStatus> cancelPayment(String paymentId, CancellationRequest request, String correlationId) {
+    return baseClient.post(
             String.format("/v1/payments/%s/cancellation", paymentId),
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId,
             findSimulationHeader(request)
-        ),
-        HttpResponse::requestStatus
-    );
+        ).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> refundPayment(String paymentId, RefundRequest request, String correlationId) {
-    return new MapOperator<>(
-        baseClient.post(
+  public Mono<RequestStatus> refundPayment(String paymentId, RefundRequest request, String correlationId) {
+    return baseClient.post(
             String.format("/v1/payments/%s/refunds", paymentId),
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId,
             findSimulationHeader(request)
-        ),
-        HttpResponse::requestStatus
-    );
+    ).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> cutOff(
+  public Mono<RequestStatus> cutOff(
       String merchantId, CutOffRequest request,
       String batchNumber, String correlationId
   ) {
-    return new MapOperator<>(
-        baseClient.put(
+    return baseClient.put(
             String.format("/v1/settlements/%s/%s", merchantId, batchNumber),
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId
-        ),
-        HttpResponse::requestStatus
-    );
+        ).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> rollbackRefund(String paymentId, String messageId, String correlationId) {
-    return new MapOperator<>(
-        baseClient.delete(
+  public Mono<RequestStatus> rollbackRefund(String paymentId, String messageId, String correlationId) {
+    return baseClient.delete(
             String.format("/v1/payments/%s/refunds/messages/%s", paymentId, messageId),
             correlationId
-        ),
-        HttpResponse::requestStatus
-    );
+        ).map(HttpResponse::requestStatus);
   }
 
   private <T> String json(T request) {

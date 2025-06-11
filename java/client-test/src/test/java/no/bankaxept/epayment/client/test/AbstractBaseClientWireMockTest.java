@@ -71,10 +71,6 @@ public abstract class AbstractBaseClientWireMockTest {
         .build();
   }
 
-  protected Flow.Publisher<String> emptyPublisher() {
-    return new SinglePublisher<>("", executor);
-  }
-
   protected String bearerToken() {
     return "Bearer " + aToken;
   }

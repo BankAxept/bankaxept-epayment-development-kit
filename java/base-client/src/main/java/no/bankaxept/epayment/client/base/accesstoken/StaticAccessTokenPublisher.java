@@ -1,7 +1,6 @@
 package no.bankaxept.epayment.client.base.accesstoken;
 
-
-import java.util.concurrent.Flow;
+import reactor.core.publisher.Mono;
 
 public class StaticAccessTokenPublisher implements AccessTokenPublisher {
 
@@ -11,8 +10,9 @@ public class StaticAccessTokenPublisher implements AccessTokenPublisher {
     this.token = token;
   }
 
+
   @Override
-  public void subscribe(Flow.Subscriber<? super String> subscriber) {
-    subscriber.onNext(token);
+  public Mono<String> getAccessToken() {
+    return Mono.just(token);
   }
 }

@@ -56,10 +56,10 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(paymentEndpointMapping(transactionTime, created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
+      StepVerifier.create(client.requestPayment(
               createPaymentRequest(transactionTime),
               "1"
-          )))
+          ))
           .expectNext(RequestStatus.Accepted)
           .verifyComplete();
     }
@@ -67,10 +67,10 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success_with_simulation() {
       stubFor(simulationPaymentEndpointMapping(transactionTime, created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
+      StepVerifier.create(client.requestPayment(
               createSimulationRequest(transactionTime),
               "1"
-          )))
+          ))
           .expectNext(RequestStatus.Accepted)
           .verifyComplete();
     }
@@ -79,10 +79,10 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void server_error() {
       stubFor(paymentEndpointMapping(transactionTime, serverError()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.requestPayment(
+      StepVerifier.create(client.requestPayment(
               createPaymentRequest(transactionTime),
               "1"
-          )))
+          ))
           .expectNext(RequestStatus.Failed)
           .verifyComplete();
     }
@@ -160,7 +160,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(PaymentRollbackEndpointMapping("1", "message-id", created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollbackPayment("1", "message-id")))
+      StepVerifier.create(client.rollbackPayment("1", "message-id"))
           .expectNext(RequestStatus.Accepted)
           .verifyComplete();
     }
@@ -185,12 +185,12 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(CaptureEndpointMapping("payment-id", "1", created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.capturePayment(
+      StepVerifier.create(client.capturePayment(
               "payment-id",
               new CaptureRequest().amount(new Amount().currency("NOK").value(10000L))
                   .messageId("74313af1-e2cc-403f-85f1-6050725b01b6"),
               "1"
-          )))
+          ))
           .expectNext(RequestStatus.Accepted)
           .verifyComplete();
     }
@@ -216,11 +216,11 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
     @Test
     public void success() {
       stubFor(CancelEndpointMapping("payment-id", "1", created()));
-      StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.cancelPayment(
+      StepVerifier.create(client.cancelPayment(
           "payment-id",
               new CancellationRequest().messageId("87a898af-2506-416e-9e99-c7c7b8f3f615"),
               "1"
-          )))
+          ))
           .expectNext(RequestStatus.Accepted)
           .verifyComplete();
     }
@@ -247,7 +247,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
             "1",
             created()
         ));
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.refundPayment(
+        StepVerifier.create(client.refundPayment(
                 "payment-id",
                 new RefundRequest()
                     .amount(new Amount()
@@ -257,7 +257,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
                     .messageId("74313af1-e2cc-403f-85f1-6050725b01b6")
                     .transactionTime(transactionTime),
                 "1"
-            )))
+            ))
             .expectNext(RequestStatus.Accepted)
             .verifyComplete();
       }
@@ -284,7 +284,7 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
       @Test
       public void success() {
         stubFor(RefundRollbackEndpointMapping("payment-id", "message-id", "1", created()));
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.rollbackRefund("payment-id", "message-id", "1")))
+        StepVerifier.create(client.rollbackRefund("payment-id", "message-id", "1"))
             .expectNext(RequestStatus.Accepted)
             .verifyComplete();
       }
@@ -310,8 +310,8 @@ public class MerchantClientTest extends AbstractBaseClientWireMockTest {
       public void success() {
         CutOffRequest cutOffRequest = new CutOffRequest().messageId("message-id").merchantAggregatorId("1");
         stubFor(cutOffSettlementBatchEndpointMapping("merchant-id", "batch-number", "1", created()));
-        StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(
-                client.cutOff("merchant-id", cutOffRequest, "batch-number", "1")))
+        StepVerifier.create(
+                client.cutOff("merchant-id", cutOffRequest, "batch-number", "1"))
             .expectNext(RequestStatus.Accepted)
             .verifyComplete();
       }

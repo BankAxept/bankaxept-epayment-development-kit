@@ -11,13 +11,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
 import no.bankaxept.epayment.client.base.BaseClient;
-import no.bankaxept.epayment.client.base.MapOperator;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.base.SimulationRequest;
 import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EligibilityRequest;
 import no.bankaxept.epayment.client.tokenrequestor.bankaxept.EnrolCardRequest;
+import reactor.core.publisher.Mono;
 
 public class TokenRequestorClient {
 
@@ -43,46 +43,36 @@ public class TokenRequestorClient {
     );
   }
 
-  public Flow.Publisher<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
-    return new MapOperator<>(
-        baseClient.post(
+  public Mono<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
+    return baseClient.post(
             "/v1/payment-tokens",
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId,
             findSimulationHeader(request)
-        ),
-        HttpResponse::requestStatus
-    );
+        ).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> deleteToken(String tokenId, String correlationId) {
-    return new MapOperator<>(
-        baseClient.post(
+  public Mono<RequestStatus> deleteToken(String tokenId, String correlationId) {
+    return baseClient.post(
             String.format("/v1/payment-tokens/%s/deletion", tokenId),
-            new SinglePublisher<>("", executor),
+            "",
             correlationId
-        ),
-        HttpResponse::requestStatus
-    );
+        ).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> eligibleBanks(List<String> bankIdentifiers) {
-    return new MapOperator<>(
-        baseClient.get(
+  public Mono<RequestStatus> eligibleBanks(List<String> bankIdentifiers) {
+    return baseClient.get(
             "/v1/eligible-banks?bankIdentifier=" + String.join(",", bankIdentifiers),
             Map.of()
-        ),
-        HttpResponse::requestStatus);
+        ).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> cardEligibility(EligibilityRequest request, String correlationId) {
-    return new MapOperator<>(
-        baseClient.post(
+  public Mono<RequestStatus> cardEligibility(EligibilityRequest request, String correlationId) {
+    return baseClient.post(
             "/v1/card-eligibility",
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId
-        ),
-        HttpResponse::requestStatus);
+        ).map(HttpResponse::requestStatus);
   }
 
   private static Map<String, List<String>> findSimulationHeader(Object request) {

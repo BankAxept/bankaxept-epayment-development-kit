@@ -10,12 +10,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
 import no.bankaxept.epayment.client.base.BaseClient;
-import no.bankaxept.epayment.client.base.MapOperator;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.wallet.bankaxept.EnrolCardRequest;
 import no.bankaxept.epayment.client.wallet.bankaxept.PaymentRequest;
+import reactor.core.publisher.Mono;
 
 public class WalletClient {
 
@@ -43,32 +43,24 @@ public class WalletClient {
     );
   }
 
-  public Flow.Publisher<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
-    return new MapOperator<>(
-        baseClient.post(
+  public Mono<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
+    return baseClient.post(
             "/v1/payment-tokens",
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId
-        ), HttpResponse::requestStatus
-    );
+        ).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> deleteToken(UUID tokenId, String correlationId) {
-    return new MapOperator<>(
-        baseClient.delete(String.format("/v1/payment-tokens/%s", tokenId), correlationId),
-        HttpResponse::requestStatus
-    );
+  public Mono<RequestStatus> deleteToken(UUID tokenId, String correlationId) {
+    return baseClient.delete(String.format("/v1/payment-tokens/%s", tokenId), correlationId).map(HttpResponse::requestStatus);
   }
 
-  public Flow.Publisher<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
-    return new MapOperator<>(
-        baseClient.post(
+  public Mono<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
+    return baseClient.post(
             "/v1/payments",
-            new SinglePublisher<>(json(request), executor),
+            json(request),
             correlationId
-        ),
-        HttpResponse::requestStatus
-    );
+        ).map(HttpResponse::requestStatus);
   }
 
   private <T> String json(T input) {
