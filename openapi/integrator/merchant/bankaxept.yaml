@@ -368,6 +368,7 @@ components:
       type: object
       required:
         - zipCode
+        - address
         - city
       properties:
         zipCode:
