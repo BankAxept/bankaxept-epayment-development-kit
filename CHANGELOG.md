@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.3.0...v2.3.1) (2025-09-02)
+
+
+### Bug Fixes
+
+* Update merchantLocation of PaymentRequest to make address optional instead of required ([#251](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/251)) ([94e491d](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/94e491d528931d612bf6b49548f30bb58af38aab))
+
 ## [2.3.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.2.0...v2.3.0) (2025-04-23)
 
 
