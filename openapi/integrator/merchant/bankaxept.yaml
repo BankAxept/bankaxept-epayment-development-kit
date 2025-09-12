@@ -367,7 +367,6 @@ components:
     merchantLocation:
       type: object
       required:
-        - zipCode
         - city
       properties:
         zipCode:
