@@ -1,0 +1,39 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://127.0.0.1:8007
+    description: Generated server url
+paths:
+  /certificates:
+    get:
+      tags:
+        - cert-butler-controller
+      operationId: certificates
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CertificateData"
+components:
+  schemas:
+    CertificateData:
+      type: object
+      properties:
+        name:
+          type: string
+        subject:
+          type: string
+        notBefore:
+          type: string
+          format: date-time
+        expiresOn:
+          type: string
+          format: date-time
+        certificate:
+          type: string
