@@ -1,15 +1,26 @@
 openapi: 3.0.1
 info:
-  title: OpenAPI definition
-  version: v0
+  version: 0.0.1
+  title: BankAxept ePayment Cert-Butler API - ePayment Platform
+  description: BankAxept ePayment Certificates Butler API
 servers:
-  - url: http://127.0.0.1:8007
+  - url: https://api.epp-stoetest.cloud/certificates
     description: Generated server url
 paths:
-  /certificates:
+  /wallet:
     get:
-      tags:
-        - cert-butler-controller
+      operationId: certificates
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CertificateData"
+  /merchant:
+    get:
       operationId: certificates
       responses:
         "200":
