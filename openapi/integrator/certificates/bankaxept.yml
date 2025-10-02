@@ -5,7 +5,6 @@ info:
   description: BankAxept ePayment Certificates Butler API
 servers:
   - url: https://api.epp-stoetest.cloud/certificates
-    description: Generated server url
 paths:
   /wallet:
     get:
