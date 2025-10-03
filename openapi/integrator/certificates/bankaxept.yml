@@ -1,8 +1,8 @@
-openapi: 3.0.1
+openapi: 3.0.0
 info:
-  version: 0.0.1
-  title: BankAxept ePayment Cert-Butler API - ePayment Platform
-  description: BankAxept ePayment Certificates Butler API
+  version: 0.1.0
+  title: BankAxept ePayment Certificates API - ePayment Platform
+  description: BankAxept ePayment Certificates API
 servers:
   - url: https://api.epp-stoetest.cloud/certificates
 paths:
