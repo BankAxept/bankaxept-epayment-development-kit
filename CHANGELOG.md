@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.4.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.3.1...v2.4.0) (2025-09-12)
+
+
+### Features
+
+* Make zipCode optional in MerchantLocation used for PaymentRequest ([#255](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/255)) ([98fc5d6](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/98fc5d6fff5ed6091fea120c8ddff3a8ed2041d3))
+
+## [2.3.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.3.0...v2.3.1) (2025-09-02)
+
+
+### Bug Fixes
+
+* Update merchantLocation of PaymentRequest to make address optional instead of required ([#251](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/251)) ([94e491d](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/94e491d528931d612bf6b49548f30bb58af38aab))
+
 ## [2.3.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.2.0...v2.3.0) (2025-04-23)
 
 

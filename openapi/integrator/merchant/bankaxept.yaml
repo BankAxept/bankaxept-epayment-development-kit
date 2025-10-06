@@ -408,8 +408,6 @@ components:
     merchantLocation:
       type: object
       required:
-        - zipCode
-        - address
         - city
       properties:
         zipCode:
