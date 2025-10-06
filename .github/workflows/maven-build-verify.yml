@@ -24,6 +24,7 @@ jobs:
           AUTHORIZATION_SERVER_URL: 'https://api.epp-stoetest.cloud/access-token/v1/accesstoken'
           MERCHANT_API_URL: 'https://api.epp-stoetest.cloud/merchant'
           TOKEN_REQUESTOR_API_URL: 'https://api.epp-stoetest.cloud/token-requestor'
+          CERT_BUTLER_SERVER_URL: 'https://api.epp-stoetest.cloud/certificates'
           CLIENT_ID: ${{ secrets.ClientId }}
           CLIENT_SECRET: ${{ secrets.ClientSecret }}
           CLIENT_ID_COMPLEX_SECRET: ${{ secrets.ClientIdComplexSecret }}

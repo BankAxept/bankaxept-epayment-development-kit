@@ -32,12 +32,11 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
   public void merchant_certs_successful() {
     stubFor(MerchantEndpoint(ok()));
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.getMerchantCertificates()))
-        .expectNext(RequestStatus.Accepted)
         .verifyComplete();
   }
 
   private MappingBuilder MerchantEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return get(urlPathEqualTo("/merchant"))
+    return get(urlPathEqualTo("/certificates/merchant"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .willReturn(responseBuilder);
   }

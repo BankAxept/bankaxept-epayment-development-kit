@@ -33,7 +33,7 @@ public class CertificatesClient {
     var emptyHeaders = new HashMap<String, List<String>>();
     return new MapOperator<>(
         baseClient.get(
-            "/merchant",
+            "/certificates/merchant",
             emptyHeaders
         ),
         HttpResponse::requestStatus
