@@ -8,7 +8,7 @@ servers:
 paths:
   /wallet:
     get:
-      operationId: certificates
+      operationId: walletCertificates
       responses:
         "200":
           description: OK
@@ -20,7 +20,7 @@ paths:
                   $ref: "#/components/schemas/CertificateData"
   /merchant:
     get:
-      operationId: certificates
+      operationId: merchantCertificates
       responses:
         "200":
           description: OK
