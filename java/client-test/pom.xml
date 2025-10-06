@@ -64,6 +64,11 @@
             <artifactId>webflux-client</artifactId>
             <scope>test</scope>
         </dependency>
+      <dependency>
+        <groupId>no.bankaxept.epayment</groupId>
+        <artifactId>certificates</artifactId>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
 
     <profiles>
