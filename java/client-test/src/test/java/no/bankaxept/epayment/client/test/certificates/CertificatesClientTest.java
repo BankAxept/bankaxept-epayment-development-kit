@@ -32,7 +32,7 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
   public void merchant_certs_successful() {
     stubFor(MerchantEndpoint(ok()));
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.getMerchantCertificates()))
-        .verifyComplete();
+        .expectNext(RequestStatus.Accepted);
   }
 
   private MappingBuilder MerchantEndpoint(ResponseDefinitionBuilder responseBuilder) {
