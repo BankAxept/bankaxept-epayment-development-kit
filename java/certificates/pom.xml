@@ -11,12 +11,6 @@
 
   <artifactId>certificates</artifactId>
 
-  <properties>
-    <maven.compiler.source>24</maven.compiler.source>
-    <maven.compiler.target>24</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>no.bankaxept.epayment</groupId>

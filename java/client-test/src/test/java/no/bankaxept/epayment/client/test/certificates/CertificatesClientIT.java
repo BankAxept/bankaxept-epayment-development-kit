@@ -8,7 +8,7 @@ public class CertificatesClientIT {
   private CertificatesClient testClient() throws MalformedURLException {
     return new CertificatesClient(
         new URL(System.getenv("AUTHORIZATION_SERVER_URL")),
-        new URL(System.getenv("CERT_BUTLER_SERVER_URL")),
+        new URL(System.getenv("CERTIFICATES_API_URL")),
         System.getenv("CLIENT_ID"),
         System.getenv("CLIENT_SECRET")
     );
