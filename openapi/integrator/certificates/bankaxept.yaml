@@ -34,6 +34,12 @@ components:
   schemas:
     CertificateData:
       type: object
+      required:
+        - name
+        - subject
+        - notBefore
+        - expiresOn
+        - certificate
       properties:
         name:
           type: string
