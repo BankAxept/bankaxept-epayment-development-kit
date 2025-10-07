@@ -32,11 +32,26 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
   public void merchant_certs_successful() {
     stubFor(MerchantEndpoint(ok()));
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.getMerchantCertificates()))
-        .expectNext(RequestStatus.Accepted);
+        .expectNext(RequestStatus.Repeated)//Repeated is ok 200
+        .verifyComplete();
   }
 
   private MappingBuilder MerchantEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return get(urlPathEqualTo("/certificates/merchant"))
+    return get(urlPathEqualTo("/merchant"))
+        .withHeader("Authorization", new EqualToPattern(bearerToken()))
+        .willReturn(responseBuilder);
+  }
+
+  @Test
+  public void wallet_certs_successful() {
+    stubFor(WalletEndpoint(ok()));
+    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.getWalletCertificates()))
+        .expectNext(RequestStatus.Repeated)//Repeated is ok 200
+        .verifyComplete();
+  }
+
+  private MappingBuilder WalletEndpoint(ResponseDefinitionBuilder responseBuilder) {
+    return get(urlPathEqualTo("/wallet"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .willReturn(responseBuilder);
   }

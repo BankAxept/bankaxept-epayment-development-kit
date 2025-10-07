@@ -1,10 +1,7 @@
 package no.bankaxept.epayment.client.certificates;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.Map;
 import java.util.concurrent.Flow;
 import no.bankaxept.epayment.client.base.BaseClient;
 import no.bankaxept.epayment.client.base.MapOperator;
@@ -19,8 +16,6 @@ public class CertificatesClient {
     this.baseClient = baseClient;
   }
 
-  private final Executor executor = Executors.newSingleThreadExecutor();
-
   public CertificatesClient(URL authorizationServerUrl, URL resourceServerUrl, String clientId, String clientSecret) {
     this(
         new BaseClient.Builder(resourceServerUrl)
@@ -30,11 +25,20 @@ public class CertificatesClient {
   }
 
   public Flow.Publisher<RequestStatus> getMerchantCertificates() {
-    var emptyHeaders = new HashMap<String, List<String>>();
     return new MapOperator<>(
         baseClient.get(
-            "/certificates/merchant",
-            emptyHeaders
+            "/merchant",
+            Map.of()
+        ),
+        HttpResponse::requestStatus
+    );
+  }
+
+  public Flow.Publisher<RequestStatus> getWalletCertificates() {
+    return new MapOperator<>(
+        baseClient.get(
+            "/wallet",
+            Map.of()
         ),
         HttpResponse::requestStatus
     );
