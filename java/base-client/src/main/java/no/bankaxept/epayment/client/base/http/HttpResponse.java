@@ -4,19 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import java.util.List;
+import java.util.Objects;
 import no.bankaxept.epayment.client.base.ClientError;
 import no.bankaxept.epayment.client.base.RequestStatus;
-import java.util.Objects;
 
 public class HttpResponse {
-
-  @JsonIgnoreProperties(ignoreUnknown = true)
-  record ProblemDetails(String detail) {}
 
   private final ObjectReader clientErrorReader = new ObjectMapper().readerFor(ProblemDetails.class);
   private final HttpStatus status;
   private final String body;
-
   public HttpResponse(int status, String body) {
     this.status = new HttpStatus(status);
     this.body = body;
@@ -27,16 +24,26 @@ public class HttpResponse {
   }
 
   public RequestStatus requestStatus() {
-    if (status.code() == 200) return RequestStatus.Repeated;
-    else if (status.code() == 201) return RequestStatus.Accepted;
-    else if (status.code() == 409) return RequestStatus.Conflicted;
-    else if (status.code() == 422) return RequestStatus.Rejected;
-    else if (status.is4xxClientError()) throw parseClientError(body);
-    else return RequestStatus.Failed;
+    if (status.code() == 200)
+      return RequestStatus.Repeated;
+    else if (status.code() == 201)
+      return RequestStatus.Accepted;
+    else if (status.code() == 409)
+      return RequestStatus.Conflicted;
+    else if (status.code() == 422)
+      return RequestStatus.Rejected;
+    else if (status.is4xxClientError())
+      throw parseClientError(body);
+    else
+      return RequestStatus.Failed;
   }
 
   public String getBody() {
     return body;
+  }
+
+  public List getListBody() {
+    return List.of();
   }
 
   private ClientError parseClientError(String body) {
@@ -66,6 +73,9 @@ public class HttpResponse {
   public int hashCode() {
     return Objects.hash(status, body);
   }
+
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  record ProblemDetails(String detail) {}
 
 
 }

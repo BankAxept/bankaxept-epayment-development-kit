@@ -10,7 +10,7 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import java.net.MalformedURLException;
-import no.bankaxept.epayment.client.base.RequestStatus;
+import java.util.List;
 import no.bankaxept.epayment.client.certificates.CertificatesClient;
 import no.bankaxept.epayment.client.test.AbstractBaseClientWireMockTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
   public void merchant_certs_successful() {
     stubFor(MerchantEndpoint(ok()));
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.getMerchantCertificates()))
-        .expectNext(RequestStatus.Repeated)//Repeated is ok 200
+        .assertNext(List::isEmpty)
         .verifyComplete();
   }
 
@@ -46,7 +46,7 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
   public void wallet_certs_successful() {
     stubFor(WalletEndpoint(ok()));
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.getWalletCertificates()))
-        .expectNext(RequestStatus.Repeated)//Repeated is ok 200
+        .assertNext(List::isEmpty)
         .verifyComplete();
   }
 

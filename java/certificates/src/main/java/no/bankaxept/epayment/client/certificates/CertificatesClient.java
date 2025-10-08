@@ -1,12 +1,13 @@
 package no.bankaxept.epayment.client.certificates;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Flow;
 import no.bankaxept.epayment.client.base.BaseClient;
 import no.bankaxept.epayment.client.base.MapOperator;
-import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
+import no.bankaxept.epayment.client.certificates.bankaxept.CertificateData;
 
 public class CertificatesClient {
 
@@ -24,23 +25,23 @@ public class CertificatesClient {
     );
   }
 
-  public Flow.Publisher<RequestStatus> getMerchantCertificates() {
+  public Flow.Publisher<List<CertificateData>> getMerchantCertificates() {
     return new MapOperator<>(
         baseClient.get(
             "/merchant",
             Map.of()
         ),
-        HttpResponse::requestStatus
+        HttpResponse::getListBody
     );
   }
 
-  public Flow.Publisher<RequestStatus> getWalletCertificates() {
+  public Flow.Publisher<List<CertificateData>> getWalletCertificates() {
     return new MapOperator<>(
         baseClient.get(
             "/wallet",
             Map.of()
         ),
-        HttpResponse::requestStatus
+        HttpResponse::getListBody
     );
   }
 }
