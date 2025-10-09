@@ -35,13 +35,13 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
 
   @Test
   public void merchantCertsEmptyOk() {
-    stubFor(MerchantEndpoint(okJson(JSON_EMPTY_LIST)));
+    stubFor(merchantEndpoint(okJson(JSON_EMPTY_LIST)));
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(merchantClient.getCertificates()))
         .assertNext(List::isEmpty)
         .verifyComplete();
   }
 
-  private MappingBuilder MerchantEndpoint(ResponseDefinitionBuilder responseBuilder) {
+  private MappingBuilder merchantEndpoint(ResponseDefinitionBuilder responseBuilder) {
     return get(urlPathEqualTo("/merchant"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .willReturn(responseBuilder);
@@ -49,13 +49,13 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
 
   @Test
   public void walletCertsEmptyOk() {
-    stubFor(WalletEndpoint(okJson(JSON_EMPTY_LIST)));
+    stubFor(walletEndpoint(okJson(JSON_EMPTY_LIST)));
     StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(walletClient.getCertificates()))
         .assertNext(List::isEmpty)
         .verifyComplete();
   }
 
-  private MappingBuilder WalletEndpoint(ResponseDefinitionBuilder responseBuilder) {
+  private MappingBuilder walletEndpoint(ResponseDefinitionBuilder responseBuilder) {
     return get(urlPathEqualTo("/wallet"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .willReturn(responseBuilder);
