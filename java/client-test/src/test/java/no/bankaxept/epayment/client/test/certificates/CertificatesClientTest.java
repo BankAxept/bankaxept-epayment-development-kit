@@ -2,6 +2,7 @@ package no.bankaxept.epayment.client.test.certificates;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
@@ -11,7 +12,8 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import java.net.MalformedURLException;
 import java.util.List;
-import no.bankaxept.epayment.client.certificates.CertificatesClient;
+import no.bankaxept.epayment.client.certificates.MerchantCertificatesClient;
+import no.bankaxept.epayment.client.certificates.WalletCertificatesClient;
 import no.bankaxept.epayment.client.test.AbstractBaseClientWireMockTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,18 +22,21 @@ import reactor.test.StepVerifier;
 
 public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
 
-  private CertificatesClient client;
+  private static final String JSON_EMPTY_LIST = "[]";
+  private MerchantCertificatesClient merchantClient;
+  private WalletCertificatesClient walletClient;
 
   @BeforeEach
   public void setup(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
     super.setup(wmRuntimeInfo);
-    client = new CertificatesClient(baseClient);
+    merchantClient = new MerchantCertificatesClient(baseClient);
+    walletClient = new WalletCertificatesClient(baseClient);
   }
 
   @Test
-  public void merchant_certs_successful() {
-    stubFor(MerchantEndpoint(ok()));
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.getMerchantCertificates()))
+  public void merchantCertsEmptyOk() {
+    stubFor(MerchantEndpoint(okJson(JSON_EMPTY_LIST)));
+    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(merchantClient.getCertificates()))
         .assertNext(List::isEmpty)
         .verifyComplete();
   }
@@ -43,9 +48,9 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
   }
 
   @Test
-  public void wallet_certs_successful() {
-    stubFor(WalletEndpoint(ok()));
-    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(client.getWalletCertificates()))
+  public void walletCertsEmptyOk() {
+    stubFor(WalletEndpoint(okJson(JSON_EMPTY_LIST)));
+    StepVerifier.create(JdkFlowAdapter.flowPublisherToFlux(walletClient.getCertificates()))
         .assertNext(List::isEmpty)
         .verifyComplete();
   }

@@ -42,10 +42,6 @@ public class HttpResponse {
     return body;
   }
 
-  public List getListBody() {
-    return List.of();
-  }
-
   private ClientError parseClientError(String body) {
     ProblemDetails details;
     try {
@@ -76,6 +72,5 @@ public class HttpResponse {
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   record ProblemDetails(String detail) {}
-
 
 }

@@ -1,0 +1,55 @@
+package no.bankaxept.epayment.client.certificates;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import no.bankaxept.epayment.client.base.BaseClient;
+import no.bankaxept.epayment.client.base.MapOperator;
+import no.bankaxept.epayment.client.base.http.HttpResponse;
+import no.bankaxept.epayment.client.certificates.bankaxept.CertificateData;
+
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Flow;
+
+public abstract class AbstractCertificatesClient {
+
+  protected final BaseClient baseClient;
+  protected final ObjectMapper objectMapper = new ObjectMapper()
+      .registerModule(new JavaTimeModule())
+      .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+  public AbstractCertificatesClient(BaseClient baseClient) {
+    this.baseClient = baseClient;
+  }
+
+  public AbstractCertificatesClient(URL authorizationServerUrl, URL resourceServerUrl, String clientId, String clientSecret) {
+    this(
+        new BaseClient.Builder(resourceServerUrl)
+            .withScheduledToken(authorizationServerUrl, clientId, clientSecret)
+            .build()
+    );
+  }
+
+  protected abstract String getEndpoint();
+
+  public Flow.Publisher<List<CertificateData>> getCertificates() {
+    return new MapOperator<>(
+        baseClient.get(
+            getEndpoint(),
+            Map.of()
+        ),
+        this::responseToBody
+    );
+  }
+
+  protected List<CertificateData> responseToBody(HttpResponse response) {
+    try {
+      return objectMapper.readerForListOf(CertificateData.class).readValue(response.getBody());
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
+  }
+}
