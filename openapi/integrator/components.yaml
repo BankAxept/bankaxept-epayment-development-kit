@@ -349,6 +349,12 @@ components:
       maxLength: 80
       description: >-
         Binding message for the cardholder authentication.
+    moreCapturesAllowed:
+      type: boolean
+      default: false
+      description: >-
+        If true, subsequent captures are allowed for the payment.
+      example: true
 
   parameters:
     paymentId:
