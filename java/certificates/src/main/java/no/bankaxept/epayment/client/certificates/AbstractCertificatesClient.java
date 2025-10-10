@@ -16,11 +16,11 @@ import java.util.concurrent.Flow;
 
 public sealed abstract class AbstractCertificatesClient permits MerchantCertificatesClient, WalletCertificatesClient {
 
-  protected final String endpoint;
-  protected final BaseClient baseClient;
-  protected final ObjectMapper objectMapper = new ObjectMapper()
+  private final ObjectMapper objectMapper = new ObjectMapper()
       .registerModule(new JavaTimeModule())
       .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+  private final String endpoint;
+  private final BaseClient baseClient;
 
   public AbstractCertificatesClient(BaseClient baseClient, String endpoint) {
     this.baseClient = baseClient;
