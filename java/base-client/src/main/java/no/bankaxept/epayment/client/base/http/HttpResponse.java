@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import java.util.List;
 import java.util.Objects;
 import no.bankaxept.epayment.client.base.ClientError;
 import no.bankaxept.epayment.client.base.RequestStatus;
@@ -14,6 +13,7 @@ public class HttpResponse {
   private final ObjectReader clientErrorReader = new ObjectMapper().readerFor(ProblemDetails.class);
   private final HttpStatus status;
   private final String body;
+
   public HttpResponse(int status, String body) {
     this.status = new HttpStatus(status);
     this.body = body;
@@ -24,17 +24,17 @@ public class HttpResponse {
   }
 
   public RequestStatus requestStatus() {
-    if (status.code() == 200)
+    if (status.code() == 200) {
       return RequestStatus.Repeated;
-    else if (status.code() == 201)
+    } else if (status.code() == 201) {
       return RequestStatus.Accepted;
-    else if (status.code() == 409)
+    } else if (status.code() == 409) {
       return RequestStatus.Conflicted;
-    else if (status.code() == 422)
+    } else if (status.code() == 422) {
       return RequestStatus.Rejected;
-    else if (status.is4xxClientError())
+    } else if (status.is4xxClientError()) {
       throw parseClientError(body);
-    else
+    } else
       return RequestStatus.Failed;
   }
 
