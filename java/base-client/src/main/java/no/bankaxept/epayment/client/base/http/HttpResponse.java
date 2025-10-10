@@ -34,8 +34,9 @@ public class HttpResponse {
       return RequestStatus.Rejected;
     } else if (status.is4xxClientError()) {
       throw parseClientError(body);
-    } else
+    } else {
       return RequestStatus.Failed;
+    }
   }
 
   public String getBody() {
