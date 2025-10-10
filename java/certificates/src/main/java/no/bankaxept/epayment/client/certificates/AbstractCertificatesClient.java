@@ -14,31 +14,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Flow;
 
-public abstract class AbstractCertificatesClient {
+public sealed abstract class AbstractCertificatesClient permits MerchantCertificatesClient, WalletCertificatesClient {
 
+  protected final String endpoint;
   protected final BaseClient baseClient;
   protected final ObjectMapper objectMapper = new ObjectMapper()
       .registerModule(new JavaTimeModule())
       .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-  public AbstractCertificatesClient(BaseClient baseClient) {
+  public AbstractCertificatesClient(BaseClient baseClient, String endpoint) {
     this.baseClient = baseClient;
+    this.endpoint = endpoint;
   }
 
-  public AbstractCertificatesClient(URL authorizationServerUrl, URL resourceServerUrl, String clientId, String clientSecret) {
+  public AbstractCertificatesClient(URL authorizationServerUrl, String endpoint, URL resourceServerUrl, String clientId, String clientSecret) {
     this(
         new BaseClient.Builder(resourceServerUrl)
             .withScheduledToken(authorizationServerUrl, clientId, clientSecret)
-            .build()
+            .build(),
+        endpoint
     );
   }
-
-  protected abstract String getEndpoint();
 
   public Flow.Publisher<List<CertificateData>> getCertificates() {
     return new MapOperator<>(
         baseClient.get(
-            getEndpoint(),
+            endpoint,
             Map.of()
         ),
         this::responseToBody

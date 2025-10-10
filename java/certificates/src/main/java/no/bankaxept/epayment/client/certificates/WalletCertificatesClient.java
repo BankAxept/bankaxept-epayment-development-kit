@@ -3,18 +3,14 @@ package no.bankaxept.epayment.client.certificates;
 import no.bankaxept.epayment.client.base.BaseClient;
 import java.net.URL;
 
-public class WalletCertificatesClient extends AbstractCertificatesClient {
+public final class WalletCertificatesClient extends AbstractCertificatesClient {
 
-  public WalletCertificatesClient(BaseClient baseClient) {
-    super(baseClient);
+  public WalletCertificatesClient(BaseClient baseClient, String endpoint) {
+    super(baseClient, endpoint);
   }
 
-  public WalletCertificatesClient(URL authorizationServerUrl, URL resourceServerUrl, String walletClientId, String walletClientSecret) {
-    super(authorizationServerUrl, resourceServerUrl, walletClientId, walletClientSecret);
+  public WalletCertificatesClient(URL authorizationServerUrl, String endpoint, URL resourceServerUrl, String walletClientId, String walletClientSecret) {
+    super(authorizationServerUrl, endpoint, resourceServerUrl, walletClientId, walletClientSecret);
   }
 
-  @Override
-  protected String getEndpoint() {
-    return "/wallet";
-  }
 }

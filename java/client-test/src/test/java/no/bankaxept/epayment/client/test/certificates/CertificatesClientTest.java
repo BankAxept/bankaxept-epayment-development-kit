@@ -29,8 +29,8 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
   @BeforeEach
   public void setup(WireMockRuntimeInfo wmRuntimeInfo) throws MalformedURLException {
     super.setup(wmRuntimeInfo);
-    merchantClient = new MerchantCertificatesClient(baseClient);
-    walletClient = new WalletCertificatesClient(baseClient);
+    merchantClient = new MerchantCertificatesClient(baseClient, "/merchant");
+    walletClient = new WalletCertificatesClient(baseClient, "/wallet");
   }
 
   @Test
