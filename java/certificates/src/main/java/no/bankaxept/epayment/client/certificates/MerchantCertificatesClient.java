@@ -12,10 +12,12 @@ public final class MerchantCertificatesClient extends AbstractCertificatesClient
   public MerchantCertificatesClient(
       URL authorizationServerUrl,
       URL resourceServerUrl,
-      String merchantClientId,
-      String merchantClientSecret
+      String clientId,
+      String clientSecret
   ) {
-    super(authorizationServerUrl, "/merchant", resourceServerUrl, merchantClientId, merchantClientSecret);
+    this(new BaseClient.Builder(resourceServerUrl)
+        .withScheduledToken(authorizationServerUrl, clientId, clientSecret)
+        .build());
   }
 
 }

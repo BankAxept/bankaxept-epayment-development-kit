@@ -12,10 +12,12 @@ public final class WalletCertificatesClient extends AbstractCertificatesClient {
   public WalletCertificatesClient(
       URL authorizationServerUrl,
       URL resourceServerUrl,
-      String walletClientId,
-      String walletClientSecret
+      String clientId,
+      String clientSecret
   ) {
-    super(authorizationServerUrl, "/wallet", resourceServerUrl, walletClientId, walletClientSecret);
+    this(new BaseClient.Builder(resourceServerUrl)
+        .withScheduledToken(authorizationServerUrl, clientId, clientSecret)
+        .build());
   }
 
 }
