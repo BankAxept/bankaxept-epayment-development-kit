@@ -6,7 +6,7 @@ import no.bankaxept.epayment.client.base.BaseClient;
 public final class MerchantCertificatesClient extends AbstractCertificatesClient {
 
   public MerchantCertificatesClient(BaseClient baseClient) {
-    super(baseClient, "/merchant");
+    super(baseClient, "/v1/merchant");
   }
 
   public MerchantCertificatesClient(

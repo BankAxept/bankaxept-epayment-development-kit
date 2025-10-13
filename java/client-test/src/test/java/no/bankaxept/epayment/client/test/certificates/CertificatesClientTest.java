@@ -41,7 +41,7 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
   }
 
   private MappingBuilder merchantEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return get(urlPathEqualTo("/merchant"))
+    return get(urlPathEqualTo("/v1/merchant"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .willReturn(responseBuilder);
   }
@@ -55,7 +55,7 @@ public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
   }
 
   private MappingBuilder walletEndpoint(ResponseDefinitionBuilder responseBuilder) {
-    return get(urlPathEqualTo("/wallet"))
+    return get(urlPathEqualTo("/v1/wallet"))
         .withHeader("Authorization", new EqualToPattern(bearerToken()))
         .willReturn(responseBuilder);
   }

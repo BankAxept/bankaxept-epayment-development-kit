@@ -6,7 +6,7 @@ info:
 servers:
   - url: https://api.epp-stoetest.cloud/certificates
 paths:
-  /wallet:
+  /v1/wallet:
     get:
       operationId: wallet
       responses:
@@ -18,7 +18,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/CertificateData"
-  /merchant:
+  /v1/merchant:
     get:
       operationId: merchant
       responses:
