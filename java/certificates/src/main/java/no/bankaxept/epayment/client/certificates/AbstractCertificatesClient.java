@@ -51,7 +51,7 @@ public sealed abstract class AbstractCertificatesClient permits MerchantCertific
     );
   }
 
-  protected List<CertificateData> responseToBody(HttpResponse response) {
+  private List<CertificateData> responseToBody(HttpResponse response) {
     try {
       return objectMapper.readerForListOf(CertificateData.class).readValue(response.getBody());
     } catch (JsonProcessingException e) {
