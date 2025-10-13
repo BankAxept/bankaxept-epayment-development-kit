@@ -21,7 +21,6 @@ import reactor.test.StepVerifier;
 
 public class CertificatesClientTest extends AbstractBaseClientWireMockTest {
 
-  //TODO: add a test where you mock some certificate
   private static final String JSON_EMPTY_LIST = "[]";
   private MerchantCertificatesClient merchantClient;
   private WalletCertificatesClient walletClient;
