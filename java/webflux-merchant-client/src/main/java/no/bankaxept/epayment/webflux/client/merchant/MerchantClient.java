@@ -53,7 +53,7 @@ public class MerchantClient {
   }
 
   public Mono<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.post(
             "/v1/payments",
             new SinglePublisher<>(json(request), executor),
@@ -61,18 +61,18 @@ public class MerchantClient {
             findSimulationHeader(request)
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> rollbackPayment(String correlationId, String messageId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.delete(String.format("/v1/payments/messages/%s", messageId), correlationId),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> capturePayment(String paymentId, CaptureRequest request, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.post(
             String.format("/v1/payments/%s/captures", paymentId),
             new SinglePublisher<>(json(request), executor),
@@ -80,11 +80,11 @@ public class MerchantClient {
             findSimulationHeader(request)
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> cancelPayment(String paymentId, CancellationRequest request, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.post(
             String.format("/v1/payments/%s/cancellation", paymentId),
             new SinglePublisher<>(json(request), executor),
@@ -92,11 +92,11 @@ public class MerchantClient {
             findSimulationHeader(request)
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> refundPayment(String paymentId, RefundRequest request, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.post(
             String.format("/v1/payments/%s/refunds", paymentId),
             new SinglePublisher<>(json(request), executor),
@@ -104,31 +104,31 @@ public class MerchantClient {
             findSimulationHeader(request)
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> cutOff(
       String merchantId, CutOffRequest request,
       String batchNumber, String correlationId
   ) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.put(
             String.format("/v1/settlements/%s/%s", merchantId, batchNumber),
             new SinglePublisher<>(json(request), executor),
             correlationId
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> rollbackRefund(String paymentId, String messageId, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.delete(
             String.format("/v1/payments/%s/refunds/messages/%s", paymentId, messageId),
             correlationId
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   private <T> String json(T request) {

@@ -50,7 +50,7 @@ public class TokenRequestorClient {
   }
 
   public Mono<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.post(
             "/v1/payment-tokens",
             new SinglePublisher<>(json(request), executor),
@@ -58,39 +58,39 @@ public class TokenRequestorClient {
             findSimulationHeader(request)
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> deleteToken(String tokenId, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.post(
             String.format("/v1/payment-tokens/%s/deletion", tokenId),
             new SinglePublisher<>("", executor),
             correlationId
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> eligibleBanks(List<String> bankIdentifiers) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.get(
             "/v1/eligible-banks?bankIdentifier=" + String.join(",", bankIdentifiers),
             Map.of()
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> cardEligibility(EligibilityRequest request, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.post(
             "/v1/card-eligibility",
             new SinglePublisher<>(json(request), executor),
             correlationId
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   private <T> String json(T input) {

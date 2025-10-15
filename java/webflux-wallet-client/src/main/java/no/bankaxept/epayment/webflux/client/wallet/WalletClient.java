@@ -13,8 +13,8 @@ import no.bankaxept.epayment.client.base.MapOperator;
 import no.bankaxept.epayment.client.base.RequestStatus;
 import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
-import no.bankaxept.epayment.client.wallet.bankaxept.EnrolCardRequest;
-import no.bankaxept.epayment.client.wallet.bankaxept.PaymentRequest;
+import no.bankaxept.epayment.webflux.client.wallet.bankaxept.EnrolCardRequest;
+import no.bankaxept.epayment.webflux.client.wallet.bankaxept.PaymentRequest;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.core.publisher.Mono;
 
@@ -45,31 +45,31 @@ public class WalletClient {
   }
 
   public Mono enrolCard(EnrolCardRequest request, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.post(
             "/v1/payment-tokens",
             new SinglePublisher<>(json(request), executor),
             correlationId
         ), HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> deleteToken(UUID tokenId, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.delete(String.format("/v1/payment-tokens/%s", tokenId), correlationId),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   public Mono<RequestStatus> requestPayment(PaymentRequest request, String correlationId) {
-    return JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
+    return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.post(
             "/v1/payments",
             new SinglePublisher<>(json(request), executor),
             correlationId
         ),
         HttpResponse::requestStatus
-    )).single();
+    )));
   }
 
   private <T> String json(T input) {
