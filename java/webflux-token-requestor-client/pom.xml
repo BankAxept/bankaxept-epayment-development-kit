@@ -54,7 +54,7 @@
               <generateModelDocumentation>false</generateModelDocumentation>
               <generateModelTests>false</generateModelTests>
               <generateApis>false</generateApis>
-              <modelPackage>no.bankaxept.epayment.client.tokenrequestor.bankaxept</modelPackage>
+              <modelPackage>no.bankaxept.epayment.webflux.client.tokenrequestor.bankaxept</modelPackage>
             </configuration>
           </execution>
           <execution>
