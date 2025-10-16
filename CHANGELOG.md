@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.4.0...v2.5.0) (2025-10-16)
+
+
+### Features
+
+* Add certificates endpoint ([#258](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/258)) ([e2e06ac](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/e2e06ac67ee676549580fbe5307f172fbe02f85a))
+
 ## [2.4.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.3.1...v2.4.0) (2025-09-12)
 
 
