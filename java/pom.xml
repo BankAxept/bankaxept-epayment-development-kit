@@ -16,6 +16,9 @@
     <module>token-requestor-client</module>
     <module>client-test</module>
     <module>certificates</module>
+    <module>webflux-wallet-client</module>
+    <module>webflux-merchant-client</module>
+    <module>webflux-token-requestor-client</module>
   </modules>
   <build>
     <pluginManagement>
@@ -72,6 +75,21 @@
       <dependency>
         <groupId>no.bankaxept.epayment</groupId>
         <artifactId>certificates</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>no.bankaxept.epayment</groupId>
+        <artifactId>webflux-wallet-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>no.bankaxept.epayment</groupId>
+        <artifactId>webflux-merchant-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>no.bankaxept.epayment</groupId>
+        <artifactId>webflux-token-requestor-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       <!-- openapi generation -->
