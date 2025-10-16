@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  version: 0.1.0
+  title: BankAxept ePayment Certificates API - ePayment Platform
+  description: BankAxept ePayment Certificates API
+servers:
+  - url: https://api.epp-stoetest.cloud/certificates
+paths:
+  /v1/wallet:
+    get:
+      operationId: wallet
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CertificateData"
+  /v1/merchant:
+    get:
+      operationId: merchant
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CertificateData"
+components:
+  schemas:
+    CertificateData:
+      type: object
+      required:
+        - name
+        - subject
+        - notBefore
+        - expiresOn
+        - certificate
+      properties:
+        name:
+          type: string
+        subject:
+          type: string
+        notBefore:
+          type: string
+          format: date-time
+        expiresOn:
+          type: string
+          format: date-time
+        certificate:
+          type: string
