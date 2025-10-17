@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.5.0...v2.6.0) (2025-10-17)
+
+
+### Features
+
+* Add webflux clients to devkit ([#259](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/259)) ([8547c92](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/8547c92e9dcb30b1e10b025c87dbd9da4d87b841))
+
 ## [2.5.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.4.0...v2.5.0) (2025-10-16)
 
 
