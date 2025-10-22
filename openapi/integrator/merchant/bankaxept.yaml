@@ -349,13 +349,7 @@ paths:
     post:
       summary: Refund a payment
       description: |
-        Creates a refund request. Refunds a payment that has previously been captured, returning a unique reference for this request.
-        Refunding can be done on the full captured amount or a partial amount.
-        Multiple partial refunds will be accepted as long as their sum does not exceed the captured amount.
-        Payments which have been authorised, but not captured, cannot be refunded, use the cancel method instead.
-
-        The amount that can be refunded *(Amount refundable)* is calculated as:
-        > *Amount<sub>refundable</sub> = Amount<sub>captured</sub> - Amount<sub>refunded</sub>*
+        Creates a refund request.
 
       operationId: refundPaymentForAgreement
       parameters:
