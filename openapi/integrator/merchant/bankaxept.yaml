@@ -315,7 +315,7 @@ paths:
         The amount that can be captured *(Amount capturable)* is calculated as:
         > *Amount<sub>capturable</sub> = Amount + Amount<sub>adjusted</sub> - Amount<sub>expired</sub>  - Amount<sub>captured</sub>*
 
-      operationId: requestCaptureForAgreement
+      operationId: capturePaymentForAgreement
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
         - $ref: '../components.yaml#/components/parameters/agreementId'
@@ -417,10 +417,65 @@ components:
     PaymentAgreementRequest:
       type: object
       required:
+        - amount
+        - merchantAggregatorId
+        - merchantId
+        - merchantReference
         - messageId
+        - encryptedCardholderAuthenticationData
+        - inStore
+        - transactionTime
+        - merchantDisplayName
       properties:
+        amount:
+          $ref: '../components.yaml#/components/schemas/Amount'
+        amountBreakdown:
+          $ref: '../components.yaml#/components/schemas/AmountBreakdown'
+        automaticCapture:
+          type: boolean
+          default: false
+          description: >-
+            If true, the merchant does not need to make a separate capture request. The authorised amount is automatically captured in full directly after the authorisation.
+          example: false
+        encryptedCardholderAuthenticationData:
+          $ref: '../components.yaml#/components/schemas/encryptedPaymentCardholderAuthenticationData'
+        merchantAggregatorId:
+          $ref: '../components.yaml#/components/schemas/merchantAggregatorId'
+        merchantId:
+          $ref: '../components.yaml#/components/schemas/merchantId'
+        merchantName:
+          $ref: '../components.yaml#/components/schemas/merchantName'
+        merchantDisplayName:
+          $ref: '../components.yaml#/components/schemas/merchantDisplayName'
+        merchantOrderReference:
+          type: string
+          description: >-
+            The merchant's order reference. This reference could be order id or similar
+          example: "AAX9913435"
+        merchantOrderMessage:
+          type: string
+          description: >-
+            A merchant-supplied message about the payment/order. The maximum length is 50 characters. Allowed characters are the letters a-å, A-Å, the numbers 0-9 and the special characters :;.,?!()".
+          example: "Airline ticket 912-783248767327476"
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        merchantCategoryCode:
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: "5541"
+        merchantLocation:
+          $ref: '#/components/schemas/merchantLocation'
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
+        inStore:
+          $ref: '#/components/schemas/inStore'
+        networkReference:
+          $ref: '../components.yaml#/components/schemas/networkReference'
+        transactionTime:
+          type: string
+          format: date-time
+          description: >-
+            The time of the transaction.
 
     PaymentRequest:
       type: object
