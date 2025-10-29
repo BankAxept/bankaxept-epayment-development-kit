@@ -387,13 +387,6 @@ paths:
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
         - $ref: '../components.yaml#/components/parameters/agreementId'
-      requestBody:
-        description: Data to register for a payment.
-        required: true
-        content:
-          application/json;charset=UTF-8:
-            schema:
-              $ref: '#/components/schemas/PaymentAgreementRequest'
       responses:
         '200':
           description: >-
