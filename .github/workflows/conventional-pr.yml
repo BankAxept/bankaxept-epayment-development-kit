@@ -1,0 +1,23 @@
+name: conventional-pr
+permissions:
+  contents: read
+  pull-requests: write
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - edited
+      - synchronize
+jobs:
+  conventional-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: techcloud0-actions/conventional-pull-request-action@3ce30fdb4d2beef8b941f23a1114dd8188eba082
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          commitlintRulesPath: .github/commitlint.rules.js
+          ignoreCommits: true
