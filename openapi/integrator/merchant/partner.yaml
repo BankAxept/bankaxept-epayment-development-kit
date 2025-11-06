@@ -144,6 +144,34 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
+  /v1/payment-agreements:
+    description: Response to a payment agreement request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      operationId: paymentAgreementResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/PaymentAgreementResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
 components:
   schemas:
     PaymentResponse:
@@ -315,6 +343,34 @@ components:
             Calculated as: `netSettlementAmount = (creditAmount + creditReversalAmount) - (debitAmount + debitReversalAmount)`
           type: integer
           format: int64
+
+    PaymentAgreementResponse:
+      type: object
+      required:
+        - messageId
+        - agreementId
+        - paymentId
+        - merchantReference
+        - status
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        paymentAgreementId:
+          $ref: '../components.yaml#/components/schemas/agreementId'
+        paymentId:
+          $ref: '../components.yaml#/components/schemas/paymentId'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        stan:
+          $ref: '#/components/schemas/stan'
+        responseCode:
+          $ref: '#/components/schemas/responseCode'
+        authorisationCode:
+          $ref: '#/components/schemas/authorisationCode'
+        batchNumber:
+          $ref: '../components.yaml#/components/schemas/batchNumber'
 
     CancellationStatus:
       type: string
