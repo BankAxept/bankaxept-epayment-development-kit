@@ -378,12 +378,12 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /v1/payment-agreements/{agreementId}/cancellation:
+  /v1/payment-agreements/{agreementId}/termination:
     post:
-      summary: Cancel a payment agreement
+      summary: Terminate a payment agreement
       description: >-
-        Cancel a payment agreement
-      operationId: cancelAgreement
+        terminate a payment agreement
+      operationId: terminateAgreement
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
         - $ref: '../components.yaml#/components/parameters/agreementId'
@@ -419,6 +419,7 @@ components:
         - inStore
         - transactionTime
         - merchantDisplayName
+        - RecurringContext
       properties:
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
@@ -469,6 +470,12 @@ components:
           format: date-time
           description: >-
             The time of the transaction.
+        RecurringContext:
+          type: string
+          description: >-
+            Specifies the context of the recurring payment agreement.
+            Allowed values are "uncof", 
+            "subscription" (not supported in pilot), "cof"(not supported in pilot).
 
     PaymentRequest:
       type: object
