@@ -419,7 +419,7 @@ components:
         - inStore
         - transactionTime
         - merchantDisplayName
-        - RecurringContext
+        - recurringContext
       properties:
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
