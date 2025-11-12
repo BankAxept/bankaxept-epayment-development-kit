@@ -470,7 +470,7 @@ components:
           format: date-time
           description: >-
             The time of the transaction.
-        RecurringContext:
+        recurringContext:
           type: string
           description: >-
             Specifies the context of the recurring payment agreement.
