@@ -287,7 +287,7 @@ paths:
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/PaymentAgreementRequest'
+              $ref: '#/components/schemas/MerchantInitiatedPaymentRequest'
       responses:
         '200':
           description: >-
@@ -378,12 +378,12 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /v1/payment-agreements/{agreementId}/cancellation:
+  /v1/payment-agreements/{agreementId}/termination:
     post:
-      summary: Cancel a payment agreement
+      summary: Terminate a payment agreement
       description: >-
-        Cancel a payment agreement
-      operationId: cancelAgreement
+        terminate a payment agreement
+      operationId: terminateAgreement
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
         - $ref: '../components.yaml#/components/parameters/agreementId'
@@ -419,6 +419,7 @@ components:
         - inStore
         - transactionTime
         - merchantDisplayName
+        - recurringContext
       properties:
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
@@ -462,6 +463,72 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         inStore:
           $ref: '#/components/schemas/inStore'
+        networkReference:
+          $ref: '../components.yaml#/components/schemas/networkReference'
+        transactionTime:
+          type: string
+          format: date-time
+          description: >-
+            The time of the transaction.
+        recurringContext:
+          type: string
+          description: >-
+            Specifies the context of the recurring payment agreement.
+            Allowed values are "uncof", 
+            "subscription" (not supported in pilot), "cof"(not supported in pilot).
+
+    MerchantInitiatedPaymentRequest:
+      type: object
+      required:
+        - amount
+        - merchantAggregatorId
+        - merchantId
+        - merchantReference
+        - messageId
+        - inStore
+        - transactionTime
+        - merchantDisplayName
+      properties:
+        amount:
+          $ref: '../components.yaml#/components/schemas/Amount'
+        amountBreakdown:
+          $ref: '../components.yaml#/components/schemas/AmountBreakdown'
+        automaticCapture:
+          type: boolean
+          default: false
+          description: >-
+            If true, the merchant does not need to make a separate capture request. The authorised amount is automatically captured in full directly after the authorisation.
+          example: false
+        merchantAggregatorId:
+          $ref: '../components.yaml#/components/schemas/merchantAggregatorId'
+        merchantId:
+          $ref: '../components.yaml#/components/schemas/merchantId'
+        merchantName:
+          $ref: '../components.yaml#/components/schemas/merchantName'
+        merchantDisplayName:
+          $ref: '../components.yaml#/components/schemas/merchantDisplayName'
+        merchantOrderReference:
+          type: string
+          description: >-
+            The merchant's order reference. This reference could be order id or similar
+          example: "AAX9913435"
+        merchantOrderMessage:
+          type: string
+          description: >-
+            A merchant-supplied message about the payment/order. The maximum length is 50 characters. Allowed characters are the letters a-å, A-Å, the numbers 0-9 and the special characters :;.,?!()".
+          example: "Airline ticket 912-783248767327476"
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        merchantCategoryCode:
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: "5541"
+        merchantLocation:
+          $ref: '#/components/schemas/merchantLocation'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        inStore:
+          $ref: '#/components/schemas/inStore' ### Is this applicable for MIT? I think yes.
         networkReference:
           $ref: '../components.yaml#/components/schemas/networkReference'
         transactionTime:
