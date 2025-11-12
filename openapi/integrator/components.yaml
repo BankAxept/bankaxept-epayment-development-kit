@@ -212,6 +212,12 @@ components:
       example: "7f60d761-f27d-43d3-8ee9-53881b3c868d"
       description: >-
         The identifier for a specific payment.
+    agreementId:
+      type: string
+      format: uuid
+      example: "7f60d761-f27d-43d3-8ee9-53881b3c868d"
+      description: >-
+        The identifier for a specific payment agreement.
     merchantName:
       type: string
       maxLength: 100
@@ -357,6 +363,12 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/paymentId'
+    agreementId:
+      name: agreementId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/agreementId'
     merchantId:
       name: merchantId
       in: path
