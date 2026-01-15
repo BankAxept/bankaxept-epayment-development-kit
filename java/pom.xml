@@ -98,6 +98,11 @@
         <artifactId>swagger-parser</artifactId>
         <version>${swagger.parser.version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.openapitools</groupId>
+          <artifactId>jackson-databind-nullable</artifactId>
+          <version>0.2.8</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <properties>
