@@ -47,7 +47,7 @@
                             </configOptions>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generateSupportingFiles>true</generateSupportingFiles>
-                            <supportingFilesToGenerate>AbstractOpenApiSchema.java,JSON.java,RFC3339DateFormat.java</supportingFilesToGenerate>
+                            <supportingFilesToGenerate>JSON.java,RFC3339DateFormat.java</supportingFilesToGenerate>
                             <inputSpec>${project.basedir}/../../openapi/integrator/merchant/bankaxept.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <generateModels>true</generateModels>
