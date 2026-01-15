@@ -276,7 +276,7 @@ paths:
     post:
       summary: Terminate a payment agreement
       description: >-
-        Terminate a payment agreement
+        terminate a payment agreement
       operationId: terminateAgreement
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
@@ -371,9 +371,18 @@ components:
             Allowed values are "uncof", 
             "subscription" (not supported in pilot), "cof"(not supported in pilot).
 
-    BasePayment:
-      type: object
+    BasePaymentRequest:
+      discriminator:
+        propertyName: paymentType
+        mapping:
+          NORMAL: '#/components/schemas/PaymentRequest'
+          CIT: '#/components/schemas/PaymentRequest'
+          MIT: '#/components/schemas/MerchantInitiatedPaymentRequest'
+      #oneOf:
+      #  - $ref: '#/components/schemas/PaymentRequest'
+      #  - $ref: '#/components/schemas/MerchantInitiatedPaymentRequest'
       required:
+        - paymentType
         - amount
         - merchantAggregatorId
         - merchantId
@@ -383,6 +392,9 @@ components:
         - transactionTime
         - merchantDisplayName
       properties:
+        paymentType:
+          type: string
+          default: NORMAL
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
         amountBreakdown:
