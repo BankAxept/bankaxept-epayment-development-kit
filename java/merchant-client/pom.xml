@@ -21,10 +21,6 @@
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -46,8 +42,7 @@
                                 <library>native</library>
                             </configOptions>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
-                            <generateSupportingFiles>true</generateSupportingFiles>
-                            <supportingFilesToGenerate>JSON.java,RFC3339DateFormat.java</supportingFilesToGenerate>
+                            <generateSupportingFiles>false</generateSupportingFiles>
                             <inputSpec>${project.basedir}/../../openapi/integrator/merchant/bankaxept.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <generateModels>true</generateModels>
