@@ -11,6 +11,7 @@ security:
   - bearerAuth: [ ]
 
 paths:
+
   /v1/payments:
     post:
       summary: Request a new payment
@@ -239,7 +240,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /recurring/v1/agreements:
+  /v1/recurring/agreements:
     post:
       summary: Request a new payment agreement
       description: >-
@@ -273,7 +274,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /recurring/v1/agreements/{agreementId}/termination:
+  /v1/recurring/agreements/{agreementId}/termination:
     post:
       summary: Terminate a payment agreement
       description: >-
@@ -300,7 +301,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /recurring/v1/payments:
+  /v1/recurring/payments:
     post:
       summary: Request a new merchant initiated payment
       description: >-
@@ -334,7 +335,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /recurring/v1/payments/{paymentId}/messages/{messageId}:
+  /v1/recurring/payments/{paymentId}/messages/{messageId}:
     delete:
       summary: Rollback a recurring payment request
       operationId: rollbackRecurringPayment
@@ -361,7 +362,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /recurring/v1/payments/{paymentId}/captures:
+  /v1/recurring/payments/{paymentId}/captures:
     post:
       summary: Capture a payment
       description: |
@@ -396,7 +397,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /recurring/v1/payments/{paymentId}/cancellation:
+  /v1/recurring/payments/{paymentId}/cancellation:
     post:
       summary: Cancel a payment
       description: |
@@ -432,7 +433,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /recurring/v1/payments/{paymentId}/refunds:
+  /v1/recurring/payments/{paymentId}/refunds:
     post:
       summary: Refund a payment
       description: |
@@ -470,7 +471,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /recurring/v1/payments/{paymentId}/refunds/messages/{messageId}:
+  /v1/recurring/payments/{paymentId}/refunds/messages/{messageId}:
     delete:
       summary: Rollback a refund request
       operationId: rollbackRecurringRefund

@@ -5,6 +5,7 @@ info:
   description: BankAxept ePayment Merchant API - Merchant Server side
 
 paths:
+
   /v1/payments:
     description: Response to a payment request
     parameters:
@@ -116,6 +117,7 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
+
   /v1/settlements:
     description: Response to a cut-off request
     parameters:
@@ -144,18 +146,158 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /v1/payment-agreements:
-    description: Response to a payment agreement request
+  /v1/recurring/agreements:
+    description: Response to an agreement request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
-      operationId: paymentAgreementResponse
+      operationId: agreementResponse
       requestBody:
         required: true
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/PaymentAgreementResponse'
+              $ref: '#/components/schemas/AgreementResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/agreements/termination:
+    description: Response to a payment agreement termination
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      operationId: agreementTerminationResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/AgreementResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/payments:
+    description: Response to a merchant initiated payment request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      operationId: merchantInitiatedPaymentResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/PaymentResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/payments/cancellations:
+    description: Response to a cancellation request of a merchant initiated payment request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      operationId: merchantInitiatedCancellationResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CancellationResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/payments/captures:
+    description: Response to a capture request of a merchant initiated payment request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      operationId: merchantInitiatedCaptureResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CaptureResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/payments/refunds:
+    description: Response to a refund request of a merchant initiated payment request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      operationId: merchantInitiatedRefundResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/RefundResponse'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -217,6 +359,19 @@ components:
         - AuthenticationFailed
         - AuthorisationFailed
         - AuthorisationDeclined
+
+    AgreementStatus:
+      type: string
+      example: Accepted
+      description: |
+        Status code specifying the result of the operation:
+        * Activated - Agreement was activated.
+        * Declined - Agreement initiation declined.
+        * Failed - Agreement initiation failed.
+      enum:
+        - Active
+        - Declined
+        - Failed
 
     CancellationResponse:
       type: object
@@ -344,14 +499,15 @@ components:
           type: integer
           format: int64
 
-    PaymentAgreementResponse:
+    AgreementResponse:
       type: object
       required:
         - messageId
         - agreementId
         - paymentId
         - merchantReference
-        - status
+        - paymentStatus
+        - agreementStatus
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
@@ -361,8 +517,10 @@ components:
           $ref: '../components.yaml#/components/schemas/paymentId'
         merchantReference:
           $ref: '../components.yaml#/components/schemas/merchantReference'
-        status:
+        paymentStatus:
           $ref: '#/components/schemas/PaymentStatus'
+        agreementStatus:
+          $ref: '#/components/schemas/AgreementStatus'
         stan:
           $ref: '#/components/schemas/stan'
         responseCode:
@@ -371,6 +529,23 @@ components:
           $ref: '#/components/schemas/authorisationCode'
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
+
+    AgreementTerminationResponse:
+      type: object
+      required:
+        - messageId
+        - agreementId
+        - merchantReference
+        - status
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        paymentId:
+          $ref: '../components.yaml#/components/schemas/agreementId'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        status:
+          $ref: '#/components/schemas/TerminationStatus'
 
     CancellationStatus:
       type: string
@@ -419,6 +594,19 @@ components:
       enum:
         - Approved
         - Declined
+
+    TerminationStatus:
+      type: string
+      example: Approved
+      description: |
+        Code specifying the result of the operation:
+        * Approved - Termination request was approved.
+        * Declined - Termination request was declined.
+        * Failed - Termination request failed.
+      enum:
+        - Approved
+        - Declined
+        - Failed
 
     stan:
       type: string
