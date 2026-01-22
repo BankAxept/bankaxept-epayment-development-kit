@@ -360,19 +360,6 @@ components:
         - AuthorisationFailed
         - AuthorisationDeclined
 
-    AgreementStatus:
-      type: string
-      example: Accepted
-      description: |
-        Status code specifying the result of the operation:
-        * Activated - Agreement was activated.
-        * Declined - Agreement initiation declined.
-        * Failed - Agreement initiation failed.
-      enum:
-        - Active
-        - Declined
-        - Failed
-
     CancellationResponse:
       type: object
       required:
@@ -506,8 +493,7 @@ components:
         - agreementId
         - paymentId
         - merchantReference
-        - paymentStatus
-        - agreementStatus
+        - status
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
@@ -519,8 +505,6 @@ components:
           $ref: '../components.yaml#/components/schemas/merchantReference'
         paymentStatus:
           $ref: '#/components/schemas/PaymentStatus'
-        agreementStatus:
-          $ref: '#/components/schemas/AgreementStatus'
         stan:
           $ref: '#/components/schemas/stan'
         responseCode:

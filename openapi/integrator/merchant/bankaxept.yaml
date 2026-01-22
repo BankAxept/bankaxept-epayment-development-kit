@@ -255,7 +255,34 @@ paths:
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/PaymentRequest'
+              $ref: '#/components/schemas/PaymentAgreementRequest'
+      responses:
+        '200':
+          description: >-
+            Request already received successfully.
+        '201':
+          description: >-
+            Request received successfully.
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/agreements/messages/{messageId}:
+    delete:
+      summary: Rollback a recurring payment agreement request
+      operationId: rollbackPaymentAgreement
+      description: >-
+        Rollback an ongoing payment agreement request.
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - $ref: '../components.yaml#/components/parameters/messageId'
       responses:
         '200':
           description: >-
@@ -335,7 +362,7 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /v1/recurring/payments/{paymentId}/messages/{messageId}:
+  /v1/recurring/payments/messages/{messageId}:
     delete:
       summary: Rollback a recurring payment request
       operationId: rollbackRecurringPayment
@@ -564,29 +591,88 @@ components:
         encryptedCardholderAuthenticationData:
           $ref: '../components.yaml#/components/schemas/encryptedPaymentCardholderAuthenticationData'
 
+    PaymentAgreementRequest:
+      required:
+        - recurringContext
+        - amount
+        - merchantAggregatorId
+        - merchantId
+        - merchantReference
+        - messageId
+        - inStore
+        - transactionTime
+        - merchantDisplayName
+        - encryptedCardholderAuthenticationData
+      properties:
+        recurringContext:
+          type: string
+          enum: [ UNCOF, SUBSCRIPTION ]
+          description: >-
+            Specifies the context of the recurring payment agreement.
+            Allowed values are "uncof", 
+            "subscription" (not supported in pilot),
+        amount:
+          $ref: '../components.yaml#/components/schemas/Amount'
+        automaticCapture:
+          type: boolean
+          default: false
+          description: >-
+            If true, the merchant does not need to make a separate capture request. The authorised amount is automatically captured in full directly after the authorisation.
+          example: false
+        merchantAggregatorId:
+          $ref: '../components.yaml#/components/schemas/merchantAggregatorId'
+        merchantId:
+          $ref: '../components.yaml#/components/schemas/merchantId'
+        merchantName:
+          $ref: '../components.yaml#/components/schemas/merchantName'
+        merchantDisplayName:
+          $ref: '../components.yaml#/components/schemas/merchantDisplayName'
+        merchantOrderReference:
+          type: string
+          description: >-
+            The merchant's order reference. This reference could be order id or similar
+          example: "AAX9913435"
+        merchantOrderMessage:
+          type: string
+          description: >-
+            A merchant-supplied message about the payment/order. The maximum length is 50 characters. Allowed characters are the letters a-å, A-Å, the numbers 0-9 and the special characters :;.,?!()".
+          example: "Airline ticket 912-783248767327476"
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        merchantCategoryCode:
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: "5541"
+        merchantLocation:
+          $ref: '#/components/schemas/merchantLocation'
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        inStore:
+          $ref: '#/components/schemas/inStore' ### Is this applicable for MIT? I think yes.
+        networkReference:
+          $ref: '../components.yaml#/components/schemas/networkReference'
+        transactionTime:
+          type: string
+          format: date-time
+          description: >-
+            The time of the transaction.
+        encryptedCardholderAuthenticationData:
+          $ref: '../components.yaml#/components/schemas/encryptedPaymentCardholderAuthenticationData'
+
     MerchantInitiatedPaymentRequest:
       required:
         - agreementId
-        - recurringContext
         - amount
         - merchantReference
         - messageId
         - inStore
         - transactionTime
+        - merchantInitiatedPaymentSignedData
       properties:
         agreementId:
           $ref: '../components.yaml#/components/schemas/agreementId'
-        recurringContext:
-          type: string
-          enum: [ UNCOF, SUBSCRIPTION, COF ]
-          description: >-
-            Specifies the context of the recurring payment agreement.
-            Allowed values are "uncof", 
-            "subscription" (not supported in pilot), "cof"(not supported in pilot).
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
-        amountBreakdown:
-          $ref: '../components.yaml#/components/schemas/AmountBreakdown'
         automaticCapture:
           type: boolean
           default: false
@@ -616,6 +702,8 @@ components:
           format: date-time
           description: >-
             The time of the transaction.
+        merchantInitiatedPaymentSignedData:
+          $ref: '../components.yaml#/components/schemas/merchantInitiatedPaymentSignedData'
 
     PaymentCardholderAuthenticationData:
       $ref: '../components.yaml#/components/schemas/PaymentCardholderAuthenticationData'
