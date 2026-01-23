@@ -185,7 +185,7 @@ paths:
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/AgreementResponse'
+              $ref: '#/components/schemas/AgreementTerminationResponse'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -503,7 +503,7 @@ components:
           $ref: '../components.yaml#/components/schemas/paymentId'
         merchantReference:
           $ref: '../components.yaml#/components/schemas/merchantReference'
-        paymentStatus:
+        status:
           $ref: '#/components/schemas/PaymentStatus'
         stan:
           $ref: '#/components/schemas/stan'

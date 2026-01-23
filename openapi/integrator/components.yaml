@@ -72,6 +72,7 @@ components:
           enum:
             - payment.v1
             - approveAccount.v1
+            - merchantInitiatedPayment.v1
         iat:
           type: integer
           minimum: 1600000000
@@ -191,6 +192,69 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/PaymentBasePermissionV1"
+
+    MerchantInitiatedPaymentBasePermissionV1:
+      description: |
+        This must satisfy PSD2 RTS Article 4 Authentication code and
+        Article 5 Dynamic Linking
+      type: object
+      required:
+        - agreementId
+        - paymentId
+        - amount
+        - currency
+      properties:
+        agreementId:
+          $ref: '#/components/schemas/agreementId'
+        paymentId:
+          type: string
+          description: |
+            Payment id used for lookup at ASPSP.
+            Payment id is not displayed to the user.
+          example: Gm1rYOxUyzBQ03BLgr_EpEXq5HTwm-K-uUMroUNlRpI=
+        amount:
+          description: |
+            The amount given with fractional digits, where fractions must be compliant to the currency definition.
+            Up to 14 significant figures. Negative amounts are signed by minus.
+            The decimal separator is a dot.
+            **Example:**
+            Valid representations for EUR with up to two decimals are:
+              * 1056
+              * 5768.2
+              * -1.50
+              * 5877.78
+          type: string
+          example: "5877.78"
+        currency:
+          type: string
+          description: |
+            ISO 4217 Alpha 3 currency code.
+          minLength: 3
+          maxLength: 3
+          pattern: "[A-Z]{3}"
+          example: "NOK"
+
+    MerchantInitiatedPaymentPermissionV1:
+      description: |
+        This must satisfy PSD2 RTS Article 4 Authentication code and
+        Article 5 Dynamic Linking
+      allOf:
+        - $ref: "#/components/schemas/BasePermission"
+        - type: object
+          required:
+            - id
+            - payments
+          properties:
+            id:
+              type: string
+              description: |
+                Payment or basket id used for lookup at ASPSP.
+                The user does not approve the id itself or anything implicitly inferred from the id.
+              example: 1234-basket-567
+            payments:
+              type: array
+              items:
+                $ref: "#/components/schemas/MerchantInitiatedPaymentBasePermissionV1"
 
     PaymentToken:
       type: object
@@ -335,7 +399,7 @@ components:
         Java Web Signature specification defined in RFC-7515. See schema PermissionGrant for payload format.
     merchantInitiatedPaymentSignedData:
       type: string
-      example: "eyJ4NXQjUzI1NiI6IkQyQkVhZWp3ektpQXVhTkl3cGlZRUxHMnh6Y25NdTJQME40VnZkNlpVVnciLCJhbGciOiJQUzI1NiJ9.eyJ0eXBlIjoicGF5bWVudC52MSIsImlhdCI6MTc2OTA3MDQ1MywiaXNzIjoibWVyY2hhbnRBZ2dyZWdhdG9yIiwibm9uY2UiOiI4MDMwZjBiOS0xMWUzLTRhMzItYmFhZi1iMGRkMDY1Yjc4YWMiLCJzdWIiOiJtZXJjaGFudElkIiwicGVybWlzc2lvbklkIjoidW5pcXVlSWRPZlBlcm1pc3Npb25SZXF1ZXN0IiwiZGlnZXN0IjoidUFTSzJZb0dKMWJ4bmZDZjNGb0lzUnBRYXhvYUJ3VldoN3pOeVRRb0RDbyJ9.C0zY99Uug259ATEy44nqX4oQHz_EJpJD8EKcWBE0-ZgKjCaKP4FuVWikFRG69ngNtUudKMd9exyBT5QSRkQfii2DBh3J-mA8vBlhWEYFOwI03ALDFFi884UiDkNx788jPe7WZmFtWHmD7XlpZVeIY25bMvGAkqtxmSGBawA_aQXHl7b5-QfOMCFpuZhfaI7bL3O7d1s0ZduB-DjJbE9Au_F5Juwul9V5YwPXxtQYR5UffcuCEObDRPAGy-PyErme-sY0J-wVkZYFNg-C84rJgEMb0l5Gx8vqnmHBGjwptEcUrvKIYPAJ_eIwxeQUC8DjwD2LufGUIyMWgMfRP2Q56g"
+      example: "eyJ4NXQjUzI1NiI6IkQyQkVhZWp3ektpQXVhTkl3cGlZRUxHMnh6Y25NdTJQME40VnZkNlpVVnciLCJhbGciOiJQUzI1NiJ9.eyJ0eXBlIjoibWVyY2hhbnRJbml0aWF0ZWRQYXltZW50LnYxIiwiaWF0IjoxNzY5MTkxNjgwLCJpc3MiOiJtZXJjaGFudEFnZ3JlZ2F0b3IiLCJub25jZSI6IjZmZTlkYTYzLTNhNzktNDcyYS1hOWVlLTdiZDU0NjM5ZjQ1ZCIsInN1YiI6Im1lcmNoYW50SWQiLCJwZXJtaXNzaW9uSWQiOiJ1bmlxdWVJZE9mUGVybWlzc2lvblJlcXVlc3QiLCJkaWdlc3QiOiJic1Zjc3Nhc3FqMXNyc2c1WGJ0dkFMaks2S0ExOUJFYU9Dejd0UFdqRzhjIn0.Dw8-8akQ2orDXTVIRqafGhvofSgzg9dmXHxqieeJT9pRL1LZPMuGZl9NezezPFRbM04fDAXEiinviMLXSOP4pTJQYNZJPV4uD-FzCr4HE4Jh3O8ri6NNCXZVBEoQqY8iIsA2-Wjf2bKts16EmtQZnPWxb5P7LgpWXzI-tCYfC_d2uC1uYiLzEvGuLo-Mw_ECM1OPw_xdcxAyKLNcQkr9ScYD_1nPfR6IwM4XGTicci8lNT1TkW78x4kskL6n-PcqbOBmUm-HTd6W8QoqFO7N1bqh4de4vWQAcV-LY0Y1gitUMGUvkn8IBCe2RgmpNMjzFKxO09sbe29i27Hfecf8nA"
       description: >-
         The Merchant Initiated Payment Data is a signed JWT in JWS Compact Serialisation format according to the
         Java Web Signature specification defined in RFC-7515. See schema PermissionGrant for payload format.
