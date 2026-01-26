@@ -279,7 +279,7 @@ components:
     agreementId:
       type: string
       format: uuid
-      example: "7f60d761-f27d-43d3-8ee9-53881b3c868d"
+      example: "5b7e9f2c-8a1d-4e3b-a7c9-3f5d8e1a4b6c"
       description: >-
         The identifier for a specific payment agreement.
     merchantName:
@@ -347,12 +347,12 @@ components:
       description: >-
         A unique identifier that guarantees message idempotency.
       type: string
-      example: "74313af1-e2cc-403f-85f1-6050725b01b6"
+      example: "d8f3a92b-1c5e-4d7a-b3f8-9e2a7c4f6b1d"
     networkReference:
       description: >-
         The network reference is a unique identifier for the transaction operation in the network. It will be transmitted for payments with automaticCapture set to true, as well as for capture and refund transaction operations.
       type: string
-      example: "74313af1-e2cc-403f-85f1-6050725b01b6"
+      example: "2c9f4e7a-6b3d-4f1c-9e8a-5d2b1c3f7e4a"
       maxLength: 36
     pan:
       type: string
