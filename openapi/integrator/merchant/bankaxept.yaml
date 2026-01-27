@@ -244,8 +244,9 @@ paths:
     post:
       summary: Request a new payment agreement
       description: >-
-        Payments creates a payment with a unique reference (paymentId). The result of the payment
-        processing will be returned asynchronously as defined in the Getting Started Guide
+        Creates a payment agreement initiated by a customer-initiated payment. Upon approval of authorization, the IDs
+        of both the payment agreement and proof payment are returned with unique references (agreementId and paymentId).
+        The result of the agreement processing will be returned asynchronously as defined in the Getting Started Guide.
       operationId: requestPaymentAgreement
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
@@ -332,8 +333,8 @@ paths:
     post:
       summary: Request a new merchant initiated payment
       description: >-
-        Payments creates a payment with a unique reference (paymentId). The result of the payment
-        processing will be returned asynchronously as defined in the Getting Started Guide
+        Creates a merchant-initiated payment under an existing agreement with a unique reference (paymentId). 
+        The result of the payment processing will be returned asynchronously as defined in the Getting Started Guide
       operationId: requestRecurringPayment
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
