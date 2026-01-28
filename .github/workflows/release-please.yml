@@ -20,7 +20,7 @@ jobs:
           app-id: ${{ vars.APP_ID }}
           private-key: ${{ secrets.PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-      - uses: techcloud0-actions/release-please-action@v4
+      - uses: techcloud0-actions/release-please-action@1155c2c8dcbd6b15e85bae6bc6d1fed9552663cb #v4
         id: release
         with:
           token: ${{ steps.app-token.outputs.token }}
