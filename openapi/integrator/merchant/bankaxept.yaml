@@ -244,9 +244,10 @@ paths:
     post:
       summary: Request a new payment agreement
       description: >-
-        Creates a payment agreement initiated by a customer-initiated payment. Upon approval of authorization, the IDs
-        of both the payment agreement and proof payment are returned with unique references (agreementId and paymentId).
-        The result of the agreement processing will be returned asynchronously as defined in the Getting Started Guide.
+        Creates a payment agreement initiated by a customer‑initiated payment. When the authorization is approved,
+        the IDs of both the payment agreement and the proof of payment are returned with unique references
+        (agreementId and paymentId). The result of the agreement processing will be returned asynchronously as 
+        described in the Getting Started Guide.
       operationId: requestPaymentAgreement
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
@@ -333,8 +334,9 @@ paths:
     post:
       summary: Request a new merchant initiated payment
       description: >-
-        Creates a merchant-initiated payment under an existing agreement with a unique reference (paymentId). 
-        The result of the payment processing will be returned asynchronously as defined in the Getting Started Guide
+        Creates a merchant‑initiated payment under an existing agreement. When the authorization is approved,
+        the payment is returned with a unique paymentId reference. The result of the payment processing will be
+        returned asynchronously as described in the Getting Started Guide.
       operationId: requestRecurringPayment
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
@@ -344,7 +346,7 @@ paths:
         content:
           application/json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/MerchantInitiatedPaymentRequest'
+              $ref: '#/components/schemas/SignedMerchantInitiatedPaymentRequest'
       responses:
         '200':
           description: >-
@@ -660,6 +662,19 @@ components:
         encryptedCardholderAuthenticationData:
           $ref: '../components.yaml#/components/schemas/encryptedPaymentCardholderAuthenticationData'
 
+    SignedMerchantInitiatedPaymentRequest:
+      type: object
+      required:
+        - signedPaymentData
+      properties:
+        signedPaymentData:
+          type: string
+          description: >-
+            The Merchant Initiated Payment Request is a signed JWT in JWS Compact Serialisation format according to the
+            Java Web Signature specification defined in RFC-7515. The payload contains all the properties from 
+            MerchantInitiatedPaymentRequest schema. The signature ensures the integrity and authenticity of the payment request.
+          example: "eyJ4NXQjUzI1NiI6IkQyQkVhZWp3ektpQXVhTkl3cGlZRUxHMnh6Y25NdTJQME40VnZkNlpVVnciLCJhbGciOiJQUzI1NiJ9.eyJhZ3JlZW1lbnRJZCI6IjEyMzQ1Njc4OTAiLCJhbW91bnQiOnsiY3VycmVuY3lDb2RlIjoiTk9LIiwidmFsdWUiOjEwMDAwfSwiYXV0b21hdGljQ2FwdHVyZSI6ZmFsc2UsIm1lcmNoYW50T3JkZXJSZWZlcmVuY2UiOiJBQVg5OTEzNDM1IiwibWVyY2hhbnRPcmRlck1lc3NhZ2UiOiJBaXJsaW5lIHRpY2tldCA5MTItNzgzMjQ4NzY3MzI3NDc2IiwibWVyY2hhbnRSZWZlcmVuY2UiOiJtZXJjaGFudFJlZjEyMyIsIm1lc3NhZ2VJZCI6IjZmZTlkYTYzLTNhNzktNDcyYS1hOWVlLTdiZDU0NjM5ZjQ1ZCIsImluU3RvcmUiOmZhbHNlLCJuZXR3b3JrUmVmZXJlbmNlIjoibmV0d29ya1JlZjQ1NiIsInRyYW5zYWN0aW9uVGltZSI6IjIwMjYtMDEtMjdUMTI6MzA6MDBaIn0.dGhpc0lzQVNpZ25hdHVyZUV4YW1wbGVHZW5lcmF0ZWRVc2luZ1BTMjU2QWxnb3JpdGhtV2l0aFRoZU1lcmNoYW50UHJpdmF0ZUtleQ"
+
     MerchantInitiatedPaymentRequest:
       required:
         - agreementId
@@ -668,7 +683,6 @@ components:
         - messageId
         - inStore
         - transactionTime
-        - merchantInitiatedPaymentSignedData
       properties:
         agreementId:
           $ref: '../components.yaml#/components/schemas/agreementId'
@@ -703,8 +717,6 @@ components:
           format: date-time
           description: >-
             The time of the transaction.
-        merchantInitiatedPaymentSignedData:
-          $ref: '../components.yaml#/components/schemas/merchantInitiatedPaymentSignedData'
 
     PaymentCardholderAuthenticationData:
       $ref: '../components.yaml#/components/schemas/PaymentCardholderAuthenticationData'
