@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.6.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.6.0...v2.6.1) (2026-01-30)
+
+
+### Dependency Updates
+
+* bump io.swagger.parser.v3:swagger-parser from 2.1.25 to 2.1.37 ([#274](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/274)) ([e7b6c21](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/e7b6c21b265993f488f06de24b61f4a5af35d3a5))
+* bump org.springframework.boot:spring-boot-starter-parent from 3.4.3 to 4.0.2 ([#278](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/278)) ([f8a57b5](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/f8a57b5cafc702e89dfa179ad1b545dca3945c24))
+
 ## [2.6.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.5.0...v2.6.0) (2025-10-17)
 
 
