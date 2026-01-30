@@ -4,6 +4,16 @@ info:
   title: BankAxept ePayment Merchant API - ePayment Platform
   description: BankAxept ePayment Merchant API - ePayment Platform side
 
+tags:
+  - name: Payments
+    description: Operations related to payments
+  - name: Settlement
+    description: Operations related to settlements
+  - name: Recurring Agreement
+    description: Operations related to recurring agreements
+  - name: Recurring Payments
+    description: Operations related to recurring payments
+
 servers:
   - url: https://api.epp-stoetest.cloud/merchant
 
@@ -14,6 +24,8 @@ paths:
 
   /v1/payments:
     post:
+      tags:
+        - Payments
       summary: Request a new payment
       description: >-
         Payments creates a payment with a unique reference (paymentId). The result of the payment
@@ -48,6 +60,8 @@ paths:
 
   /v1/payments/messages/{messageId}:
     delete:
+      tags:
+        - Payments
       summary: Rollback a payment request
       operationId: rollbackPayment
       description: >-
@@ -75,6 +89,8 @@ paths:
 
   /v1/payments/{paymentId}/captures:
     post:
+      tags:
+        - Payments
       summary: Capture a payment
       description: |
         Captures the authorisation hold on a payment, returning a unique reference for this request.
@@ -110,6 +126,8 @@ paths:
 
   /v1/payments/{paymentId}/cancellation:
     post:
+      tags:
+        - Payments
       summary: Cancel a payment
       description: |
         A cancellation blocks funds transfer for an authorised payment.
@@ -146,6 +164,8 @@ paths:
 
   /v1/payments/{paymentId}/refunds:
     post:
+      tags:
+        - Payments
       summary: Refund a payment
       description: |
         Creates a refund request. Refunds a payment that has previously been captured, returning a unique reference for this request.
@@ -184,6 +204,8 @@ paths:
 
   /v1/payments/{paymentId}/refunds/messages/{messageId}:
     delete:
+      tags:
+        - Payments
       summary: Rollback a refund request
       operationId: rollbackRefund
       description: >-
@@ -212,6 +234,8 @@ paths:
 
   /v1/settlements/{merchantId}/{batchNumber}:
     put:
+      tags:
+        - Settlement
       summary: Cut off a settlement batch
       operationId: cutOff
       parameters:
@@ -242,6 +266,8 @@ paths:
 
   /v1/recurring/agreements:
     post:
+      tags:
+        - Recurring Agreement
       summary: Request a new payment agreement
       description: >-
         Creates a payment agreement initiated by a customer‑initiated payment. When the authorization is approved,
@@ -278,6 +304,8 @@ paths:
 
   /v1/recurring/agreements/messages/{messageId}:
     delete:
+      tags:
+        - Recurring Agreement
       summary: Rollback a recurring payment agreement request
       operationId: rollbackPaymentAgreement
       description: >-
@@ -305,6 +333,8 @@ paths:
 
   /v1/recurring/agreements/{agreementId}/termination:
     post:
+      tags:
+        - Recurring Agreement
       summary: Terminate a payment agreement
       description: >-
         terminate a payment agreement
@@ -332,6 +362,8 @@ paths:
 
   /v1/recurring/payments:
     post:
+      tags:
+        - Recurring Payments
       summary: Request a new merchant initiated payment
       description: >-
         Creates a merchant‑initiated payment under an existing agreement. When the authorization is approved,
@@ -367,6 +399,8 @@ paths:
 
   /v1/recurring/payments/messages/{messageId}:
     delete:
+      tags:
+        - Recurring Payments
       summary: Rollback a recurring payment request
       operationId: rollbackRecurringPayment
       description: >-
@@ -394,6 +428,8 @@ paths:
 
   /v1/recurring/payments/{paymentId}/captures:
     post:
+      tags:
+        - Recurring Payments
       summary: Capture a payment
       description: |
         Captures the authorisation hold on a payment, returning a unique reference for this request.
@@ -429,6 +465,8 @@ paths:
 
   /v1/recurring/payments/{paymentId}/cancellation:
     post:
+      tags:
+        - Recurring Payments
       summary: Cancel a payment
       description: |
         A cancellation blocks funds transfer for an authorised payment.
@@ -465,6 +503,8 @@ paths:
 
   /v1/recurring/payments/{paymentId}/refunds:
     post:
+      tags:
+        - Recurring Payments
       summary: Refund a payment
       description: |
         Creates a refund request. Refunds a payment that has previously been captured, returning a unique reference for this request.
@@ -503,6 +543,8 @@ paths:
 
   /v1/recurring/payments/{paymentId}/refunds/messages/{messageId}:
     delete:
+      tags:
+        - Recurring Payments
       summary: Rollback a refund request
       operationId: rollbackRecurringRefund
       description: >-
