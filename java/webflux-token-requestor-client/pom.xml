@@ -43,6 +43,7 @@
                 <booleanGetterPrefix>is</booleanGetterPrefix>
                 <dateLibrary>java8</dateLibrary>
                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                <supportUrlQuery>false</supportUrlQuery>
                 <library>native</library>
               </configOptions>
               <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
@@ -67,6 +68,7 @@
                 <booleanGetterPrefix>is</booleanGetterPrefix>
                 <dateLibrary>java8</dateLibrary>
                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                <supportUrlQuery>false</supportUrlQuery>
                 <library>native</library>
               </configOptions>
               <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
