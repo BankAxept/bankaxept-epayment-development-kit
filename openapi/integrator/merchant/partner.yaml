@@ -537,7 +537,7 @@ components:
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
-        paymentAgreementId:
+        agreementId:
           $ref: '../components.yaml#/components/schemas/agreementId'
         paymentId:
           $ref: '../components.yaml#/components/schemas/paymentId'
@@ -564,7 +564,7 @@ components:
       properties:
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
-        paymentId:
+        agreementId:
           $ref: '../components.yaml#/components/schemas/agreementId'
         merchantReference:
           $ref: '../components.yaml#/components/schemas/merchantReference'

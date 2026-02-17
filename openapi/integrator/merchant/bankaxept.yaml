@@ -347,7 +347,7 @@ paths:
         - Recurring Agreement
       summary: Terminate a payment agreement
       description: >-
-        terminate a payment agreement
+        Terminate a payment agreement.
       operationId: terminateAgreement
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
@@ -585,6 +585,7 @@ components:
   schemas:
 
     PaymentRequest:
+      type: object
       required:
         - amount
         - merchantAggregatorId
@@ -647,6 +648,7 @@ components:
           $ref: '../components.yaml#/components/schemas/encryptedPaymentCardholderAuthenticationData'
 
     PaymentAgreementRequest:
+      type: object
       required:
         - recurringContext
         - amount
@@ -664,8 +666,7 @@ components:
           enum: [ UNCOF, SUBSCRIPTION ]
           description: >-
             Specifies the context of the recurring payment agreement.
-            Allowed values are "uncof", 
-            "subscription" (not supported in pilot),
+            Allowed values are "UNCOF", "SUBSCRIPTION" (not supported in pilot),
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
         automaticCapture:
@@ -728,6 +729,7 @@ components:
           example: "eyJ4NXQjUzI1NiI6IkQyQkVhZWp3ektpQXVhTkl3cGlZRUxHMnh6Y25NdTJQME40VnZkNlpVVnciLCJhbGciOiJQUzI1NiJ9.eyJhZ3JlZW1lbnRJZCI6IjEyMzQ1Njc4OTAiLCJhbW91bnQiOnsiY3VycmVuY3lDb2RlIjoiTk9LIiwidmFsdWUiOjEwMDAwfSwiYXV0b21hdGljQ2FwdHVyZSI6ZmFsc2UsIm1lcmNoYW50T3JkZXJSZWZlcmVuY2UiOiJBQVg5OTEzNDM1IiwibWVyY2hhbnRPcmRlck1lc3NhZ2UiOiJBaXJsaW5lIHRpY2tldCA5MTItNzgzMjQ4NzY3MzI3NDc2IiwibWVyY2hhbnRSZWZlcmVuY2UiOiJtZXJjaGFudFJlZjEyMyIsIm1lc3NhZ2VJZCI6IjZmZTlkYTYzLTNhNzktNDcyYS1hOWVlLTdiZDU0NjM5ZjQ1ZCIsImluU3RvcmUiOmZhbHNlLCJuZXR3b3JrUmVmZXJlbmNlIjoibmV0d29ya1JlZjQ1NiIsInRyYW5zYWN0aW9uVGltZSI6IjIwMjYtMDEtMjdUMTI6MzA6MDBaIn0.dGhpc0lzQVNpZ25hdHVyZUV4YW1wbGVHZW5lcmF0ZWRVc2luZ1BTMjU2QWxnb3JpdGhtV2l0aFRoZU1lcmNoYW50UHJpdmF0ZUtleQ"
 
     MerchantInitiatedPaymentRequest:
+      type: object
       required:
         - agreementId
         - amount
