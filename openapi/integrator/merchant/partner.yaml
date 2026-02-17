@@ -4,6 +4,24 @@ info:
   title: BankAxept ePayment Merchant API - Merchant Server
   description: BankAxept ePayment Merchant API - Merchant Server side
 
+tags:
+  - name: Payments
+  - name: Settlement
+  - name: Recurring Agreement
+    description: |
+      Operations related to recurring agreements
+      
+      **PILOT/DEVELOPMENT**
+
+      Recurring payment operations are currently in pilot phase. These endpoints may change and should be used for testing purposes only.
+  - name: Recurring Payments
+    description: |
+      Operations related to recurring payments
+      
+      **PILOT/DEVELOPMENT**
+
+      Recurring payment operations are currently in pilot phase. These endpoints may change and should be used for testing purposes only.
+
 paths:
 
   /v1/payments:
@@ -11,6 +29,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Payments
       operationId: paymentResponse
       requestBody:
         required: true
@@ -39,6 +59,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Payments
       operationId: cancellationResponse
       requestBody:
         required: true
@@ -67,6 +89,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Payments
       operationId: captureResponse
       requestBody:
         required: true
@@ -95,6 +119,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Payments
       operationId: refundResponse
       requestBody:
         required: true
@@ -123,6 +149,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Settlement
       operationId: cutOffResponse
       requestBody:
         required: true
@@ -151,6 +179,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Recurring Agreement
       operationId: agreementResponse
       requestBody:
         required: true
@@ -179,6 +209,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Recurring Agreement
       operationId: agreementTerminationResponse
       requestBody:
         required: true
@@ -207,6 +239,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Recurring Payments
       operationId: merchantInitiatedPaymentResponse
       requestBody:
         required: true
@@ -235,6 +269,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Recurring Payments
       operationId: merchantInitiatedCancellationResponse
       requestBody:
         required: true
@@ -263,6 +299,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Recurring Payments
       operationId: merchantInitiatedCaptureResponse
       requestBody:
         required: true
@@ -291,6 +329,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Recurring Payments
       operationId: merchantInitiatedRefundResponse
       requestBody:
         required: true

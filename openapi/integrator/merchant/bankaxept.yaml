@@ -10,9 +10,19 @@ tags:
   - name: Settlement
     description: Operations related to settlements
   - name: Recurring Agreement
-    description: Operations related to recurring agreements
+    description: |
+      Operations related to recurring agreements
+      
+      **PILOT/DEVELOPMENT**
+
+      Recurring payment operations are currently in pilot phase. These endpoints may change and should be used for testing purposes only.
   - name: Recurring Payments
-    description: Operations related to recurring payments
+    description: |
+      Operations related to recurring payments
+      
+      **PILOT/DEVELOPMENT**
+
+      Recurring payment operations are currently in pilot phase. These endpoints may change and should be used for testing purposes only.
 
 servers:
   - url: https://api.epp-stoetest.cloud/merchant
