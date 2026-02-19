@@ -650,7 +650,7 @@ components:
     PaymentAgreementRequest:
       type: object
       required:
-        - recurringContext
+        - type
         - amount
         - merchantAggregatorId
         - merchantId
@@ -661,12 +661,37 @@ components:
         - merchantDisplayName
         - encryptedCardholderAuthenticationData
       properties:
-        recurringContext:
+        type:
           type: string
-          enum: [ UNCOF, SUBSCRIPTION ]
+          enum: [ UNCOF, SUBSCRIPTION, INSTALMENT ]
           description: >-
             Specifies the context of the recurring payment agreement.
-            Allowed values are "UNCOF", "SUBSCRIPTION" (not supported in pilot),
+            Allowed values are "UNCOF", "SUBSCRIPTION" and "INSTALMENT" (Only "UNCOF" is supported in pilot).
+        interval:
+          type: object
+          description: >-
+            Defines how often recurring payments occur. This field is required when type is SUBSCRIPTION and INSTALMENT.
+          required:
+            - unit
+            - count
+          properties:
+            unit:
+              type: string
+              description: >-
+                The time unit for the recurring payment interval. Example: setting unit to WEEK with count 2 means payments occur every 2 weeks.
+              enum: [ DAY, WEEK, MONTH, YEAR ]
+            count:
+              type: integer
+              description: >-
+                The number of time units between each recurring payment. Example: setting count to 2 with unit WEEK means payments occur every 2 weeks.
+              minimum: 1
+              maximum: 31
+        count:
+          type: integer
+          description: >-
+            The total number of payments in the recurring payment agreement. This field is required when type is INSTALMENT.
+          minimum: 1
+          maximum: 999
         amount:
           $ref: '../components.yaml#/components/schemas/Amount'
         automaticCapture:
