@@ -42,6 +42,7 @@
                 <dateLibrary>java8</dateLibrary>
                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
                 <library>native</library>
+                <supportUrlQuery>false</supportUrlQuery>
               </configOptions>
               <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
               <generateSupportingFiles>false</generateSupportingFiles>
