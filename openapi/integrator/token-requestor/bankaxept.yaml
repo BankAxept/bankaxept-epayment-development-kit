@@ -54,8 +54,6 @@ paths:
           $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
-        '409':
-          $ref: '../components.yaml#/components/responses/409Error'
         '422':
           $ref: '../components.yaml#/components/responses/422Error'
         '500':

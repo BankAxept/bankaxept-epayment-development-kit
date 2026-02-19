@@ -52,11 +52,9 @@ paths:
               $ref: '#/components/schemas/PaymentRequest'
       responses:
         '200':
-          description: >-
-            Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: >-
-            Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -81,11 +79,9 @@ paths:
         - $ref: '../components.yaml#/components/parameters/messageId'
       responses:
         '200':
-          description: >-
-            Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: >-
-            Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -120,9 +116,9 @@ paths:
               $ref: '#/components/schemas/CaptureRequest'
       responses:
         '200':
-          description: Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -198,9 +194,9 @@ paths:
               $ref: '#/components/schemas/RefundRequest'
       responses:
         '200':
-          description: Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -226,11 +222,9 @@ paths:
         - $ref: '../components.yaml#/components/parameters/messageId'
       responses:
         '200':
-          description: >-
-            Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: >-
-            Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -296,11 +290,9 @@ paths:
               $ref: '#/components/schemas/PaymentAgreementRequest'
       responses:
         '200':
-          description: >-
-            Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: >-
-            Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -325,11 +317,9 @@ paths:
         - $ref: '../components.yaml#/components/parameters/messageId'
       responses:
         '200':
-          description: >-
-            Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: >-
-            Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -354,15 +344,11 @@ paths:
         - $ref: '../components.yaml#/components/parameters/agreementId'
       responses:
         '200':
-          description: >-
-            Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: >-
-            Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
-        '409':
-          $ref: '../components.yaml#/components/responses/409Error'
         '422':
           $ref: '../components.yaml#/components/responses/422Error'
         '500':
@@ -391,11 +377,9 @@ paths:
               $ref: '#/components/schemas/SignedMerchantInitiatedPaymentRequest'
       responses:
         '200':
-          description: >-
-            Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: >-
-            Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -420,11 +404,9 @@ paths:
         - $ref: '../components.yaml#/components/parameters/messageId'
       responses:
         '200':
-          description: >-
-            Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: >-
-            Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -459,9 +441,9 @@ paths:
               $ref: '#/components/schemas/CaptureRequest'
       responses:
         '200':
-          description: Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -537,9 +519,9 @@ paths:
               $ref: '#/components/schemas/RefundRequest'
       responses:
         '200':
-          description: Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -565,11 +547,9 @@ paths:
         - $ref: '../components.yaml#/components/parameters/messageId'
       responses:
         '200':
-          description: >-
-            Request already received successfully.
+          $ref: '../components.yaml#/components/responses/200Ok'
         '201':
-          description: >-
-            Request received successfully.
+          $ref: '../components.yaml#/components/responses/201Ok'
         '400':
           $ref: '../components.yaml#/components/responses/400Error'
         '409':
@@ -749,7 +729,7 @@ components:
           type: string
           description: >-
             The Merchant Initiated Payment Request is a signed JWT in JWS Compact Serialisation format according to the
-            Java Web Signature specification defined in RFC-7515. The payload contains all the properties from 
+            JSON Web Signature (JWS) specification defined in RFC 7515. The payload contains all the properties from 
             MerchantInitiatedPaymentRequest schema. The signature ensures the integrity and authenticity of the payment request.
           example: "eyJ4NXQjUzI1NiI6IkQyQkVhZWp3ektpQXVhTkl3cGlZRUxHMnh6Y25NdTJQME40VnZkNlpVVnciLCJhbGciOiJQUzI1NiJ9.eyJhZ3JlZW1lbnRJZCI6IjEyMzQ1Njc4OTAiLCJhbW91bnQiOnsiY3VycmVuY3lDb2RlIjoiTk9LIiwidmFsdWUiOjEwMDAwfSwiYXV0b21hdGljQ2FwdHVyZSI6ZmFsc2UsIm1lcmNoYW50T3JkZXJSZWZlcmVuY2UiOiJBQVg5OTEzNDM1IiwibWVyY2hhbnRPcmRlck1lc3NhZ2UiOiJBaXJsaW5lIHRpY2tldCA5MTItNzgzMjQ4NzY3MzI3NDc2IiwibWVyY2hhbnRSZWZlcmVuY2UiOiJtZXJjaGFudFJlZjEyMyIsIm1lc3NhZ2VJZCI6IjZmZTlkYTYzLTNhNzktNDcyYS1hOWVlLTdiZDU0NjM5ZjQ1ZCIsImluU3RvcmUiOmZhbHNlLCJuZXR3b3JrUmVmZXJlbmNlIjoibmV0d29ya1JlZjQ1NiIsInRyYW5zYWN0aW9uVGltZSI6IjIwMjYtMDEtMjdUMTI6MzA6MDBaIn0.dGhpc0lzQVNpZ25hdHVyZUV4YW1wbGVHZW5lcmF0ZWRVc2luZ1BTMjU2QWxnb3JpdGhtV2l0aFRoZU1lcmNoYW50UHJpdmF0ZUtleQ"
 

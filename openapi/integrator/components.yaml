@@ -332,7 +332,7 @@ components:
       example: "eyJhbGciOiJSUzI1NiIsIng1dCNTMjU2IjoiZGlnZXN0KGNlcnQpIn0.eyJhdXRoZW50aWNhdGVkRGF0YSI6eyJhY2NvdW50TnVtYmVyIjoiOTk5Nzc1MTIzNDUiLCJ0b2tlblJlcXVlc3Rvck5hbWUiOiJ0b2tlblJlcXVlc3Rvck5hbWUifSwibmluIjoiMTMwODc1MTIzNDUiLCJhdXRoZW50aWNhdGlvblNkbyI6Ijg0MzEzYWYxLWUyY2MtNDAzZi04NWYxLTYwNTA3MjViMDFiNiIsImF1dGhlbnRpY2F0aW9uQ3JlZGVudGlhbHNTZXQiOiJCQU5LSUQiLCJhdXRoZW50aWNhdGlvbkRhdGVUaW1lIjoiMjAxNy0wNy0yMVQxNzozMjoyOFoiLCJ2ZXJpZmljYXRpb25EYXRlVGltZSI6IjIwMTctMDctMjFUMTc6MzI6NDJaIn0.UoRYvKtrZrojIaq4P_iHjfA5Hx9SkEL-v_U0WMv78urpMbqsH2EpBdMuervwNWJKhc5vSp7ugO9LFYgE1PzSDUOYrMa6HfCJeRjlcgRODPC_exrX5lflUr7c-B8MJwSidCkOaKekrYexskYFpk4sdRTizbFdERzr3ZkgvBs_oa22KTYMwpipFO8i-Yf5XEE4zHGvh8abOsIY1yQQGhMwgr9RjNh_bi1wqL_FTJRPggsPjBMxrneWgy2veUbhHUq_JYqvSQxvhhJ_1RdE4gHXz0xaptmmbdZ5mtI1DyCRJEn6Io4x-0VIssApvljPjsMylcG2moeIDqUbjUAfxGrZcA"
       description: >-
         The Verified Cardholder Authentication Data is a signed JWT in JWS Compact Serialisation format according to the
-        Java Web Signature specification defined in RFC-7515. See schema PermissionGrant for payload format.
+        JSON Web Signature (JWS) specification defined in RFC 7515. See schema PermissionGrant for payload format.
     nin:
       type: string
       pattern: '^[0-9]{11}$'
