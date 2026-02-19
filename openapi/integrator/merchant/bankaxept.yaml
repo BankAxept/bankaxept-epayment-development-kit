@@ -671,9 +671,6 @@ components:
           type: object
           description: >-
             Defines how often recurring payments occur. This field is required when type is SUBSCRIPTION and INSTALMENT.
-          required:
-            - unit
-            - count
           properties:
             unit:
               type: string
@@ -686,6 +683,7 @@ components:
                 The number of time units between each recurring payment. Example: setting count to 2 with unit WEEK means payments occur every 2 weeks.
               minimum: 1
               maximum: 31
+              default: 1
         count:
           type: integer
           description: >-
