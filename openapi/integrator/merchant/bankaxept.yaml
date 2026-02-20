@@ -330,6 +330,8 @@ components:
           $ref: '../components.yaml#/components/schemas/messageId'
         networkReference:
           $ref: '../components.yaml#/components/schemas/networkReference'
+        moreCapturesAllowed:
+          $ref: '../components.yaml#/components/schemas/moreCapturesAllowed'
 
     RefundRequest:
       type: object
