@@ -212,6 +212,12 @@ components:
       example: "7f60d761-f27d-43d3-8ee9-53881b3c868d"
       description: >-
         The identifier for a specific payment.
+    agreementId:
+      type: string
+      format: uuid
+      example: "5b7e9f2c-8a1d-4e3b-a7c9-3f5d8e1a4b6c"
+      description: >-
+        The identifier for a specific payment agreement.
     merchantName:
       type: string
       maxLength: 100
@@ -277,12 +283,12 @@ components:
       description: >-
         A unique identifier that guarantees message idempotency.
       type: string
-      example: "74313af1-e2cc-403f-85f1-6050725b01b6"
+      example: "d8f3a92b-1c5e-4d7a-b3f8-9e2a7c4f6b1d"
     networkReference:
       description: >-
         The network reference is a unique identifier for the transaction operation in the network. It will be transmitted for payments with automaticCapture set to true, as well as for capture and refund transaction operations.
       type: string
-      example: "74313af1-e2cc-403f-85f1-6050725b01b6"
+      example: "2c9f4e7a-6b3d-4f1c-9e8a-5d2b1c3f7e4a"
       maxLength: 36
     pan:
       type: string
@@ -326,7 +332,7 @@ components:
       example: "eyJhbGciOiJSUzI1NiIsIng1dCNTMjU2IjoiZGlnZXN0KGNlcnQpIn0.eyJhdXRoZW50aWNhdGVkRGF0YSI6eyJhY2NvdW50TnVtYmVyIjoiOTk5Nzc1MTIzNDUiLCJ0b2tlblJlcXVlc3Rvck5hbWUiOiJ0b2tlblJlcXVlc3Rvck5hbWUifSwibmluIjoiMTMwODc1MTIzNDUiLCJhdXRoZW50aWNhdGlvblNkbyI6Ijg0MzEzYWYxLWUyY2MtNDAzZi04NWYxLTYwNTA3MjViMDFiNiIsImF1dGhlbnRpY2F0aW9uQ3JlZGVudGlhbHNTZXQiOiJCQU5LSUQiLCJhdXRoZW50aWNhdGlvbkRhdGVUaW1lIjoiMjAxNy0wNy0yMVQxNzozMjoyOFoiLCJ2ZXJpZmljYXRpb25EYXRlVGltZSI6IjIwMTctMDctMjFUMTc6MzI6NDJaIn0.UoRYvKtrZrojIaq4P_iHjfA5Hx9SkEL-v_U0WMv78urpMbqsH2EpBdMuervwNWJKhc5vSp7ugO9LFYgE1PzSDUOYrMa6HfCJeRjlcgRODPC_exrX5lflUr7c-B8MJwSidCkOaKekrYexskYFpk4sdRTizbFdERzr3ZkgvBs_oa22KTYMwpipFO8i-Yf5XEE4zHGvh8abOsIY1yQQGhMwgr9RjNh_bi1wqL_FTJRPggsPjBMxrneWgy2veUbhHUq_JYqvSQxvhhJ_1RdE4gHXz0xaptmmbdZ5mtI1DyCRJEn6Io4x-0VIssApvljPjsMylcG2moeIDqUbjUAfxGrZcA"
       description: >-
         The Verified Cardholder Authentication Data is a signed JWT in JWS Compact Serialisation format according to the
-        Java Web Signature specification defined in RFC-7515. See schema PermissionGrant for payload format.
+        JSON Web Signature (JWS) specification defined in RFC 7515. See schema PermissionGrant for payload format.
     nin:
       type: string
       pattern: '^[0-9]{11}$'
@@ -357,6 +363,12 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/paymentId'
+    agreementId:
+      name: agreementId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/agreementId'
     merchantId:
       name: merchantId
       in: path

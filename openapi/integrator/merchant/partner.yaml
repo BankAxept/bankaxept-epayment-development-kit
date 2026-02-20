@@ -4,12 +4,33 @@ info:
   title: BankAxept ePayment Merchant API - Merchant Server
   description: BankAxept ePayment Merchant API - Merchant Server side
 
+tags:
+  - name: Payments
+  - name: Settlement
+  - name: Recurring Agreement
+    description: |
+      Operations related to recurring agreements
+      
+      **PILOT/DEVELOPMENT**
+
+      Recurring payment operations are currently in pilot phase. These endpoints may change and should be used for testing purposes only.
+  - name: Recurring Payments
+    description: |
+      Operations related to recurring payments
+      
+      **PILOT/DEVELOPMENT**
+
+      Recurring payment operations are currently in pilot phase. These endpoints may change and should be used for testing purposes only.
+
 paths:
+
   /v1/payments:
     description: Response to a payment request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Payments
       operationId: paymentResponse
       requestBody:
         required: true
@@ -38,6 +59,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Payments
       operationId: cancellationResponse
       requestBody:
         required: true
@@ -66,6 +89,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Payments
       operationId: captureResponse
       requestBody:
         required: true
@@ -94,6 +119,8 @@ paths:
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Payments
       operationId: refundResponse
       requestBody:
         required: true
@@ -116,11 +143,14 @@ paths:
           $ref: '../components.yaml#/components/responses/500Error'
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
+
   /v1/settlements:
     description: Response to a cut-off request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
+      tags:
+        - Settlement
       operationId: cutOffResponse
       requestBody:
         required: true
@@ -128,6 +158,186 @@ paths:
           application/json;charset=UTF-8:
             schema:
               $ref: '#/components/schemas/CutOffResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/agreements:
+    description: Response to an agreement request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      tags:
+        - Recurring Agreement
+      operationId: agreementResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/AgreementResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/agreements/termination:
+    description: Response to a payment agreement termination
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      tags:
+        - Recurring Agreement
+      operationId: agreementTerminationResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/AgreementTerminationResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/payments:
+    description: Response to a merchant initiated payment request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      tags:
+        - Recurring Payments
+      operationId: merchantInitiatedPaymentResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/PaymentResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/payments/cancellations:
+    description: Response to a cancellation request of a merchant initiated payment request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      tags:
+        - Recurring Payments
+      operationId: merchantInitiatedCancellationResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CancellationResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/payments/captures:
+    description: Response to a capture request of a merchant initiated payment request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      tags:
+        - Recurring Payments
+      operationId: merchantInitiatedCaptureResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/CaptureResponse'
+      responses:
+        '200':
+          $ref: '../components.yaml#/components/responses/200Ok'
+        '201':
+          $ref: '../components.yaml#/components/responses/201Ok'
+        '400':
+          $ref: '../components.yaml#/components/responses/400Error'
+        '409':
+          $ref: '../components.yaml#/components/responses/409Error'
+        '422':
+          $ref: '../components.yaml#/components/responses/422Error'
+        '500':
+          $ref: '../components.yaml#/components/responses/500Error'
+        '503':
+          $ref: '../components.yaml#/components/responses/503Error'
+
+  /v1/recurring/payments/refunds:
+    description: Response to a refund request of a merchant initiated payment request
+    parameters:
+      - $ref: '../components.yaml#/components/parameters/correlationId'
+    post:
+      tags:
+        - Recurring Payments
+      operationId: merchantInitiatedRefundResponse
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/RefundResponse'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -316,6 +526,51 @@ components:
           type: integer
           format: int64
 
+    AgreementResponse:
+      type: object
+      required:
+        - messageId
+        - agreementId
+        - paymentId
+        - merchantReference
+        - status
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        agreementId:
+          $ref: '../components.yaml#/components/schemas/agreementId'
+        paymentId:
+          $ref: '../components.yaml#/components/schemas/paymentId'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        stan:
+          $ref: '#/components/schemas/stan'
+        responseCode:
+          $ref: '#/components/schemas/responseCode'
+        authorisationCode:
+          $ref: '#/components/schemas/authorisationCode'
+        batchNumber:
+          $ref: '../components.yaml#/components/schemas/batchNumber'
+
+    AgreementTerminationResponse:
+      type: object
+      required:
+        - messageId
+        - agreementId
+        - merchantReference
+        - status
+      properties:
+        messageId:
+          $ref: '../components.yaml#/components/schemas/messageId'
+        agreementId:
+          $ref: '../components.yaml#/components/schemas/agreementId'
+        merchantReference:
+          $ref: '../components.yaml#/components/schemas/merchantReference'
+        status:
+          $ref: '#/components/schemas/TerminationStatus'
+
     CancellationStatus:
       type: string
       example: Approved
@@ -363,6 +618,19 @@ components:
       enum:
         - Approved
         - Declined
+
+    TerminationStatus:
+      type: string
+      example: Approved
+      description: |
+        Code specifying the result of the operation:
+        * Approved - Termination request was approved.
+        * Declined - Termination request was declined.
+        * Failed - Termination request failed.
+      enum:
+        - Approved
+        - Declined
+        - Failed
 
     stan:
       type: string
