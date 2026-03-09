@@ -3,6 +3,7 @@ package no.bankaxept.epayment.client.test.base;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ServiceLoader;
+import java.util.function.Function;
 import no.bankaxept.epayment.client.base.accesstoken.ScheduledAccessTokenPublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
@@ -16,7 +17,7 @@ public class BaseClientIT {
   public void accessToken() throws MalformedURLException {
     HttpClient httpClient = ServiceLoader.load(HttpClientProvider.class)
         .findFirst()
-        .map(httpClientProvider -> httpClientProvider.create(null))
+        .map(httpClientProvider -> httpClientProvider.create(null, Function.identity()))
         .orElseThrow();
     var publisher = JdkFlowAdapter.flowPublisherToFlux(
         new ScheduledAccessTokenPublisher.Builder()
