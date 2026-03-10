@@ -2,6 +2,7 @@ package no.bankaxept.epayment.client.webflux;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Flow.Publisher;
 
@@ -15,6 +16,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.core.publisher.Mono;
+
+import static java.util.Objects.requireNonNullElse;
 
 public class WebFluxClient implements HttpClient {
 
@@ -79,7 +82,7 @@ public class WebFluxClient implements HttpClient {
   }
 
   private Mono<HttpResponse> toHttpResponse(ResponseEntity<String> entity) {
-    return Mono.just(new HttpResponse(entity.getStatusCode().value(), entity.getBody()))
+    return Mono.just(new HttpResponse(entity.getStatusCode().value(), requireNonNullElse(entity.getBody(), "")))
         .as(transformer)
         .onErrorResume(err -> {
           if (err instanceof WebClientResponseException responseException) {
