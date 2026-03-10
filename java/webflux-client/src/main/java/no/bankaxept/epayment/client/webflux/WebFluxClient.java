@@ -1,23 +1,20 @@
 package no.bankaxept.epayment.client.webflux;
 
+import static java.util.Objects.requireNonNullElse;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Flow.Publisher;
-
 import java.util.function.Function;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.core.publisher.Mono;
-
-import static java.util.Objects.requireNonNullElse;
 
 public class WebFluxClient implements HttpClient {
 
@@ -53,11 +50,25 @@ public class WebFluxClient implements HttpClient {
   }
 
   private Publisher<HttpResponse> sendAndRetrieve(String uri, Map<String, List<String>> headers, HttpMethod method) {
-    return buildRequest(uri, headers, method)
+    return retrieveAndMap(buildRequest(uri, headers, method))
+        .as(JdkFlowAdapter::publisherToFlowPublisher);
+  }
+
+  private Mono<HttpResponse> retrieveAndMap(WebClient.RequestHeadersSpec<?> requestSpec) {
+    return requestSpec
         .retrieve()
         .toEntity(String.class)
-        .flatMap(this::toHttpResponse)
-        .as(JdkFlowAdapter::publisherToFlowPublisher);
+        .map(entity -> new HttpResponse(entity.getStatusCode().value(), requireNonNullElse(entity.getBody(), "")))
+        .as(transformer)
+        .onErrorResume(err -> {
+          if (err instanceof WebClientResponseException responseException) {
+            return Mono.just(new HttpResponse(
+                responseException.getStatusCode().value(),
+                requireNonNullElse(responseException.getResponseBodyAsString(), "")
+            ));
+          }
+          return Mono.error(err);
+        });
   }
 
   private Publisher<HttpResponse> sendAndRetrieve(
@@ -66,12 +77,10 @@ public class WebFluxClient implements HttpClient {
       Map<String, List<String>> headers,
       HttpMethod method
   ) {
-    return buildRequest(uri, headers, method)
-        .body(BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
-        .retrieve()
-        .toEntity(String.class)
-        .flatMap(this::toHttpResponse)
-        .as(JdkFlowAdapter::publisherToFlowPublisher);
+    return retrieveAndMap(
+        buildRequest(uri, headers, method)
+            .body(BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
+    ).as(JdkFlowAdapter::publisherToFlowPublisher);
   }
 
   private WebClient.RequestBodySpec buildRequest(String uri, Map<String, List<String>> headers, HttpMethod method) {
@@ -79,19 +88,5 @@ public class WebFluxClient implements HttpClient {
         .method(method)
         .uri(uri)
         .headers(httpHeaders -> httpHeaders.putAll(headers));
-  }
-
-  private Mono<HttpResponse> toHttpResponse(ResponseEntity<String> entity) {
-    return Mono.just(new HttpResponse(entity.getStatusCode().value(), requireNonNullElse(entity.getBody(), "")))
-        .as(transformer)
-        .onErrorResume(err -> {
-          if (err instanceof WebClientResponseException responseException) {
-            return Mono.just(new HttpResponse(
-                responseException.getStatusCode().value(),
-                responseException.getResponseBodyAsString()
-            ));
-          }
-          return Mono.error(err);
-        });
   }
 }
