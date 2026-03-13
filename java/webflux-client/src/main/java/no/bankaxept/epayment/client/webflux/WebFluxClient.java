@@ -21,12 +21,16 @@ public class WebFluxClient implements HttpClient {
   private final WebClient webClient;
   private final Function<Mono<HttpResponse>, Mono<HttpResponse>> transformer;
 
-  public WebFluxClient(String baseUrl, Function<Mono<HttpResponse>, Mono<HttpResponse>> transformer1) {
+  public WebFluxClient(String baseUrl) {
+    this(baseUrl, Function.identity());
+  }
+
+  public WebFluxClient(String baseUrl, Function<Mono<HttpResponse>, Mono<HttpResponse>> transformer) {
     webClient = Optional.ofNullable(WebFluxClient.class.getPackage().getImplementationVersion())
         .map(implementationVersion -> WebClient.builder()
             .defaultHeader("User-Agent", "EppDevKit/" + implementationVersion))
         .orElseGet(WebClient::builder).baseUrl(baseUrl).build();
-    this.transformer = transformer1;
+    this.transformer = transformer;
   }
 
   @Override
@@ -60,15 +64,10 @@ public class WebFluxClient implements HttpClient {
         .toEntity(String.class)
         .map(entity -> new HttpResponse(entity.getStatusCode().value(), requireNonNullElse(entity.getBody(), "")))
         .as(transformer)
-        .onErrorResume(err -> {
-          if (err instanceof WebClientResponseException responseException) {
-            return Mono.just(new HttpResponse(
-                responseException.getStatusCode().value(),
-                requireNonNullElse(responseException.getResponseBodyAsString(), "")
-            ));
-          }
-          return Mono.error(err);
-        });
+        .onErrorResume(WebClientResponseException.class, e -> Mono.just(new HttpResponse(
+            e.getStatusCode().value(),
+            e.getResponseBodyAsString()
+        )));
   }
 
   private Publisher<HttpResponse> sendAndRetrieve(
