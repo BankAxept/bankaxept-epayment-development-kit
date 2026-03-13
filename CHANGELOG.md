@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.7.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.6.0...v2.7.0) (2026-03-13)
+
+
+### Features
+
+* add recurring agreement and MIT payment API specs ([#268](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/268)) ([dc5cd4f](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/dc5cd4f09862e785e61be93736e10cc7f35a5753))
+
+
+### Dependency Updates
+
+* bump io.swagger.parser.v3:swagger-parser from 2.1.25 to 2.1.37 ([#274](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/274)) ([e7b6c21](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/e7b6c21b265993f488f06de24b61f4a5af35d3a5))
+* bump io.swagger.parser.v3:swagger-parser from 2.1.37 to 2.1.39 ([#286](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/286)) ([6883184](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/68831842e3ee8d882ce45f5cd4a078097775ab2a))
+* bump org.openapitools:openapi-generator-maven-plugin from 7.19.0 to 7.20.0 ([#283](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/283)) ([becf493](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/becf493a2e375806486f1a47024eccc1ee0c16d7))
+* bump org.openapitools:openapi-generator-maven-plugin from 7.6.0 to 7.19.0 ([#277](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/277)) ([3ccda36](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/3ccda36c411fe3a9df51989c3f257e9346b38c54))
+* bump org.springframework.boot:spring-boot-starter-parent from 3.4.3 to 4.0.2 ([#278](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/278)) ([f8a57b5](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/f8a57b5cafc702e89dfa179ad1b545dca3945c24))
+* bump org.springframework.boot:spring-boot-starter-parent from 4.0.2 to 4.0.3 ([#284](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/284)) ([c98f2f3](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/c98f2f3b5ebb3bf2b933b31ae6dcfd7fa524ddd1))
+
 ## [2.6.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.5.0...v2.6.0) (2025-10-17)
 
 
