@@ -1,5 +1,7 @@
 package no.bankaxept.epayment.client.webflux;
 
+import static java.util.Objects.requireNonNullElse;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,78 +11,81 @@ import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.adapter.JdkFlowAdapter;
 import reactor.core.publisher.Mono;
 
 public class WebFluxClient implements HttpClient {
 
   private final WebClient webClient;
+  private final Function<Mono<HttpResponse>, Mono<HttpResponse>> transformer;
 
   public WebFluxClient(String baseUrl) {
+    this(baseUrl, Function.identity());
+  }
+
+  public WebFluxClient(String baseUrl, Function<Mono<HttpResponse>, Mono<HttpResponse>> transformer) {
     webClient = Optional.ofNullable(WebFluxClient.class.getPackage().getImplementationVersion())
         .map(implementationVersion -> WebClient.builder()
             .defaultHeader("User-Agent", "EppDevKit/" + implementationVersion))
         .orElseGet(WebClient::builder).baseUrl(baseUrl).build();
-  }
-
-  public WebFluxClient() {
-    webClient = Optional.ofNullable(WebFluxClient.class.getPackage().getImplementationVersion())
-        .map(implementationVersion -> WebClient.builder()
-            .defaultHeader("User-Agent", "EppDevKit/" + implementationVersion))
-        .orElseGet(WebClient::builder).build();
+    this.transformer = transformer;
   }
 
   @Override
   public Publisher<HttpResponse> get(String uri, Map<String, List<String>> headers) {
-    return sendRequest(uri, headers, HttpMethod.GET);
+    return sendAndRetrieve(uri, headers, HttpMethod.GET);
   }
 
   @Override
   public Publisher<HttpResponse> post(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
-    return sendRequest(uri, bodyPublisher, headers, HttpMethod.POST);
+    return sendAndRetrieve(uri, bodyPublisher, headers, HttpMethod.POST);
   }
 
   @Override
   public Publisher<HttpResponse> delete(String uri, Map<String, List<String>> headers) {
-    return sendRequest(uri, headers, HttpMethod.DELETE);
+    return sendAndRetrieve(uri, headers, HttpMethod.DELETE);
   }
 
   @Override
   public Publisher<HttpResponse> put(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
-    return sendRequest(uri, bodyPublisher, headers, HttpMethod.PUT);
+    return sendAndRetrieve(uri, bodyPublisher, headers, HttpMethod.PUT);
   }
 
-  private Publisher<HttpResponse> sendRequest(
+  private Publisher<HttpResponse> sendAndRetrieve(String uri, Map<String, List<String>> headers, HttpMethod method) {
+    return retrieveAndMap(buildRequest(uri, headers, method))
+        .as(JdkFlowAdapter::publisherToFlowPublisher);
+  }
+
+  private Mono<HttpResponse> retrieveAndMap(WebClient.RequestHeadersSpec<?> requestSpec) {
+    return requestSpec
+        .retrieve()
+        .toEntity(String.class)
+        .map(entity -> new HttpResponse(entity.getStatusCode().value(), requireNonNullElse(entity.getBody(), "")))
+        .as(transformer)
+        .onErrorResume(WebClientResponseException.class, e -> Mono.just(new HttpResponse(
+            e.getStatusCode().value(),
+            e.getResponseBodyAsString()
+        )));
+  }
+
+  private Publisher<HttpResponse> sendAndRetrieve(
       String uri,
       Publisher<String> bodyPublisher,
       Map<String, List<String>> headers,
       HttpMethod method
   ) {
-    return JdkFlowAdapter.publisherToFlowPublisher(
-        setupRequest(uri, headers, method)
+    return retrieveAndMap(
+        buildRequest(uri, headers, method)
             .body(BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
-            .exchangeToMono(mapResponse()));
+    ).as(JdkFlowAdapter::publisherToFlowPublisher);
   }
 
-  private Publisher<HttpResponse> sendRequest(String uri, Map<String, List<String>> headers, HttpMethod method) {
-    return JdkFlowAdapter.publisherToFlowPublisher(
-        setupRequest(uri, headers, method)
-            .exchangeToMono(mapResponse()));
-
-  }
-
-  private WebClient.RequestBodySpec setupRequest(String uri, Map<String, List<String>> headers, HttpMethod method) {
+  private WebClient.RequestBodySpec buildRequest(String uri, Map<String, List<String>> headers, HttpMethod method) {
     return webClient
         .method(method)
         .uri(uri)
         .headers(httpHeaders -> httpHeaders.putAll(headers));
-  }
-
-  private Function<ClientResponse, Mono<HttpResponse>> mapResponse() {
-    return clientResponse -> clientResponse.bodyToMono(String.class)
-        .defaultIfEmpty("")
-        .map(v -> new HttpResponse(clientResponse.statusCode().value(), v));
   }
 }
