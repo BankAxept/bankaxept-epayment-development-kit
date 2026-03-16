@@ -11,7 +11,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.ContainsPattern;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.webflux.WebFluxClient;
@@ -31,7 +30,7 @@ public class WebFluxHttpClientTest {
 
   @BeforeEach
   public void setup(WireMockRuntimeInfo wmRuntimeInfo) {
-    client = new WebFluxClient("http://localhost:" + wmRuntimeInfo.getHttpPort(), Function.identity());
+    client = new WebFluxClient("http://localhost:" + wmRuntimeInfo.getHttpPort());
   }
 
   @AfterEach

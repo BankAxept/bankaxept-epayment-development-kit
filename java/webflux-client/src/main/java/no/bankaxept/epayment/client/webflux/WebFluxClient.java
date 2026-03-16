@@ -35,31 +35,33 @@ public class WebFluxClient implements HttpClient {
 
   @Override
   public Publisher<HttpResponse> get(String uri, Map<String, List<String>> headers) {
-    return sendAndRetrieve(uri, headers, HttpMethod.GET);
+    return sendRequest(HttpMethod.GET, uri, headers);
   }
 
   @Override
   public Publisher<HttpResponse> post(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
-    return sendAndRetrieve(uri, bodyPublisher, headers, HttpMethod.POST);
+    return sendRequest(HttpMethod.POST, uri, headers, bodyPublisher);
   }
 
   @Override
   public Publisher<HttpResponse> delete(String uri, Map<String, List<String>> headers) {
-    return sendAndRetrieve(uri, headers, HttpMethod.DELETE);
+    return sendRequest(HttpMethod.DELETE, uri, headers);
   }
 
   @Override
   public Publisher<HttpResponse> put(String uri, Publisher<String> bodyPublisher, Map<String, List<String>> headers) {
-    return sendAndRetrieve(uri, bodyPublisher, headers, HttpMethod.PUT);
+    return sendRequest(HttpMethod.PUT, uri, headers, bodyPublisher);
   }
 
-  private Publisher<HttpResponse> sendAndRetrieve(String uri, Map<String, List<String>> headers, HttpMethod method) {
-    return retrieveAndMap(buildRequest(uri, headers, method))
-        .as(JdkFlowAdapter::publisherToFlowPublisher);
-  }
-
-  private Mono<HttpResponse> retrieveAndMap(WebClient.RequestHeadersSpec<?> requestSpec) {
-    return requestSpec
+  private Publisher<HttpResponse> sendRequest(
+      HttpMethod method,
+      String uri,
+      Map<String, List<String>> headers
+  ) {
+    return webClient
+        .method(method)
+        .uri(uri)
+        .headers(httpHeaders -> httpHeaders.putAll(headers))
         .retrieve()
         .toEntity(String.class)
         .map(entity -> new HttpResponse(entity.getStatusCode().value(), requireNonNullElse(entity.getBody(), "")))
@@ -67,25 +69,30 @@ public class WebFluxClient implements HttpClient {
         .onErrorResume(WebClientResponseException.class, e -> Mono.just(new HttpResponse(
             e.getStatusCode().value(),
             e.getResponseBodyAsString()
-        )));
+        )))
+        .as(JdkFlowAdapter::publisherToFlowPublisher);
   }
 
-  private Publisher<HttpResponse> sendAndRetrieve(
+  private Publisher<HttpResponse> sendRequest(
+      HttpMethod method,
       String uri,
-      Publisher<String> bodyPublisher,
       Map<String, List<String>> headers,
-      HttpMethod method
+      Publisher<String> bodyPublisher
   ) {
-    return retrieveAndMap(
-        buildRequest(uri, headers, method)
-            .body(BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
-    ).as(JdkFlowAdapter::publisherToFlowPublisher);
-  }
-
-  private WebClient.RequestBodySpec buildRequest(String uri, Map<String, List<String>> headers, HttpMethod method) {
     return webClient
         .method(method)
         .uri(uri)
-        .headers(httpHeaders -> httpHeaders.putAll(headers));
+        .headers(httpHeaders -> httpHeaders.putAll(headers))
+        .body(BodyInserters.fromProducer(JdkFlowAdapter.flowPublisherToFlux(bodyPublisher), String.class))
+        .retrieve()
+        .toEntity(String.class)
+        .map(entity -> new HttpResponse(entity.getStatusCode().value(), requireNonNullElse(entity.getBody(), "")))
+        .as(transformer)
+        .onErrorResume(WebClientResponseException.class, e -> Mono.just(new HttpResponse(
+            e.getStatusCode().value(),
+            e.getResponseBodyAsString()
+        )))
+        .as(JdkFlowAdapter::publisherToFlowPublisher);
   }
+
 }
