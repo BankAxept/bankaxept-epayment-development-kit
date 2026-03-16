@@ -30,7 +30,7 @@ public class WebFluxClient implements HttpClient {
         .map(implementationVersion -> WebClient.builder()
             .defaultHeader("User-Agent", "EppDevKit/" + implementationVersion))
         .orElseGet(WebClient::builder).baseUrl(baseUrl).build();
-    this.transformer = transformer;
+    this.transformer = requireNonNullElse(transformer, Function.identity());
   }
 
   @Override
