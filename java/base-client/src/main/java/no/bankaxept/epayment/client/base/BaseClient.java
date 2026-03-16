@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.Flow;
+import java.util.concurrent.Flow.Publisher;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenPublisher;
 import no.bankaxept.epayment.client.base.accesstoken.AccessTokenSubscriber;
@@ -99,9 +101,13 @@ public class BaseClient {
     private AccessTokenPublisher tokenPublisher;
 
     public Builder(URL resourceServerUrl) {
+      this(resourceServerUrl, Function.identity());
+    }
+
+    public Builder(URL resourceServerUrl, Function<Publisher<HttpResponse>, Publisher<HttpResponse>> transformer) {
       this.httpClient = ServiceLoader.load(HttpClientProvider.class)
           .findFirst()
-          .map(httpClientProvider -> httpClientProvider.create(resourceServerUrl.toString()))
+          .map(httpClientProvider -> httpClientProvider.create(resourceServerUrl.toString(), transformer))
           .orElseThrow();
     }
 
