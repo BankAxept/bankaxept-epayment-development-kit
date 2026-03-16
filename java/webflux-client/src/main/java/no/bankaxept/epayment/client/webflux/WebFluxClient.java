@@ -65,11 +65,11 @@ public class WebFluxClient implements HttpClient {
         .retrieve()
         .toEntity(String.class)
         .map(entity -> new HttpResponse(entity.getStatusCode().value(), requireNonNullElse(entity.getBody(), "")))
+        .as(transformer)
         .onErrorResume(WebClientResponseException.class, e -> Mono.just(new HttpResponse(
             e.getStatusCode().value(),
             e.getResponseBodyAsString()
         )))
-        .as(transformer)
         .as(JdkFlowAdapter::publisherToFlowPublisher);
   }
 
@@ -87,11 +87,11 @@ public class WebFluxClient implements HttpClient {
         .retrieve()
         .toEntity(String.class)
         .map(entity -> new HttpResponse(entity.getStatusCode().value(), requireNonNullElse(entity.getBody(), "")))
+        .as(transformer)
         .onErrorResume(WebClientResponseException.class, e -> Mono.just(new HttpResponse(
             e.getStatusCode().value(),
             e.getResponseBodyAsString()
         )))
-        .as(transformer)
         .as(JdkFlowAdapter::publisherToFlowPublisher);
   }
 
