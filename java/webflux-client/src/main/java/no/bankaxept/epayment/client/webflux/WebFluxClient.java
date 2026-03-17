@@ -1,10 +1,10 @@
 package no.bankaxept.epayment.client.webflux;
 
 import static java.util.Objects.requireNonNullElse;
+import static java.util.Optional.ofNullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.Flow.Publisher;
 import java.util.function.Function;
 import no.bankaxept.epayment.client.base.http.HttpClient;
@@ -26,10 +26,14 @@ public class WebFluxClient implements HttpClient {
   }
 
   public WebFluxClient(String baseUrl, Function<Mono<HttpResponse>, Mono<HttpResponse>> transformer) {
-    webClient = Optional.ofNullable(WebFluxClient.class.getPackage().getImplementationVersion())
-        .map(implementationVersion -> WebClient.builder()
-            .defaultHeader("User-Agent", "EppDevKit/" + implementationVersion))
-        .orElseGet(WebClient::builder).baseUrl(baseUrl).build();
+    String userAgent = ofNullable(WebFluxClient.class.getPackage())
+        .map(Package::getImplementationVersion)
+        .map(implementationVersion -> "EppDevKit/" + implementationVersion)
+        .orElse("EppDevKit");
+    webClient = WebClient.builder()
+        .defaultHeader("User-Agent", userAgent)
+        .baseUrl(baseUrl)
+        .build();
     this.transformer = requireNonNullElse(transformer, Function.identity());
   }
 
