@@ -108,7 +108,7 @@ public class BaseClient {
       this.httpClient = ServiceLoader.load(HttpClientProvider.class)
           .findFirst()
           .map(httpClientProvider -> httpClientProvider.create(resourceServerUrl.toString(), transformer))
-          .orElseThrow();
+          .orElseThrow(() -> new IllegalStateException("HttpClientProvider SPI implementation must be provided"));
     }
 
     public Builder withStaticToken(String token) {

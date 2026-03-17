@@ -209,11 +209,14 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
       if (grantType == null) {
         throw new IllegalArgumentException("Grant type is not set");
       }
+      if (url == null) {
+        throw new IllegalArgumentException("Url is not set");
+      }
       if (httpClient == null) {
         httpClient = ServiceLoader.load(HttpClientProvider.class)
             .findFirst()
             .map(httpClientProvider -> httpClientProvider.create(url.toString(), Function.identity()))
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalStateException("HttpClientProvider SPI implementation must be provided"));
       }
       return new ScheduledAccessTokenPublisher(url, headers, createBody(), clock, getSchedulerOrDefault(), httpClient);
     }
