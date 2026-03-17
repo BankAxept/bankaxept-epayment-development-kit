@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.7.0...v2.7.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* add SPI httpClient as an overridable default in ScheduledAccessTokenPublisher ([#288](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/288)) ([fa3f2d6](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/fa3f2d6f8e3d6c780e0bd350549a549e1aac3dc1))
+
 ## [2.7.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.6.0...v2.7.0) (2026-03-16)
 
 
