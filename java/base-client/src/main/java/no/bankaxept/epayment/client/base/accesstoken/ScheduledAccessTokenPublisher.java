@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
@@ -17,10 +18,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import no.bankaxept.epayment.client.base.SinglePublisher;
 import no.bankaxept.epayment.client.base.http.HttpClient;
 import no.bankaxept.epayment.client.base.http.HttpResponse;
 import no.bankaxept.epayment.client.base.http.HttpStatusException;
+import no.bankaxept.epayment.client.base.spi.HttpClientProvider;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -205,6 +208,15 @@ public class ScheduledAccessTokenPublisher implements AccessTokenPublisher, Flow
     public ScheduledAccessTokenPublisher build() {
       if (grantType == null) {
         throw new IllegalArgumentException("Grant type is not set");
+      }
+      if (url == null) {
+        throw new IllegalArgumentException("Url is not set");
+      }
+      if (httpClient == null) {
+        httpClient = ServiceLoader.load(HttpClientProvider.class)
+            .findFirst()
+            .map(httpClientProvider -> httpClientProvider.create(url.toString(), Function.identity()))
+            .orElseThrow(() -> new IllegalStateException("HttpClientProvider SPI implementation must be provided"));
       }
       return new ScheduledAccessTokenPublisher(url, headers, createBody(), clock, getSchedulerOrDefault(), httpClient);
     }

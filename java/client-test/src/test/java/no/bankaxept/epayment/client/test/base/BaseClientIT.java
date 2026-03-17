@@ -18,7 +18,7 @@ public class BaseClientIT {
     HttpClient httpClient = ServiceLoader.load(HttpClientProvider.class)
         .findFirst()
         .map(httpClientProvider -> httpClientProvider.create(null, Function.identity()))
-        .orElseThrow();
+        .orElseThrow(() -> new IllegalStateException("HttpClientProvider SPI implementation must be provided"));
     var publisher = JdkFlowAdapter.flowPublisherToFlux(
         new ScheduledAccessTokenPublisher.Builder()
             .httpClient(httpClient)
