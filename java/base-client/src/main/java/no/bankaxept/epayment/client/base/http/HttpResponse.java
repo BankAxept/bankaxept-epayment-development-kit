@@ -31,6 +31,7 @@ public class HttpResponse {
     else if (status.code() == 201) return RequestStatus.Accepted;
     else if (status.code() == 409) return RequestStatus.Conflicted;
     else if (status.code() == 422) return RequestStatus.Rejected;
+    else if (status.code() == 429) return RequestStatus.Rejected;
     else if (status.is4xxClientError()) throw parseClientError(body);
     else return RequestStatus.Failed;
   }
