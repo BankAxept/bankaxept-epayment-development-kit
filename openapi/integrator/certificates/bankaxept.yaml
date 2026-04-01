@@ -40,6 +40,8 @@ components:
         - notBefore
         - expiresOn
         - certificate
+        - issuer
+        - CA
       properties:
         name:
           type: string
@@ -53,3 +55,7 @@ components:
           format: date-time
         certificate:
           type: string
+        issuer:
+          type: string
+        CA:
+          type: boolean
