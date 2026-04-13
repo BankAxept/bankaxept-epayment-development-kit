@@ -729,9 +729,10 @@ components:
         signedPaymentData:
           type: string
           description: >-
-            The Merchant Initiated Payment Request is a signed JWT in JWS Compact Serialisation format according to the
-            JSON Web Signature (JWS) specification defined in RFC 7515. The payload contains all the properties from 
-            MerchantInitiatedPaymentRequest schema. The signature ensures the integrity and authenticity of the payment request.
+            JSON Web Signature (JWS) specification defined in RFC 7515. The JWS payload contains only the properties from
+            the MerchantInitiatedPaymentRequest schema, and only those properties are covered by the signature. The top-level
+            messageId is provided alongside signedPaymentData for idempotency, is not included in the JWS payload, and is not
+            integrity-protected by the JWS signature.
           example: "eyJ4NXQjUzI1NiI6IkQyQkVhZWp3ektpQXVhTkl3cGlZRUxHMnh6Y25NdTJQME40VnZkNlpVVnciLCJhbGciOiJQUzI1NiJ9.eyJhZ3JlZW1lbnRJZCI6IjEyMzQ1Njc4OTAiLCJhbW91bnQiOnsiY3VycmVuY3lDb2RlIjoiTk9LIiwidmFsdWUiOjEwMDAwfSwiYXV0b21hdGljQ2FwdHVyZSI6ZmFsc2UsIm1lcmNoYW50T3JkZXJSZWZlcmVuY2UiOiJBQVg5OTEzNDM1IiwibWVyY2hhbnRPcmRlck1lc3NhZ2UiOiJBaXJsaW5lIHRpY2tldCA5MTItNzgzMjQ4NzY3MzI3NDc2IiwibWVyY2hhbnRSZWZlcmVuY2UiOiJtZXJjaGFudFJlZjEyMyIsImluU3RvcmUiOmZhbHNlLCJuZXR3b3JrUmVmZXJlbmNlIjoibmV0d29ya1JlZjQ1NiIsInRyYW5zYWN0aW9uVGltZSI6IjIwMjYtMDEtMjdUMTI6MzA6MDBaIn0.dGhpc0lzQVNpZ25hdHVyZUV4YW1wbGVHZW5lcmF0ZWRVc2luZ1BTMjU2QWxnb3JpdGhtV2l0aFRoZU1lcmNoYW50UHJpdmF0ZUtleQ"
         messageId:
           $ref: '../components.yaml#/components/schemas/messageId'
