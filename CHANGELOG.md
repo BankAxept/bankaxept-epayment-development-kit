@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.2](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.7.1...v2.7.2) (2026-04-13)
+
+
+### Bug Fixes
+
+* move messageId out of the signed MIT data and place it alongside the payload ([#295](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/295)) ([38f9c6a](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/38f9c6afb3c6748e0f32d8493652bfd4902aef89))
+
 ## [2.7.1](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.7.0...v2.7.1) (2026-03-17)
 
 
