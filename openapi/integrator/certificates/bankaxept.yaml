@@ -41,7 +41,6 @@ components:
         - expiresOn
         - certificate
         - issuer
-        - CA
       properties:
         name:
           type: string
@@ -57,5 +56,3 @@ components:
           type: string
         issuer:
           type: string
-        CA:
-          type: boolean
