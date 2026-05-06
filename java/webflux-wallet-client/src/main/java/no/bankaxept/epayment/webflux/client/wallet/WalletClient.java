@@ -44,7 +44,7 @@ public class WalletClient {
     );
   }
 
-  public Mono enrolCard(EnrolCardRequest request, String correlationId) {
+  public Mono<RequestStatus> enrolCard(EnrolCardRequest request, String correlationId) {
     return Mono.from(JdkFlowAdapter.flowPublisherToFlux(new MapOperator<>(
         baseClient.post(
             "/v1/payment-tokens",
