@@ -204,20 +204,17 @@ paths:
         '503':
           $ref: '../components.yaml#/components/responses/503Error'
 
-  /v1/recurring/agreements/termination:
-    description: Response to a payment agreement termination
+  /v1/recurring/agreements/{merchantReference}:
+    description: Agreement termination notification
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
-    post:
+    delete:
       tags:
         - Recurring Agreement
-      operationId: agreementTerminationResponse
-      requestBody:
-        required: true
-        content:
-          application/json;charset=UTF-8:
-            schema:
-              $ref: '#/components/schemas/AgreementTerminationResponse'
+      operationId: agreementTermination
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/tokenRequestorReference'
+        - $ref: '../components.yaml#/components/parameters/correlationId'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
@@ -265,13 +262,13 @@ paths:
           $ref: '../components.yaml#/components/responses/503Error'
 
   /v1/recurring/payments/cancellations:
-    description: Response to a cancellation request of a merchant initiated payment request
+    description: Response to a cancellation request of a recurring payment request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
       tags:
         - Recurring Payments
-      operationId: merchantInitiatedCancellationResponse
+      operationId: recurringCancellationResponse
       requestBody:
         required: true
         content:
@@ -295,13 +292,13 @@ paths:
           $ref: '../components.yaml#/components/responses/503Error'
 
   /v1/recurring/payments/captures:
-    description: Response to a capture request of a merchant initiated payment request
+    description: Response to a capture request of a recurring payment request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
       tags:
         - Recurring Payments
-      operationId: merchantInitiatedCaptureResponse
+      operationId: recurringCaptureResponse
       requestBody:
         required: true
         content:
@@ -325,13 +322,13 @@ paths:
           $ref: '../components.yaml#/components/responses/503Error'
 
   /v1/recurring/payments/refunds:
-    description: Response to a refund request of a merchant initiated payment request
+    description: Response to a refund request of a recurring payment request
     parameters:
       - $ref: '../components.yaml#/components/parameters/correlationId'
     post:
       tags:
         - Recurring Payments
-      operationId: merchantInitiatedRefundResponse
+      operationId: recurringRefundResponse
       requestBody:
         required: true
         content:
@@ -554,23 +551,6 @@ components:
         batchNumber:
           $ref: '../components.yaml#/components/schemas/batchNumber'
 
-    AgreementTerminationResponse:
-      type: object
-      required:
-        - messageId
-        - agreementId
-        - merchantReference
-        - status
-      properties:
-        messageId:
-          $ref: '../components.yaml#/components/schemas/messageId'
-        agreementId:
-          $ref: '../components.yaml#/components/schemas/agreementId'
-        merchantReference:
-          $ref: '../components.yaml#/components/schemas/merchantReference'
-        status:
-          $ref: '#/components/schemas/TerminationStatus'
-
     CancellationStatus:
       type: string
       example: Approved
@@ -618,19 +598,6 @@ components:
       enum:
         - Approved
         - Declined
-
-    TerminationStatus:
-      type: string
-      example: Approved
-      description: |
-        Code specifying the result of the operation:
-        * Approved - Termination request was approved.
-        * Declined - Termination request was declined.
-        * Failed - Termination request failed.
-      enum:
-        - Approved
-        - Declined
-        - Failed
 
     stan:
       type: string
