@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.3](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.7.2...v2.7.3) (2026-05-07)
+
+
+### Bug Fixes
+
+* convert http method for partner termination notification endpoint ([#302](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/302)) ([731a9cb](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/731a9cb71b1e7c04141161c753f00f88e6fb5df9))
+
 ## [2.7.2](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.7.1...v2.7.2) (2026-04-13)
 
 
