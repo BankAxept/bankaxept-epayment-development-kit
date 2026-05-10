@@ -213,7 +213,7 @@ paths:
         - Recurring Agreement
       operationId: agreementTermination
       parameters:
-        - $ref: '../components.yaml#/components/parameters/tokenRequestorReference'
+        - $ref: '../components.yaml#/components/parameters/merchantReference'
         - $ref: '../components.yaml#/components/parameters/correlationId'
       responses:
         '200':
