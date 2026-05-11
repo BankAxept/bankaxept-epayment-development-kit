@@ -207,14 +207,12 @@ paths:
   /v1/recurring/agreements/{merchantReference}:
     description: Agreement termination notification
     parameters:
+      - $ref: '../components.yaml#/components/parameters/merchantReference'
       - $ref: '../components.yaml#/components/parameters/correlationId'
     delete:
       tags:
         - Recurring Agreement
       operationId: agreementTermination
-      parameters:
-        - $ref: '../components.yaml#/components/parameters/merchantReference'
-        - $ref: '../components.yaml#/components/parameters/correlationId'
       responses:
         '200':
           $ref: '../components.yaml#/components/responses/200Ok'
