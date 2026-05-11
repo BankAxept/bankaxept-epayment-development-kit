@@ -408,6 +408,12 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/tokenRequestorReference'
+    merchantReference:
+      name: merchantReference
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/merchantReference'
 
   responses:
     200Ok:
