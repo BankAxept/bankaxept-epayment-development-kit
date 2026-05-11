@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.4](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.7.3...v2.7.4) (2026-05-11)
+
+
+### Bug Fixes
+
+* add merchant reference as path parameter for agreement termination ([#305](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/305)) ([1dd1613](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/1dd161320330b5b457433643db6bf224a9bb142b))
+
 ## [2.7.3](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.7.2...v2.7.3) (2026-05-07)
 
 
