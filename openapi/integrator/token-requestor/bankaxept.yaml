@@ -64,7 +64,9 @@ paths:
   /v1/eligible-banks:
     get:
       summary: Eligible banks
-      description: Returns the subset of the input list of banks that are eligible for enrolment.
+      description: >-
+        Returns the subset of the input list of banks that are eligible for enrolment.
+        If no bank identifiers are provided, all eligible banks are returned.
       operationId: eligibleBanks
       parameters:
         - name: bankIdentifier
@@ -76,7 +78,6 @@ paths:
               pattern: "[0-9]{4}"
               example: "9998"
             type: array
-          required: true
       responses:
         '200':
           description: Request processed
