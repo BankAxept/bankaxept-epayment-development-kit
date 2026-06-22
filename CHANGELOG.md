@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.8.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.7.4...v2.8.0) (2026-06-22)
+
+
+### Features
+
+* prepare api to return all eligible banks when no bankIdentifier is provided ([#315](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/315)) ([3115633](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/3115633bef3ff1fb88e63c2d5f58480cf18e6da6))
+
+
+### Dependency Updates
+
+* bump com.github.tomakehurst:wiremock-jre8-standalone from 2.35.2 to 3.0.1 ([#308](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/308)) ([7092629](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/7092629456c2bcb54e85df667e701d9d6c1b0a75))
+* bump io.swagger.parser.v3:swagger-parser from 2.1.39 to 2.1.43 ([#311](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/311)) ([384faa0](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/384faa0a328758e805e3e17c9f39dda515c04615))
+* bump io.swagger.parser.v3:swagger-parser from 2.1.43 to 2.1.44 ([#314](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/314)) ([eaf3a39](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/eaf3a391372e6386e7a6d43377f57b4d988d9bb3))
+* bump org.openapitools:openapi-generator-maven-plugin from 7.20.0 to 7.22.0 ([#300](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/300)) ([6726319](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/6726319b36653adcc81eb25c027aa5e90115407f))
+* bump org.openapitools:openapi-generator-maven-plugin from 7.22.0 to 7.23.0 ([#312](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/312)) ([616bc3e](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/616bc3e9509b3d3a99892f144b7d14bfb5795926))
+* bump org.springframework.boot:spring-boot-starter-parent from 4.0.3 to 4.0.6 ([#299](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/299)) ([f94a0fe](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/f94a0fe385b7f70af925ab02146f6e2cc6fae8b2))
+* bump org.springframework.boot:spring-boot-starter-parent from 4.0.6 to 4.1.0 ([#313](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/313)) ([cdae617](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/cdae6176917085818e8db36995b6d24165b9ee0e))
+
 ## [2.7.4](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.7.3...v2.7.4) (2026-05-11)
 
 
