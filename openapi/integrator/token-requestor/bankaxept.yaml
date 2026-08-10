@@ -173,14 +173,44 @@ components:
 
     EnrolmentData:
       type: object
+      description: >-
+        Enrolment data identifying the BankAxept card. The enrolmentType property
+        selects which identifier is supplied: accountNumber when enrolmentType is
+        ACCOUNT_NUMBER, or encryptedCardReferenceToken when enrolmentType is
+        CARD_REFERENCE. When enrolmentType is absent it defaults to ACCOUNT_NUMBER,
+        preserving backward compatibility with clients that send only nin and
+        accountNumber.
       required:
         - nin
-        - accountNumber
       properties:
+        enrolmentType:
+          allOf:
+            - $ref: '#/components/schemas/enrolmentType'
+          default: ACCOUNT_NUMBER
         nin:
           $ref: '../components.yaml#/components/schemas/nin'
         accountNumber:
           $ref: '../components.yaml#/components/schemas/accountNumber'
+        encryptedCardReferenceToken:
+          $ref: '#/components/schemas/encryptedCardReferenceToken'
+
+    enrolmentType:
+      type: string
+      description: >-
+        Selects the concrete enrolment data type. Each concrete enrolment type
+        supplies its own default: ACCOUNT_NUMBER for AccountNumberEnrolmentData
+        and CARD_REFERENCE for CardReferenceEnrolmentData. When enrolmentType is
+        absent it defaults to ACCOUNT_NUMBER, preserving backward compatibility
+        with clients that send only nin and accountNumber.
+      enum:
+        - ACCOUNT_NUMBER
+        - CARD_REFERENCE
+
+    encryptedCardReferenceToken:
+      type: string
+      description: >-
+        The encrypted token used to present the card. This data is already known by
+        the issuer processor and is used to look up the associated BankAxept card.
 
     CardholderAuthenticationData:
       type: object
