@@ -87,7 +87,7 @@ Note that only one flow may be completed at a time.
 Attempting to perform multiple flows at the same time will result in an error response from the ePayment Platform.
 
 The request will resolve what underlying Account Number is connected to the payment source and
-will be returned  `accountNumberLookUpResult` in the callback.'
+will be returned  `accountNumber` in the callback.'
 
 Note that NIN is required for all requests.
 
@@ -100,7 +100,7 @@ the Integrator's Callback Server once the enrolment is successfully processed.
 The BankAxept NFC token enrolment flow may be used by providing the `nfcTokenReference`in the enrolment request. The
 `nfcTokenReference` is a 16 digit number that is unique to the end customer and their BankAxept NFC token.
 
-To correlate this new token value with existing enrolments a 'accountNumberLookUpResult' field is sent in the callback.
+To correlate this new token value with existing enrolments a 'accountNumber' field is sent in the callback.
 
 #### Cloud Token Reference
 
