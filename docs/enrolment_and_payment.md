@@ -89,6 +89,8 @@ Attempting to perform multiple flows at the same time will result in an error re
 The request will resolve what underlying Account Number is connected to the payment source and
 will be returned  `accountNumberLookUpResult` in the callback.'
 
+Note that NIN is required for all requests.
+
 #### BankAxept NFC Token
 
 By sending the BankAxept NFC token in the enrolment request the BankAxept service will automatically
@@ -108,7 +110,8 @@ tokenId or the DPAN of the token.
 The CloudToken Reference enrolment flow must contain `cloudTokenReference` field in the enrolment request.
 This must contain `encryptedCloudTokenData` that is encrypted using the public key provided by the Issuer Processor.
 
-The request must also include the first 6 digits of the card number (BIN) to identify which issuer is owning the card.
+The request must also include the `issuerProcessor` field which is used to route the request to the correct issuer
+processor.
 
 ## Creating a payment
 
