@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Merchant and Token Requestor APIs Components
   version: 0.3.0
-paths:
+paths: { }
 components:
   schemas:
     Amount:
@@ -342,6 +342,45 @@ components:
       example: "99977512345"
       description: >-
         The payment card's bank account number.
+    nfcTokenReference:
+      type: string
+      pattern: '^[0-9]{16}$'
+      example: "9997751234567890"
+      description: >-
+        The bankAxept NFC token reference.
+    cloudTokenReference:
+      type: object
+      required:
+        - bankIdentificationNumber
+        - encryptedCloudTokenData
+      properties:
+        bankIdentificationNumber:
+          type: string
+          description: The first 6 digits of the PAN of the payment card. This is used to identify the issuer of the payment token.
+          pattern: '^[0-9]{6}$'
+          example: "123456"
+        encryptedCloudTokenData:
+          description: >-
+            Payment and Cardholder Authentication Data is encrypted according to the Java Web Encryption specification defined in RFC-7516.
+            See schema CloudTokenData for decrypted data format. This must be encrypted using the public key of the issuer processor.
+            See the BankAxept Tokenization and Payment API documentation for more information on how to encrypt the data.
+          type: string
+          example: "eyJ31k90g1j901g131gf1j4gi0.9284g04kp0921jo3113bvRQ1MhUJY34pYi31xgSiApiR1uP4tSXV3DNnY3N5Zq9Bnt1OucN2nJxAqCcND4G8TpGw9kofFcLcs5kXHg7nmIgjI8ZXTYx7GuZ_w6YxVTzCmjT5dpSlOQFkuCfJn2VdKnF4PjaqiKW9fWluOKorUZdsjsDl5PjIjf3ndqCtGEma6TBpKxLX0FnCZzvsVATCBcxqwKLvkAYFdFFtLfxe5OvW0PFsy4OjasODW3Kk55e58v5xXB8bP9hzr5S7sXFlzX2TG583MLLXG3K1E3XG0R262vs2cGgSA1B6zmujvmkpR4lLofwgahpO-ZrhGZtXE0-wFJw.NDB8Ln7XCf1q1p6ddRvnSw.PTBsKUkN5stmSQwrQ-jQLA.ece3W1q3AiMdg5QQbAd1tq_nQWLRkyNnk2mL1TP8fpQ"
+    CloudTokenData:
+      type: object
+      required:
+        - token
+        - tokenType
+      properties:
+        token:
+          type: string
+          description: The value of the cloud token.
+        tokenType:
+          type: string
+          enum:
+            - DPAN
+            - ID
+
     authenticationDateTime:
       type: string
       format: date-time

@@ -80,6 +80,36 @@ sequenceDiagram
 
 ```
 
+### Enrolment optional flows
+
+There are optional flows for enrolment that may be implemented by the integrator.
+Note that only one flow may be completed at a time.
+Attempting to perform multiple flows at the same time will result in an error response from the ePayment Platform.
+
+The request will resolve what underlying Account Number is connected to the payment source and
+will be returned  `accountNumberLookUpResult` in the callback.'
+
+#### BankAxept NFC Token
+
+By sending the BankAxept NFC token in the enrolment request the BankAxept service will automatically
+create a BankAxept NFC token for the end customer. The BankAxept NFC token will be sent in the asynchronous callback to
+the Integrator's Callback Server once the enrolment is successfully processed.
+
+The BankAxept NFC token enrolment flow may be used by providing the `nfcTokenReference`in the enrolment request. The
+`nfcTokenReference` is a 16 digit number that is unique to the end customer and their BankAxept NFC token.
+
+To correlate this new token value with existing enrolments a 'accountNumberLookUpResult' field is sent in the callback.
+
+#### CloudToken Reference
+
+By sending in the Primary Token Id of the card you may enrol a BankAxept EPP token. You may either send the
+tokenId or the DPAN of the token.
+
+The CloudToken Reference enrolment flow must contain `cloudTokenReference` field in the enrolment request.
+This must contain `encryptedCloudTokenData` that is encrypted using the public key provided by the Issuer Processor.
+
+The request must also include the first 6 digits of the card number (BIN) to identify which issuer is owning the card.
+
 ## Creating a payment
 
 A full overview of all available fields for a payment can be found in

@@ -169,6 +169,12 @@ components:
           type: string
           pattern: '^[0-9]{4}$'
           example: "7001"
+        accountNumberLookUpResult:
+          type: string
+          pattern: '^[0-9]{11}$'
+          description: |
+            The resulting account number from the enrolment.
+
 
     EnrolmentStatus:
       type: string
