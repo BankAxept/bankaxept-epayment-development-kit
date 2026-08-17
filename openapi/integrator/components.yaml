@@ -377,7 +377,6 @@ components:
             - NETCOMPANY
         encryptedCloudTokenData:
           description: >-
-            Payment and Cardholder Authentication Data is encrypted according to the Java Web Encryption specification defined in RFC-7516.
             See schema CloudTokenData for decrypted data format. This must be encrypted using the public key of the issuer processor.
             See the BankAxept Tokenization and Payment API documentation for more information on how to encrypt the data.
           type: string
