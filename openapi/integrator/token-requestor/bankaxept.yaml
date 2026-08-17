@@ -184,17 +184,14 @@ components:
       properties:
         nin:
           $ref: '../components.yaml#/components/schemas/nin'
+        enrolmentType:
+          $ref: '../components.yaml#/components/schemas/enrolmentType'
         accountNumber:
           $ref: '../components.yaml#/components/schemas/accountNumber'
         nfcTokenReference:
           $ref: '../components.yaml#/components/schemas/nfcTokenReference'
         cloudTokenReference:
           $ref: '../components.yaml#/components/schemas/cloudTokenReference'
-      oneOf:
-        - required: [ accountNumber ]
-        - required: [ nfcTokenReference ]
-        - required: [ cloudTokenReference ]
-
     CardholderAuthenticationData:
       type: object
       required:
