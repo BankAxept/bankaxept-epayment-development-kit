@@ -48,6 +48,7 @@
               </configOptions>
               <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
               <generateSupportingFiles>false</generateSupportingFiles>
+              <openapiNormalizer>REMOVE_ANYOF_ONEOF_AND_KEEP_PROPERTIES_ONLY=true</openapiNormalizer>
               <inputSpec>${project.basedir}/../../openapi/integrator/token-requestor/bankaxept.yaml</inputSpec>
               <generatorName>java</generatorName>
               <generateModels>true</generateModels>
