@@ -173,11 +173,6 @@ components:
 
     EnrolmentData:
       type: object
-      description: >
-        Enrolment data identifying the BankAxept card.
-        NIN is always required.
-        Exactly one of accountNumber, nfcTokenReference or
-        cloudTokenData must be supplied.
       required:
         - nin
       properties:
@@ -191,6 +186,54 @@ components:
           $ref: '../components.yaml#/components/schemas/nfcTokenReference'
         cloudTokenData:
           $ref: '../components.yaml#/components/schemas/cloudTokenData'
+      oneOf:
+        - title: Account Number Enrolment
+          required:
+            - accountNumber
+          properties:
+            enrolmentType:
+              type: string
+              enum:
+                - ACCOUNT_NUMBER
+          not:
+            anyOf:
+              - required:
+                  - nfcTokenReference
+              - required:
+                  - cloudTokenData
+
+        - title: NFC Token Reference Enrolment
+          required:
+            - enrolmentType
+            - nfcTokenReference
+          properties:
+            enrolmentType:
+              type: string
+              enum:
+                - NFC_TOKEN_REFERENCE
+          not:
+            anyOf:
+              - required:
+                  - accountNumber
+              - required:
+                  - cloudTokenData
+
+        - title: Cloud Token Enrolment
+          required:
+            - enrolmentType
+            - cloudTokenData
+          properties:
+            enrolmentType:
+              type: string
+              enum:
+                - CLOUD_TOKEN
+          not:
+            anyOf:
+              - required:
+                  - accountNumber
+              - required:
+                  - nfcTokenReference
+
     CardholderAuthenticationData:
       type: object
       required:

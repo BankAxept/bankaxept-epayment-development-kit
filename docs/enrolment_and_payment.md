@@ -94,10 +94,10 @@ Note that NIN is required for all requests.
 #### BankAxept NFC Token
 
 By sending the BankAxept NFC token in the enrolment request the BankAxept service will automatically
-create a BankAxept NFC token for the end customer. The BankAxept NFC token will be sent in the asynchronous callback to
+create a BankAxept EPP token for the end customer. The BankAxept EPP token will be sent in the asynchronous callback to
 the Integrator's Callback Server once the enrolment is successfully processed.
 
-The BankAxept NFC token enrolment flow may be used by providing the `nfcTokenReference`in the enrolment request. The
+The BankAxept NFC token enrolment flow may be used by providing the `nfcTokenReference` in the enrolment request. The
 `nfcTokenReference` is a 16 digit number that is unique to the end customer and their BankAxept NFC token.
 
 To correlate this new token value with existing enrolments a 'accountNumber' field is sent in the callback.
@@ -107,8 +107,8 @@ To correlate this new token value with existing enrolments a 'accountNumber' fie
 By sending in the Primary Token Id of the card you may enrol a BankAxept EPP token. You may either send the
 tokenId or the DPAN of the token.
 
-The CloudToken Reference enrolment flow must contain `cloudTokenReference` field in the enrolment request.
-This must contain `encryptedCloudTokenData` that is encrypted using the public key provided by the Issuer Processor.
+The CloudToken Reference enrolment flow must contain `cloudTokenData` field in the enrolment request.
+This must contain `encryptedCloudTokenPayload` that is encrypted using the public key provided by the Issuer Processor.
 
 The request must also include the `issuerProcessor` field which is used to route the request to the correct issuer
 processor.

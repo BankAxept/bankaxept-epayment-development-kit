@@ -339,16 +339,15 @@ components:
     enrolmentType:
       type: string
       description: >-
-        Selects the concrete enrolment data type. Each concrete enrolment type
-        supplies its own default: ACCOUNT_NUMBER for AccountNumberEnrolmentData
-        and CARD_REFERENCE for CardReferenceEnrolmentData. When enrolmentType is
+        Selects the concrete enrolment data type. When enrolmentType is
         absent it defaults to ACCOUNT_NUMBER, preserving backward compatibility
         with clients that send only nin and accountNumber.
-        If NFC or cloud token enrolment is used, the enrolmentType must be set to NFC_TOKEN_REFERENCE or CLOUD_TOKEN_REFERENCE respectively.
+        If NFC or cloud token enrolment is used, the enrolmentType must be set to NFC_TOKEN_REFERENCE or CLOUD_TOKEN respectively.
+      default: ACCOUNT_NUMBER
       enum:
         - ACCOUNT_NUMBER
         - NFC_TOKEN_REFERENCE
-        - CLOUD_TOKEN_REFERENCE
+        - CLOUD_TOKEN
     accountNumber:
       type: string
       pattern: '^[0-9]{11}$'
