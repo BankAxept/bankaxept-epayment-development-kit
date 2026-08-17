@@ -364,7 +364,7 @@ components:
     cloudTokenReference:
       type: object
       required:
-        - bankIdentificationNumber
+        - issuerProcessor
         - encryptedCloudTokenData
       properties:
         issuerProcessor:

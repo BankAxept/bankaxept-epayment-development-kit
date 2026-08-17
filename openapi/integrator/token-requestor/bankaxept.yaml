@@ -178,7 +178,6 @@ components:
         NIN is always required.
         Exactly one of accountNumber, nfcTokenReference or
         cloudTokenReference must be supplied.
-      additionalProperties: false
       required:
         - nin
       properties:

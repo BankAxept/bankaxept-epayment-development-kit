@@ -102,7 +102,7 @@ The BankAxept NFC token enrolment flow may be used by providing the `nfcTokenRef
 
 To correlate this new token value with existing enrolments a 'accountNumberLookUpResult' field is sent in the callback.
 
-#### CloudToken Reference
+#### Cloud Token Reference
 
 By sending in the Primary Token Id of the card you may enrol a BankAxept EPP token. You may either send the
 tokenId or the DPAN of the token.

@@ -160,6 +160,11 @@ components:
           $ref: '#/components/schemas/ErrorCode'
         paymentToken:
           $ref: '../components.yaml#/components/schemas/PaymentToken'
+        accountNumber:
+          type: string
+          pattern: '^[0-9]{11}$'
+          description: |
+            The resulting account number from the enrolment.
         accountNumberLastFourDigits:
           type: string
           pattern: '^[0-9]{4}$'
@@ -169,11 +174,6 @@ components:
           type: string
           pattern: '^[0-9]{4}$'
           example: "7001"
-        accountNumberLookUpResult:
-          type: string
-          pattern: '^[0-9]{11}$'
-          description: |
-            The resulting account number from the enrolment.
 
 
     EnrolmentStatus:
