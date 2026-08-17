@@ -175,7 +175,6 @@ components:
           pattern: '^[0-9]{4}$'
           example: "7001"
 
-
     EnrolmentStatus:
       type: string
       example: Accepted

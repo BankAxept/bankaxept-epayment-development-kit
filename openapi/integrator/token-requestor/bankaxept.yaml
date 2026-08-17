@@ -177,7 +177,7 @@ components:
         Enrolment data identifying the BankAxept card.
         NIN is always required.
         Exactly one of accountNumber, nfcTokenReference or
-        cloudTokenReference must be supplied.
+        cloudTokenData must be supplied.
       required:
         - nin
       properties:
@@ -189,8 +189,8 @@ components:
           $ref: '../components.yaml#/components/schemas/accountNumber'
         nfcTokenReference:
           $ref: '../components.yaml#/components/schemas/nfcTokenReference'
-        cloudTokenReference:
-          $ref: '../components.yaml#/components/schemas/cloudTokenReference'
+        cloudTokenData:
+          $ref: '../components.yaml#/components/schemas/cloudTokenData'
     CardholderAuthenticationData:
       type: object
       required:
