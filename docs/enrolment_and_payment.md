@@ -86,8 +86,9 @@ There are optional flows for enrolment that may be implemented by the integrator
 Note that only one flow may be completed at a time.
 Attempting to perform multiple flows at the same time will result in an error response from the ePayment Platform.
 
-The request will resolve what underlying Account Number is connected to the payment source and
-will be returned  `accountNumber` in the callback.'
+For account number enrolment, `enrolmentType` may be omitted and defaults to `ACCOUNT_NUMBER`.
+The `accountNumber` field is returned in the callback only when `enrolmentType` is `NFC_TOKEN_REFERENCE` or
+`NETWORK_TOKEN`.
 
 Note that NIN is required for all requests.
 
@@ -97,18 +98,18 @@ By sending the BankAxept NFC token in the enrolment request the BankAxept servic
 create a BankAxept EPP token for the end customer. The BankAxept EPP token will be sent in the asynchronous callback to
 the Integrator's Callback Server once the enrolment is successfully processed.
 
-The BankAxept NFC token enrolment flow may be used by providing the `nfcTokenReference` in the enrolment request. The
-`nfcTokenReference` is a 16 digit number that is unique to the end customer and their BankAxept NFC token.
+The BankAxept NFC token enrolment flow may be used by setting `enrolmentType` to `NFC_TOKEN_REFERENCE` and providing
+the `nfcTokenReference` in the enrolment request. The `nfcTokenReference` is a 16 digit number that is unique to the
+end customer and their BankAxept NFC token.
 
-To correlate this new token value with existing enrolments a 'accountNumber' field is sent in the callback.
-
-#### Cloud Token Reference
+#### Network Token Reference
 
 By sending in the Primary Token Id of the card you may enrol a BankAxept EPP token. You may either send the
 tokenId or the DPAN of the token.
 
-The CloudToken Reference enrolment flow must contain `cloudTokenData` field in the enrolment request.
-This must contain `encryptedCloudTokenPayload` that is encrypted using the public key provided by the Issuer Processor.
+The network token reference enrolment flow must set `enrolmentType` to `NETWORK_TOKEN` and contain the
+`networkTokenData` field in the enrolment request.
+This field must contain `encryptedNetworkTokenPayload`, which is encrypted using the public key provided by the issuer processor.
 
 The request must also include the `issuerProcessor` field which is used to route the request to the correct issuer
 processor.

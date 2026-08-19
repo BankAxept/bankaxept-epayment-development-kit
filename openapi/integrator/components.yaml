@@ -72,6 +72,8 @@ components:
           enum:
             - payment.v1
             - approveAccount.v1
+            - approveNfcToken.v1
+            - approveNetworkToken.v1
         iat:
           $ref: '#/components/schemas/iat'
         iss:
@@ -342,12 +344,12 @@ components:
         Selects the concrete enrolment data type. When enrolmentType is
         absent it defaults to ACCOUNT_NUMBER, preserving backward compatibility
         with clients that send only nin and accountNumber.
-        If NFC or cloud token enrolment is used, the enrolmentType must be set to NFC_TOKEN_REFERENCE or CLOUD_TOKEN respectively.
+        If NFC or network token enrolment is used, the enrolmentType must be set to NFC_TOKEN_REFERENCE or NETWORK_TOKEN respectively.
       default: ACCOUNT_NUMBER
       enum:
         - ACCOUNT_NUMBER
         - NFC_TOKEN_REFERENCE
-        - CLOUD_TOKEN
+        - NETWORK_TOKEN
     accountNumber:
       type: string
       pattern: '^[0-9]{11}$'
@@ -360,11 +362,11 @@ components:
       example: "9997751234567890"
       description: >-
         The bankAxept NFC token reference.
-    cloudTokenData:
+    networkTokenData:
       type: object
       required:
         - issuerProcessor
-        - encryptedCloudTokenPayload
+        - encryptedNetworkTokenPayload
       properties:
         issuerProcessor:
           type: string
@@ -374,13 +376,13 @@ components:
             - TIETO
             - NORDEA
             - NETCOMPANY
-        encryptedCloudTokenPayload:
+        encryptedNetworkTokenPayload:
           description: >-
-            See schema CloudTokenPayload for decrypted data format. This must be encrypted using the public key of the issuer processor.
+            See schema NetworkTokenPayload for decrypted data format. This must be encrypted using the public key of the issuer processor.
             See the BankAxept Tokenization and Payment API documentation for more information on how to encrypt the data.
           type: string
           example: "eyJ31k90g1j901g131gf1j4gi0.9284g04kp0921jo3113bvRQ1MhUJY34pYi31xgSiApiR1uP4tSXV3DNnY3N5Zq9Bnt1OucN2nJxAqCcND4G8TpGw9kofFcLcs5kXHg7nmIgjI8ZXTYx7GuZ_w6YxVTzCmjT5dpSlOQFkuCfJn2VdKnF4PjaqiKW9fWluOKorUZdsjsDl5PjIjf3ndqCtGEma6TBpKxLX0FnCZzvsVATCBcxqwKLvkAYFdFFtLfxe5OvW0PFsy4OjasODW3Kk55e58v5xXB8bP9hzr5S7sXFlzX2TG583MLLXG3K1E3XG0R262vs2cGgSA1B6zmujvmkpR4lLofwgahpO-ZrhGZtXE0-wFJw.NDB8Ln7XCf1q1p6ddRvnSw.PTBsKUkN5stmSQwrQ-jQLA.ece3W1q3AiMdg5QQbAd1tq_nQWLRkyNnk2mL1TP8fpQ"
-    CloudTokenPayload:
+    NetworkTokenPayload:
       type: object
       required:
         - value
@@ -388,7 +390,7 @@ components:
       properties:
         value:
           type: string
-          description: The value of the cloud token field.
+          description: The value of the network token field.
         type:
           type: string
           enum:
