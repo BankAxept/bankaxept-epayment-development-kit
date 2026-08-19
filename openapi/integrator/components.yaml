@@ -129,6 +129,39 @@ components:
               description: The Merchant where the card will be approved
               maxLength: 70
 
+    ApproveNfcTokenPermissionV1:
+      allOf:
+        - $ref: "#/components/schemas/BasePermission"
+        - type: object
+          required:
+            - nfcTokenReference
+            - merchantName
+          properties:
+            nfcTokenReference:
+              $ref: "#/components/schemas/nfcTokenReference"
+            merchantName:
+              type: string
+              description: The merchant where the card will be approved.
+              maxLength: 70
+
+    ApproveNetworkTokenPermissionV1:
+      allOf:
+        - $ref: "#/components/schemas/BasePermission"
+        - type: object
+          required:
+            - encryptedNetworkTokenPayload
+            - issuerProcessor
+            - merchantName
+          properties:
+            encryptedNetworkTokenPayload:
+              $ref: "#/components/schemas/networkTokenData/properties/encryptedNetworkTokenPayload"
+            issuerProcessor:
+              $ref: "#/components/schemas/networkTokenData/properties/issuerProcessor"
+            merchantName:
+              type: string
+              description: The merchant where the card will be approved.
+              maxLength: 70
+
     PaymentBasePermissionV1:
       description: |
         This must satisfy PSD2 RTS Article 4 Authentication code and

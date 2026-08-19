@@ -76,7 +76,7 @@ sequenceDiagram
     IntegratorRepresentative ->> ePaymentRepresentative: Provide set of IPs, Authentication Provider and CallbackUrl.
     ePaymentPlatform ->> ePaymentPlatform: create ClientId identifying the Integrator.
     ePaymentRepresentative ->> ePaymentPlatform: Configure Allow List IPs, Authentication Provider, bCrypt hash and CallbackUrl.
-    ePaymentRepresentative -->> IntegratorRepresentative: Send EPP public certificates, ISS value, <br/> Token Requestor Name and the AuthenticationProvider-ISS field <br/> and ClientId.
+    ePaymentRepresentative -->> IntegratorRepresentative: Send EPP public certificates, ISS value, <br/> Merchant Name, Token Requestor ID, and the AuthenticationProvider-ISS field <br/> and ClientId.
     Note over IntegratorRepresentative, ePaymentRepresentative: Manual setup completed.
     Integrator ->> ePaymentPlatform: Generate access token.
     ePaymentPlatform ->> ePaymentPlatform: Verify request.
@@ -95,7 +95,8 @@ sequenceDiagram
 | Authentication Provider     | Inform the EPP team which Authentication Provider you will be utilizing. The ID from this setup must be used in the Authentication of Enrolment and Payment.  |
 | ISS                         | Once the your profile is set up your will receive the Issuer ID corresponding to the your Integrator or Authentication Provider profile.                      |
 | EPP public certificates     | Is sent by EPP during setup, 1. needed to encrypt parts of requests and 2. MTLS verification of callbacks.                                                    |
-| Token Requestor Name and Id | Is sent by EPP during setup, needs to be part of enrolment requests.                                                                                          |
+| Merchant Name               | Is sent by EPP during setup and must be used as `merchantName` in enrolment permission statements.                                                           |
+| Token Requestor ID          | Is sent by EPP during setup and must be used as the encryption issuer.                                                                                       |
 | MerchantId (optional)       | Depending on your setup you might be issued a new MerchantId as part of your registration or you might .                                                      |
 
 ### API entity overview.

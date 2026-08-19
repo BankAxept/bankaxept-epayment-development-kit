@@ -14,20 +14,42 @@ the structure as seen in the [Components overview](./swagger/epp_components.md).
 
 You must use a robust signing algorithm. We accept `ES256` or `PS256` as the signing algorithm.
 
-The `Digest` field in the `PermissionGrant` object is a `Base64` encoded SHA-256 hash of the following data points.
+The `digest` field in the `PermissionGrant` object is an unpadded, URL-safe Base64 encoded SHA-256 hash of a compact
+UTF-8 JSON permission statement. Properties must appear in the order specified for the permission type, with no
+insignificant whitespace.
 
-#### For enrolment:
+#### For Account Number Enrolment
 
-> nonce: Must be the same as the corresponding nonce in the PermissionGrant object.
->
-> accountNumber: The Account Number of the enrolment session.
->
-> tokenRequestorName: The Token Requestor Name
+The `approveAccount.v1` permission statement contains these properties in order:
 
-The Token Requestor Name is part of the information exchange as seen in
-our [checklist](./getting_started.md#checklist-for-information-exchange).
+1. `nonce`: Must match the nonce in the `PermissionGrant` object.
+2. `accountNumber`: The account number of the enrolment session.
+3. `merchantName`: The merchant name provided during information exchange.
 
-#### For payment:
+#### For NFC Token Enrolment
+
+The `approveNfcToken.v1` permission statement contains these properties in order:
+
+1. `nonce`: Must match the nonce in the `PermissionGrant` object.
+2. `nfcTokenReference`: The BankAxept NFC token reference of the enrolment session.
+3. `merchantName`: The merchant name provided during information exchange.
+
+#### For Network Token Enrolment
+
+The `approveNetworkToken.v1` permission statement contains these properties in order:
+
+1. `nonce`: Must match the nonce in the `PermissionGrant` object.
+2. `encryptedNetworkTokenPayload`: The encrypted network token payload of the enrolment session.
+3. `issuerProcessor`: The issuer processor that receives the enrolment request.
+4. `merchantName`: The merchant name provided during information exchange.
+
+Including `issuerProcessor` in the digest binds the permission to the processor used for routing and key selection.
+Changing the processor invalidates the digest.
+
+The Merchant Name is part of the information exchange as seen in our
+[checklist](./getting_started.md#checklist-for-information-exchange).
+
+#### For Payment
 
 > nonce: Must be the same as the corresponding nonce in the PermissionGrant object.
 >
@@ -47,7 +69,7 @@ encrypted data object.
 
 | Value                   | Usage                                                                                                                                                                         |
 |-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Token Requestor Name    | Used in enrolment for the digest.TokenRequestorName value                                                                                                                     |
+| Merchant Name           | Used in enrolment for the `digest.merchantName` value                                                                                                                         |
 | Encryption Issuer       | The id of the Token Requestor assigned to you. To be used in the `EnrolmentCardholderAuthenticationData.iss` field and in the `PaymentCardholderAuthenticationData.iss`field. |
 | Permission Grant Issuer | The Authentication Provider Id, this is to be placed in the PermissionGrant.Iss field                                                                                         |
 
@@ -64,9 +86,8 @@ our [Components overview](./swagger/epp_components.md).
 The `ISS` field is received from EPP and acts as a correlation to the Authentication provider that was configured to
 your Profile.
 
-A corresponding `Token Requestor Name` that represent the human-readable name of the token requestor will also be
-provided.
-This needs to be encoded in the Authentication Provider's `PermissionGrant` object.
+A corresponding `Merchant Name` will also be provided. This must be encoded as `merchantName` in the permission
+statement used to calculate the digest.
 
 ## Illustrated EPP-Wallet-Authentication Provider interoperability
 
@@ -118,8 +139,8 @@ erDiagram
     }
     Digest {
         string nonce
-        string acountNumber
-        string tokenRequestorName
+        string accountNumber
+        string merchantName
     }
 ```
 
@@ -183,7 +204,7 @@ erDiagram
     verifiedCardholderAuthenticationSignedData ||--|| PermissionGrant: "Decodes to"
     PermissionGrant ||--|| Digest: "Base64-encoded SHA-256 hash"
     PermissionGrant {
-        string type "for enrollment: 'approveAccount.v1'. For payment: 'payment.v1'"
+        string type "For account number enrolment: 'approveAccount.v1'"
         string iss "ISS is received from EPP, and identifies the Authentication Provider"
         integer iat "An Epoch timestamp that is validated as being less than 15 minutes old"
         string nonce "The nonce for the permission statement"
@@ -193,8 +214,8 @@ erDiagram
     }
     Digest {
         string nonce "The nonce for the permission statement"
-        string acountNumber "The Account Number of the enrolment session"
-        string tokenRequestorName "The Token Requestor Name"
+        string accountNumber "The account number of the enrolment session"
+        string merchantName "The merchant name"
     }
 ```
 
@@ -288,7 +309,7 @@ erDiagram
     verifiedCardholderAuthenticationSignedData ||--|| PermissionGrant: "Decodes to"
     PermissionGrant ||--|| Digest: "Base64-encoded SHA-256 hash"
     PermissionGrant {
-        string type "for enrollment: 'approveAccount.v1'. For payment: 'payment.v1'"
+        string type "For payment: 'payment.v1'"
         string iss "ISS is received from EPP, and identifies the Authentication Provider"
         integer iat "An Epoch timestamp that is validated as being less than 15 minutes old"
         string nonce "The nonce for the permission statement"
@@ -336,23 +357,43 @@ The script above should produce the following output:
 
 You may use this to verify your own implementation.
 
-#### Bash example Enrolment
+#### Account Number Enrolment Digest
 
-```bash
-echo -n '{"nonce":"a05b53be-718e-4df2-80ac-83696b711111”,”accountNumber”:”1000000001","merchantName”:”test-enrolment-name"}' \
-| sha256sum - \
-| awk '{print $1}' \
-| xxd -r -p \
-| base64 \
-| tr -d '=' \
-| tr '/+' '_-'
+The compact JSON input for `approveAccount.v1` is:
+
+```json
+{"nonce":"a05b53be-718e-4df2-80ac-83696b711111","accountNumber":"12341212345","merchantName":"test-enrolment-name"}
 ```
 
-The script above should produce the following output:
+The resulting digest is:
 
-`VSYBjYtrHT6pPxuIU68MDxC5T77jG_fNbWxBbeEHqWk`
+`-PAwASn3A47p15X48mrqBL-pWdcKtktj8bqTYCW0yn4`
 
-You may use this to verify your own implementation.
+#### NFC Token Enrolment Digest
+
+The compact JSON input for `approveNfcToken.v1` is:
+
+```json
+{"nonce":"a05b53be-718e-4df2-80ac-83696b711111","nfcTokenReference":"9997751234567890","merchantName":"test-enrolment-name"}
+```
+
+The resulting digest is:
+
+`u1u1EDybY-zy8BrvDSeGI-aksVeqRa7FYr5XBCuHouI`
+
+#### Network Token Enrolment Digest
+
+The compact JSON input for `approveNetworkToken.v1` is:
+
+```json
+{"nonce":"a05b53be-718e-4df2-80ac-83696b711111","encryptedNetworkTokenPayload":"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ.VnDZJqQgJ7oZWEtiYjnPyEwgX_z7H_P9FjpMG7oiuUG61OnvzvdwabgCUDYF388uKXCCTsbywgkXjIEcEIgDSrTdrfgyFwD-bsdrmg6eW4uKoxtASeRTzy0rFn21NTV4xlcLxDhuKVx2kshFKwaLwIopq60UEWi5PC2GOKnD7R5ur7JqgFYawqBv3rlGOxX-EO1RanJs70Fmx_rYyYIdlG-n5v07TgiosBZgn2R1UYen2oN7ul3OZrQsnOJdaShGn0O7s9On2Mm1XSBWsQv6OTPMioTZDch2lRgqsniSe4j6L_kfYQHuwYxrkkpN69khQ9KWuYjCv-2-KceUYh0Bdw.TqKgSfErJxe-XPQA.hqwMECiE6T6zrvuJUO2li1Shk2LHXaXd7-Oq5TRFVRX_IR0ynDLVrW-s.ldvWVsSRaJLp_tosKW5G7w","issuerProcessor":"DNB","merchantName":"test-enrolment-name"}
+```
+
+The resulting digest is:
+
+`4OnBNgQhHJ0iN9_agSfGk40-LHBBizFcJZZ7euDfoeg`
+
+You may use these values to verify your implementation.
 
 #### Java example for Payment
 
