@@ -91,12 +91,12 @@ sequenceDiagram
 ### Network Token Enrolment Flow
 
 Network token enrolment creates a BankAxept payment token from an existing primary network token. The associated card
-must be cobadged with BankAxept. The network token payload must contain either `originalTokenId` or `originalToken`, but
+must be cobadged with BankAxept. `NetworkTokenEnrolmentData` must contain either `originalTokenId` or `originalToken`, but
 not both. `originalTokenRequestorId` is optional, but including it is strongly recommended because it can provide
 valuable context when diagnosing network token enrolment issues.
 
-Create `NetworkTokenEnrolmentData` with `iss`, `iat`, `nin`, `bankIdentificationNumber`, and `networkTokenData`. Sign
-this object with the integrator's private key as a compact JWS and include the result as
+Create `NetworkTokenEnrolmentData` with `iss`, `iat`, `nin`, `bankIdentificationNumber`, and the original token fields.
+Sign this object with the integrator's private key as a compact JWS and include the result as
 `signedNetworkTokenEnrolmentData`. The ePayment Platform validates the signature, issuer, and timestamp, and uses the
 bank identification number to route the enrolment request.
 
@@ -105,8 +105,8 @@ sequenceDiagram
     participant Integrator
     participant EPP as ePayment Platform
 
-    Integrator ->> Integrator: Create NetworkTokenEnrolmentData with iss, iat, nin,<br/>bankIdentificationNumber, and networkTokenData
-    note right of Integrator: networkTokenData contains originalTokenId or originalToken.<br/>originalTokenRequestorId is optional but valuable for diagnostics.
+    Integrator ->> Integrator: Create NetworkTokenEnrolmentData with iss, iat, nin,<br/>bankIdentificationNumber, and the original token fields
+    note right of Integrator: Include originalTokenId or originalToken.<br/>originalTokenRequestorId is optional but valuable for diagnostics.
     Integrator ->> Integrator: Sign NetworkTokenEnrolmentData with the integrator's private key
     Integrator ->> Integrator: Create authentication data with signedNetworkTokenEnrolmentData
     Integrator ->> Integrator: Encrypt cardholder authentication data with the EPP public key

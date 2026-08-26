@@ -27,8 +27,8 @@ The `approveAccount.v1` permission statement contains these properties in order:
 
 #### For Network Token Enrolment
 
-The integrator creates `NetworkTokenEnrolmentData` containing `iss`, `iat`, `nin`, `bankIdentificationNumber`, and
-`networkTokenData`, then signs it with the integrator's private key as a compact JWS. Include the resulting value as
+The integrator creates `NetworkTokenEnrolmentData` containing `iss`, `iat`, `nin`, `bankIdentificationNumber`, and the
+original token fields, then signs it with the integrator's private key as a compact JWS. Include the resulting value as
 `signedNetworkTokenEnrolmentData` in `EnrolmentCardholderAuthenticationData`.
 
 The Merchant Name is part of the information exchange as seen in our
@@ -215,7 +215,6 @@ For network token enrolment, the integrator signs `NetworkTokenEnrolmentData` di
 erDiagram
     EnrolmentCardholderAuthenticationData ||--|| signedNetworkTokenEnrolmentData: "JWS signed by the integrator"
     signedNetworkTokenEnrolmentData ||--|| NetworkTokenEnrolmentData: "Decodes to"
-    NetworkTokenEnrolmentData ||--|| NetworkTokenData: "Contains"
     EnrolmentCardholderAuthenticationData {
         string signedNetworkTokenEnrolmentData
     }
@@ -224,9 +223,6 @@ erDiagram
         integer iat
         string nin
         string bankIdentificationNumber
-        object networkTokenData
-    }
-    NetworkTokenData {
         string originalTokenRequestorId "Optional but recommended for diagnostics"
         string originalTokenId "Either this field"
         string originalToken "Or this field"

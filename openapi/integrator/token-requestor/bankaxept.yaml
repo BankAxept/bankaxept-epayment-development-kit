@@ -208,7 +208,7 @@ components:
         A compact JSON Web Signature (JWS) as defined in RFC 7515 and signed with the integrator's private key.
         The JWS payload contains only the properties from the NetworkTokenEnrolmentData schema, and only those
         properties are integrity protected by the signature.
-      example: "eyJhbGciOiJQUzI1NiJ9.eyJpc3MiOiJ0b2tlbi1yZXF1ZXN0b3ItaWQiLCJpYXQiOjE3NTAwMDAwMDAsIm5pbiI6IjEzMDg3NTEyMzQ1IiwiYmFua0lkZW50aWZpY2F0aW9uTnVtYmVyIjoiOTU3ODUzIiwibmV0d29ya1Rva2VuRGF0YSI6eyJvcmlnaW5hbFRva2VuUmVxdWVzdG9ySWQiOiIxMjM0NTY3ODkwMSIsIm9yaWdpbmFsVG9rZW5JZCI6Im5ldHdvcmstdG9rZW4taWQifX0.c2lnbmF0dXJl"
+      example: "eyJhbGciOiJQUzI1NiJ9.eyJpc3MiOiJ0b2tlbi1yZXF1ZXN0b3ItaWQiLCJpYXQiOjE3NTAwMDAwMDAsIm5pbiI6IjEzMDg3NTEyMzQ1IiwiYmFua0lkZW50aWZpY2F0aW9uTnVtYmVyIjoiOTU3ODUzIiwib3JpZ2luYWxUb2tlblJlcXVlc3RvcklkIjoiMTIzNDU2Nzg5MDEiLCJvcmlnaW5hbFRva2VuSWQiOiJuZXR3b3JrLXRva2VuLWlkIn0.c2lnbmF0dXJl"
 
     NetworkTokenEnrolmentData:
       type: object
@@ -217,7 +217,6 @@ components:
         - iat
         - iss
         - nin
-        - networkTokenData
       properties:
         iss:
           $ref: '../components.yaml#/components/schemas/iss'
@@ -231,12 +230,6 @@ components:
           example: "957853"
           description: >-
             The Bank Identification Number (BIN) of the payment card.
-        networkTokenData:
-          $ref: '#/components/schemas/NetworkTokenData'
-
-    NetworkTokenData:
-      type: object
-      properties:
         originalTokenRequestorId:
           type: string
           maxLength: 11
