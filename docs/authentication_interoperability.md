@@ -26,25 +26,18 @@ The `approveAccount.v1` permission statement contains these properties in order:
 2. `accountNumber`: The account number of the enrolment session.
 3. `merchantName`: The merchant name provided during information exchange.
 
-#### For NFC Token Enrolment
-
-The `approveNfcToken.v1` permission statement contains these properties in order:
-
-1. `nonce`: Must match the nonce in the `PermissionGrant` object.
-2. `nfcTokenReference`: The BankAxept NFC token reference of the enrolment session.
-3. `merchantName`: The merchant name provided during information exchange.
-
 #### For Network Token Enrolment
 
 The `approveNetworkToken.v1` permission statement contains these properties in order:
 
 1. `nonce`: Must match the nonce in the `PermissionGrant` object.
-2. `encryptedNetworkTokenPayload`: The encrypted network token payload of the enrolment session.
-3. `issuerProcessor`: The issuer processor that receives the enrolment request.
+2. `bankIdentificationNumber`: The bank identification number used to retrieve the issuer processor certificate and
+   route the enrolment.
+3. `encryptedNetworkTokenPayload`: The network token payload encrypted with the issuer processor certificate.
 4. `merchantName`: The merchant name provided during information exchange.
 
-Including `issuerProcessor` in the digest binds the permission to the processor used for routing and key selection.
-Changing the processor invalidates the digest.
+Including `bankIdentificationNumber` in the digest binds the permission to the certificate and routing information used
+for the enrolment. Changing it invalidates the digest.
 
 The Merchant Name is part of the information exchange as seen in our
 [checklist](./getting_started.md#checklist-for-information-exchange).
@@ -125,9 +118,12 @@ sequenceDiagram
 
 ### Enrolment example
 
+The `PermissionGrant.type` selects exactly one of the following permission statements.
+
 ```mermaid
 erDiagram
-    PermissionGrant ||--|| Digest: "Base64-encoded SHA-256 hash"
+    PermissionGrant ||--o| AccountNumberDigest: "approveAccount.v1"
+    PermissionGrant ||--o| NetworkTokenDigest: "approveNetworkToken.v1"
     PermissionGrant {
         string type
         int iat
@@ -137,9 +133,15 @@ erDiagram
         string permissionId
         string Digest
     }
-    Digest {
+    AccountNumberDigest {
         string nonce
         string accountNumber
+        string merchantName
+    }
+    NetworkTokenDigest {
+        string nonce
+        string bankIdentificationNumber
+        string encryptedNetworkTokenPayload
         string merchantName
     }
 ```
@@ -202,9 +204,10 @@ erDiagram
         object PermissionGrant
     }
     verifiedCardholderAuthenticationSignedData ||--|| PermissionGrant: "Decodes to"
-    PermissionGrant ||--|| Digest: "Base64-encoded SHA-256 hash"
+    PermissionGrant ||--o| AccountNumberDigest: "approveAccount.v1"
+    PermissionGrant ||--o| NetworkTokenDigest: "approveNetworkToken.v1"
     PermissionGrant {
-        string type "For account number enrolment: 'approveAccount.v1'"
+        string type "'approveAccount.v1' or 'approveNetworkToken.v1'"
         string iss "ISS is received from EPP, and identifies the Authentication Provider"
         integer iat "An Epoch timestamp that is validated as being less than 15 minutes old"
         string nonce "The nonce for the permission statement"
@@ -212,9 +215,15 @@ erDiagram
         string permissionId "Unique id of the permission request"
         string Digest "The input in the Digest need to match corresponding values in the EnrolmentRequest"
     }
-    Digest {
+    AccountNumberDigest {
         string nonce "The nonce for the permission statement"
         string accountNumber "The account number of the enrolment session"
+        string merchantName "The merchant name"
+    }
+    NetworkTokenDigest {
+        string nonce "The nonce for the permission statement"
+        string bankIdentificationNumber "The bank identification number"
+        string encryptedNetworkTokenPayload "The encrypted network token payload"
         string merchantName "The merchant name"
     }
 ```
@@ -369,29 +378,17 @@ The resulting digest is:
 
 `-PAwASn3A47p15X48mrqBL-pWdcKtktj8bqTYCW0yn4`
 
-#### NFC Token Enrolment Digest
-
-The compact JSON input for `approveNfcToken.v1` is:
-
-```json
-{"nonce":"a05b53be-718e-4df2-80ac-83696b711111","nfcTokenReference":"9997751234567890","merchantName":"test-enrolment-name"}
-```
-
-The resulting digest is:
-
-`u1u1EDybY-zy8BrvDSeGI-aksVeqRa7FYr5XBCuHouI`
-
 #### Network Token Enrolment Digest
 
 The compact JSON input for `approveNetworkToken.v1` is:
 
 ```json
-{"nonce":"a05b53be-718e-4df2-80ac-83696b711111","encryptedNetworkTokenPayload":"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ.VnDZJqQgJ7oZWEtiYjnPyEwgX_z7H_P9FjpMG7oiuUG61OnvzvdwabgCUDYF388uKXCCTsbywgkXjIEcEIgDSrTdrfgyFwD-bsdrmg6eW4uKoxtASeRTzy0rFn21NTV4xlcLxDhuKVx2kshFKwaLwIopq60UEWi5PC2GOKnD7R5ur7JqgFYawqBv3rlGOxX-EO1RanJs70Fmx_rYyYIdlG-n5v07TgiosBZgn2R1UYen2oN7ul3OZrQsnOJdaShGn0O7s9On2Mm1XSBWsQv6OTPMioTZDch2lRgqsniSe4j6L_kfYQHuwYxrkkpN69khQ9KWuYjCv-2-KceUYh0Bdw.TqKgSfErJxe-XPQA.hqwMECiE6T6zrvuJUO2li1Shk2LHXaXd7-Oq5TRFVRX_IR0ynDLVrW-s.ldvWVsSRaJLp_tosKW5G7w","issuerProcessor":"DNB","merchantName":"test-enrolment-name"}
+{"nonce":"a05b53be-718e-4df2-80ac-83696b711111","bankIdentificationNumber":"957853","encryptedNetworkTokenPayload":"encrypted-payload","merchantName":"test-enrolment-name"}
 ```
 
 The resulting digest is:
 
-`4OnBNgQhHJ0iN9_agSfGk40-LHBBizFcJZZ7euDfoeg`
+`yDY8sWVrFY5yKQt6qzPNbDJ3BWSlmLRtL75F3gIzZuo`
 
 You may use these values to verify your implementation.
 

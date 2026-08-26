@@ -124,6 +124,31 @@ paths:
               schema:
                 $ref: "#/components/schemas/EligibilityError"
 
+  /v1/issuer-processor-certificates/{bankIdentificationNumber}:
+    get:
+      summary: Get issuer processor certificate by bank identification number
+      description: >-
+        Returns the issuer processor certificate associated with the given bank identification number.
+        The PEM encoded certificate is used to encrypt the network token payload.
+      operationId: getIssuerProcessorCertificate
+      parameters:
+        - $ref: '../components.yaml#/components/parameters/correlationId'
+        - $ref: '../components.yaml#/components/parameters/bankIdentificationNumber'
+      responses:
+        '200':
+          description: Returns the issuer processor certificate in PEM format.
+          content:
+            application/pem-certificate-chain:
+              schema:
+                type: string
+                description: PEM encoded issuer processor certificate.
+        '400':
+          description: Invalid input format or missing parameters.
+        '404':
+          description: Issuer processor certificate not found for the given BIN.
+        '500':
+          description: Internal Server Error, request can be retried later.
+
 components:
   schemas:
     EnrolCardRequest:
@@ -178,61 +203,25 @@ components:
       properties:
         nin:
           $ref: '../components.yaml#/components/schemas/nin'
-        enrolmentType:
-          $ref: '../components.yaml#/components/schemas/enrolmentType'
         accountNumber:
           $ref: '../components.yaml#/components/schemas/accountNumber'
-        nfcTokenReference:
-          $ref: '../components.yaml#/components/schemas/nfcTokenReference'
         networkTokenData:
-          $ref: '../components.yaml#/components/schemas/networkTokenData'
+          $ref: '../components.yaml#/components/schemas/NetworkTokenData'
       oneOf:
         - title: Account Number Enrolment
+          type: object
           required:
             - accountNumber
-          properties:
-            enrolmentType:
-              type: string
-              enum:
-                - ACCOUNT_NUMBER
           not:
-            anyOf:
-              - required:
-                  - nfcTokenReference
-              - required:
-                  - networkTokenData
-
-        - title: NFC Token Reference Enrolment
-          required:
-            - enrolmentType
-            - nfcTokenReference
-          properties:
-            enrolmentType:
-              type: string
-              enum:
-                - NFC_TOKEN_REFERENCE
-          not:
-            anyOf:
-              - required:
-                  - accountNumber
-              - required:
-                  - networkTokenData
-
+            required:
+              - networkTokenData
         - title: Network Token Enrolment
+          type: object
           required:
-            - enrolmentType
             - networkTokenData
-          properties:
-            enrolmentType:
-              type: string
-              enum:
-                - NETWORK_TOKEN
           not:
-            anyOf:
-              - required:
-                  - accountNumber
-              - required:
-                  - nfcTokenReference
+            required:
+              - accountNumber
 
     CardholderAuthenticationData:
       type: object

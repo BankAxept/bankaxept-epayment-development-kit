@@ -44,75 +44,90 @@ our [Token Requestor Callback API](./swagger/integrator_token_requestor_callback
 | Deletions          | The token should be considered deleted and not used again.                             |
 | Expiry updates     | An update extending the expiry of a token.                                             |
 
-### Enrolment Standard flow
+### Account Number Enrolment Flow
 
 ```mermaid
 sequenceDiagram
     participant Integrator
-    participant ePaymentPlatform
-    Integrator ->> ePaymentPlatform: Request enrolment
-    activate ePaymentPlatform
-    ePaymentPlatform -->> Integrator: 200 OK.
-    deactivate ePaymentPlatform
-    ePaymentPlatform ->> ePaymentPlatform: Resolve enrolment Status
-    ePaymentPlatform ->> Integrator: Asynchronous enrolment result callback
-    activate Integrator
-    Integrator -->> ePaymentPlatform: 200 OK.
-    deactivate Integrator
-    note left of Integrator: The callback contains a token <br/> which is used in subsequent Payment Requests.
+    participant AuthenticationProvider as Authentication Provider
+    participant EPP as ePayment Platform
 
-    alt subsequent token deletion (For example, end customer deletion)
-        Integrator ->> ePaymentPlatform: Post Token Deletion
-        activate ePaymentPlatform
-        ePaymentPlatform -->> Integrator: 200 OK.
-        deactivate ePaymentPlatform
+    Integrator ->> AuthenticationProvider: Request approval for nonce, accountNumber, and merchantName
+    AuthenticationProvider ->> AuthenticationProvider: Create and sign approveAccount.v1 PermissionGrant
+    AuthenticationProvider -->> Integrator: Signed PermissionGrant
+    Integrator ->> Integrator: Create enrolmentData with nin and accountNumber
+    Integrator ->> Integrator: Create authentication data with enrolmentData, iss, iat,<br/>and signed PermissionGrant
+    Integrator ->> Integrator: Encrypt cardholder authentication data with the EPP public key
+    Integrator ->> EPP: POST /v1/payment-tokens with messageId,<br/>tokenRequestorReference, and encryptedCardholderAuthenticationData
+    activate EPP
+    EPP -->> Integrator: 201 Created
+    deactivate EPP
+    EPP ->> EPP: Resolve account and enrol payment token
+    EPP ->> Integrator: Asynchronous enrolment result callback
+    activate Integrator
+    Integrator -->> EPP: 200 OK
+    deactivate Integrator
+    note left of Integrator: An accepted callback contains the paymentToken<br/>used in subsequent payment requests.
+
+    alt Subsequent token deletion
+        Integrator ->> EPP: POST token deletion
+        activate EPP
+        EPP -->> Integrator: 200 OK
+        deactivate EPP
 
     end
 
-    alt subsequent lifecycle updates (Suspend, Resume, Delete, Expiry updates)
-        ePaymentPlatform ->> Integrator: Asynchronous Token lifecycle update callback
+    alt Subsequent lifecycle update
+        EPP ->> Integrator: Asynchronous token lifecycle update callback
         activate Integrator
-        Integrator -->> ePaymentPlatform: 200 OK.
+        Integrator -->> EPP: 200 OK
         deactivate Integrator
-        note left of Integrator: Note that subsequent lifecycle <br/> updates are initiated <br/> by the EPP and not the Integrator.
+        note left of Integrator: Suspension, resumption, deletion, and expiry updates<br/>are initiated by the ePayment Platform.
 
     end
 
 ```
 
-### Enrolment optional flows
+### Network Token Enrolment Flow
 
-There are optional flows for enrolment that may be implemented by the integrator.
-Note that only one flow may be completed at a time.
-Attempting to perform multiple flows at the same time will result in an error response from the ePayment Platform.
+Network token enrolment creates a BankAxept payment token from an existing primary network token. The associated card
+must be cobadged with BankAxept. The network token payload must contain either `originalTokenId` or `originalToken`, but
+not both. It may also contain `originalTokenRequestorId`. The `networkTokenData` and `accountNumber` fields are mutually
+exclusive. NIN is required for both enrolment flows.
 
-For account number enrolment, `enrolmentType` may be omitted and defaults to `ACCOUNT_NUMBER`.
-The `accountNumber` field is returned in the callback only when `enrolmentType` is `NFC_TOKEN_REFERENCE` or
-`NETWORK_TOKEN`.
+Retrieve the issuer processor certificate using the card's `bankIdentificationNumber`, then use the certificate to
+encrypt the network token payload. Include the resulting value as `encryptedNetworkTokenPayload` together with the
+`bankIdentificationNumber` in `networkTokenData`. The ePayment Platform uses the bank identification number to route the
+enrolment request.
 
-Note that NIN is required for all requests.
+```mermaid
+sequenceDiagram
+    participant Integrator
+    participant AuthenticationProvider as Authentication Provider
+    participant EPP as ePayment Platform
 
-#### BankAxept NFC Token
-
-By sending the BankAxept NFC token in the enrolment request the BankAxept service will automatically
-create a BankAxept EPP token for the end customer. The BankAxept EPP token will be sent in the asynchronous callback to
-the Integrator's Callback Server once the enrolment is successfully processed.
-
-The BankAxept NFC token enrolment flow may be used by setting `enrolmentType` to `NFC_TOKEN_REFERENCE` and providing
-the `nfcTokenReference` in the enrolment request. The `nfcTokenReference` is a 16 digit number that is unique to the
-end customer and their BankAxept NFC token.
-
-#### Network Token Reference
-
-By sending in the Primary Token Id of the card you may enrol a BankAxept EPP token. You may either send the
-tokenId or the DPAN of the token.
-
-The network token reference enrolment flow must set `enrolmentType` to `NETWORK_TOKEN` and contain the
-`networkTokenData` field in the enrolment request.
-This field must contain `encryptedNetworkTokenPayload`, which is encrypted using the public key provided by the issuer processor.
-
-The request must also include the `issuerProcessor` field which is used to route the request to the correct issuer
-processor.
+    Integrator ->> EPP: GET /v1/issuer-processor-certificates/{bankIdentificationNumber}
+    EPP -->> Integrator: PEM encoded issuer processor certificate
+    Integrator ->> Integrator: Create NetworkTokenPayload with originalTokenId or originalToken
+    Integrator ->> Integrator: Encrypt NetworkTokenPayload with the issuer processor certificate
+    Integrator ->> AuthenticationProvider: Request approval for nonce, bankIdentificationNumber,<br/>encryptedNetworkTokenPayload, and merchantName
+    AuthenticationProvider ->> AuthenticationProvider: Create and sign approveNetworkToken.v1 PermissionGrant
+    AuthenticationProvider -->> Integrator: Signed PermissionGrant
+    Integrator ->> Integrator: Create enrolmentData with nin and networkTokenData
+    note right of Integrator: networkTokenData contains bankIdentificationNumber<br/>and encryptedNetworkTokenPayload.
+    Integrator ->> Integrator: Create authentication data with enrolmentData, iss, iat,<br/>and signed PermissionGrant
+    Integrator ->> Integrator: Encrypt cardholder authentication data with the EPP public key
+    Integrator ->> EPP: POST /v1/payment-tokens with messageId,<br/>tokenRequestorReference, and encryptedCardholderAuthenticationData
+    activate EPP
+    EPP -->> Integrator: 201 Created
+    deactivate EPP
+    EPP ->> EPP: Resolve network token and enrol payment token
+    EPP ->> Integrator: Asynchronous enrolment result callback
+    activate Integrator
+    note left of Integrator: An accepted callback contains paymentToken and accountNumber.
+    Integrator -->> EPP: 200 OK
+    deactivate Integrator
+```
 
 ## Creating a payment
 
