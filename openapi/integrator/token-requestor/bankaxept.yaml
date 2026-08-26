@@ -187,6 +187,8 @@ components:
                   - iat
               - required:
                   - iss
+              - required:
+                  - verifiedCardholderAuthenticationSignedData
 
     PermissionGrant:
       $ref: '../components.yaml#/components/schemas/PermissionGrant'

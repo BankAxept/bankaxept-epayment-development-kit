@@ -31,6 +31,9 @@ The integrator creates `NetworkTokenEnrolmentData` containing `iss`, `iat`, `nin
 original token fields, then signs it with the integrator's private key as a compact JWS using `ES256` or `PS256`.
 Include the resulting value as `signedNetworkTokenEnrolmentData` in `EnrolmentCardholderAuthenticationData`.
 
+During manual onboarding, provide EPP with the public certificate corresponding to this private signing key. EPP
+associates the certificate with the integrator profile and uses it to verify `signedNetworkTokenEnrolmentData`.
+
 The Merchant Name is part of the information exchange as seen in our
 [checklist](./getting_started.md#checklist-for-information-exchange).
 
@@ -64,7 +67,7 @@ Account number enrolment and payment requests contain `encryptedCardholderAuthen
 `verifiedCardholderAuthenticationSignedData` in the decrypted object. Network token enrolment contains
 `signedNetworkTokenEnrolmentData` in the decrypted object.
 
-Encrypt the complete cardholder authentication data object using the public certificate from EPP received in point 7
+Encrypt the complete cardholder authentication data object using the public certificate from EPP received in point 8
 of [setting up your EPP integration](./getting_started.md#setting-up-your-epp-integration). The
 `verifiedCardholderAuthenticationSignedData` object can be reviewed in our
 [Components overview](./swagger/epp_components.md).
