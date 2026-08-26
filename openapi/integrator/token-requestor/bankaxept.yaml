@@ -124,31 +124,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/EligibilityError"
 
-  /v1/issuer-processor-certificates/{bankIdentificationNumber}:
-    get:
-      summary: Get issuer processor certificate by bank identification number
-      description: >-
-        Returns the issuer processor certificate associated with the given bank identification number.
-        The PEM encoded certificate is used to encrypt the network token payload.
-      operationId: getIssuerProcessorCertificate
-      parameters:
-        - $ref: '../components.yaml#/components/parameters/correlationId'
-        - $ref: '../components.yaml#/components/parameters/bankIdentificationNumber'
-      responses:
-        '200':
-          description: Returns the issuer processor certificate in PEM format.
-          content:
-            application/pem-certificate-chain:
-              schema:
-                type: string
-                description: PEM encoded issuer processor certificate.
-        '400':
-          description: Invalid input format or missing parameters.
-        '404':
-          description: Issuer processor certificate not found for the given BIN.
-        '500':
-          description: Internal Server Error, request can be retried later.
-
 components:
   schemas:
     EnrolCardRequest:
@@ -177,21 +152,41 @@ components:
 
     EnrolmentCardholderAuthenticationData:
       type: object
-      required:
-        - enrolmentData
-        - iss
-        - iat
       properties:
-        enrolmentData:
-          $ref: '#/components/schemas/EnrolmentData'
         iss:
           $ref: '../components.yaml#/components/schemas/iss'
         iat:
           $ref: '../components.yaml#/components/schemas/iat'
+        enrolmentData:
+          $ref: '#/components/schemas/EnrolmentData'
+        signedNetworkTokenEnrolmentData:
+          $ref: '#/components/schemas/signedNetworkTokenEnrolmentData'
         verifiedCardholderAuthenticationSignedData:
           $ref: '../components.yaml#/components/schemas/verifiedCardholderAuthenticationSignedData'
         cardholderAuthenticationData:
           $ref: '#/components/schemas/CardholderAuthenticationData'
+      oneOf:
+        - title: Account Number Enrolment
+          type: object
+          required:
+            - enrolmentData
+            - iat
+            - iss
+          not:
+            required:
+              - signedNetworkTokenEnrolmentData
+        - title: Network Token Enrolment
+          type: object
+          required:
+            - signedNetworkTokenEnrolmentData
+          not:
+            anyOf:
+              - required:
+                  - enrolmentData
+              - required:
+                  - iat
+              - required:
+                  - iss
 
     PermissionGrant:
       $ref: '../components.yaml#/components/schemas/PermissionGrant'
@@ -199,29 +194,74 @@ components:
     EnrolmentData:
       type: object
       required:
+        - accountNumber
         - nin
       properties:
         nin:
           $ref: '../components.yaml#/components/schemas/nin'
         accountNumber:
           $ref: '../components.yaml#/components/schemas/accountNumber'
+
+    signedNetworkTokenEnrolmentData:
+      type: string
+      description: >-
+        A compact JSON Web Signature (JWS) as defined in RFC 7515 and signed with the integrator's private key.
+        The JWS payload contains only the properties from the NetworkTokenEnrolmentData schema, and only those
+        properties are integrity protected by the signature.
+      example: "eyJhbGciOiJQUzI1NiJ9.eyJpc3MiOiJ0b2tlbi1yZXF1ZXN0b3ItaWQiLCJpYXQiOjE3NTAwMDAwMDAsIm5pbiI6IjEzMDg3NTEyMzQ1IiwiYmFua0lkZW50aWZpY2F0aW9uTnVtYmVyIjoiOTU3ODUzIiwibmV0d29ya1Rva2VuRGF0YSI6eyJvcmlnaW5hbFRva2VuUmVxdWVzdG9ySWQiOiIxMjM0NTY3ODkwMSIsIm9yaWdpbmFsVG9rZW5JZCI6Im5ldHdvcmstdG9rZW4taWQifX0.c2lnbmF0dXJl"
+
+    NetworkTokenEnrolmentData:
+      type: object
+      required:
+        - bankIdentificationNumber
+        - iat
+        - iss
+        - nin
+        - networkTokenData
+      properties:
+        iss:
+          $ref: '../components.yaml#/components/schemas/iss'
+        iat:
+          $ref: '../components.yaml#/components/schemas/iat'
+        nin:
+          $ref: '../components.yaml#/components/schemas/nin'
+        bankIdentificationNumber:
+          type: string
+          pattern: '^[0-9]{6}$'
+          example: "957853"
+          description: >-
+            The Bank Identification Number (BIN) of the payment card.
         networkTokenData:
-          $ref: '../components.yaml#/components/schemas/NetworkTokenData'
+          $ref: '#/components/schemas/NetworkTokenData'
+
+    NetworkTokenData:
+      type: object
+      properties:
+        originalTokenRequestorId:
+          type: string
+          maxLength: 11
+          description: >-
+            Optional Token Requestor Identifier of the original token provided and allocated by the TSP. Including it is
+            strongly recommended because it can provide valuable context when diagnosing network token enrolment issues.
+        originalTokenId:
+          type: string
+          maxLength: 64
+          description: The original token identifier as defined by the TSP.
+        originalToken:
+          type: string
+          maxLength: 19
+          description: The original token used to request the digitization with primary TSP.
       oneOf:
-        - title: Account Number Enrolment
-          type: object
-          required:
-            - accountNumber
+        - required:
+            - originalTokenId
           not:
             required:
-              - networkTokenData
-        - title: Network Token Enrolment
-          type: object
-          required:
-            - networkTokenData
+              - originalToken
+        - required:
+            - originalToken
           not:
             required:
-              - accountNumber
+              - originalTokenId
 
     CardholderAuthenticationData:
       type: object

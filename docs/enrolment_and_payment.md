@@ -92,30 +92,23 @@ sequenceDiagram
 
 Network token enrolment creates a BankAxept payment token from an existing primary network token. The associated card
 must be cobadged with BankAxept. The network token payload must contain either `originalTokenId` or `originalToken`, but
-not both. It may also contain `originalTokenRequestorId`. The `networkTokenData` and `accountNumber` fields are mutually
-exclusive. NIN is required for both enrolment flows.
+not both. `originalTokenRequestorId` is optional, but including it is strongly recommended because it can provide
+valuable context when diagnosing network token enrolment issues.
 
-Retrieve the issuer processor certificate using the card's `bankIdentificationNumber`, then use the certificate to
-encrypt the network token payload. Include the resulting value as `encryptedNetworkTokenPayload` together with the
-`bankIdentificationNumber` in `networkTokenData`. The ePayment Platform uses the bank identification number to route the
-enrolment request.
+Create `NetworkTokenEnrolmentData` with `iss`, `iat`, `nin`, `bankIdentificationNumber`, and `networkTokenData`. Sign
+this object with the integrator's private key as a compact JWS and include the result as
+`signedNetworkTokenEnrolmentData`. The ePayment Platform validates the signature, issuer, and timestamp, and uses the
+bank identification number to route the enrolment request.
 
 ```mermaid
 sequenceDiagram
     participant Integrator
-    participant AuthenticationProvider as Authentication Provider
     participant EPP as ePayment Platform
 
-    Integrator ->> EPP: GET /v1/issuer-processor-certificates/{bankIdentificationNumber}
-    EPP -->> Integrator: PEM encoded issuer processor certificate
-    Integrator ->> Integrator: Create NetworkTokenPayload with originalTokenId or originalToken
-    Integrator ->> Integrator: Encrypt NetworkTokenPayload with the issuer processor certificate
-    Integrator ->> AuthenticationProvider: Request approval for nonce, bankIdentificationNumber,<br/>encryptedNetworkTokenPayload, and merchantName
-    AuthenticationProvider ->> AuthenticationProvider: Create and sign approveNetworkToken.v1 PermissionGrant
-    AuthenticationProvider -->> Integrator: Signed PermissionGrant
-    Integrator ->> Integrator: Create enrolmentData with nin and networkTokenData
-    note right of Integrator: networkTokenData contains bankIdentificationNumber<br/>and encryptedNetworkTokenPayload.
-    Integrator ->> Integrator: Create authentication data with enrolmentData, iss, iat,<br/>and signed PermissionGrant
+    Integrator ->> Integrator: Create NetworkTokenEnrolmentData with iss, iat, nin,<br/>bankIdentificationNumber, and networkTokenData
+    note right of Integrator: networkTokenData contains originalTokenId or originalToken.<br/>originalTokenRequestorId is optional but valuable for diagnostics.
+    Integrator ->> Integrator: Sign NetworkTokenEnrolmentData with the integrator's private key
+    Integrator ->> Integrator: Create authentication data with signedNetworkTokenEnrolmentData
     Integrator ->> Integrator: Encrypt cardholder authentication data with the EPP public key
     Integrator ->> EPP: POST /v1/payment-tokens with messageId,<br/>tokenRequestorReference, and encryptedCardholderAuthenticationData
     activate EPP

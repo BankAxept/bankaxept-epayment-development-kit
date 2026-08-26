@@ -72,7 +72,6 @@ components:
           enum:
             - payment.v1
             - approveAccount.v1
-            - approveNetworkToken.v1
         iat:
           $ref: '#/components/schemas/iat'
         iss:
@@ -126,24 +125,6 @@ components:
             merchantName:
               type: string
               description: The Merchant where the card will be approved
-              maxLength: 70
-
-    ApproveNetworkTokenPermissionV1:
-      allOf:
-        - $ref: "#/components/schemas/BasePermission"
-        - type: object
-          required:
-            - bankIdentificationNumber
-            - encryptedNetworkTokenPayload
-            - merchantName
-          properties:
-            bankIdentificationNumber:
-              $ref: "#/components/schemas/NetworkTokenData/properties/bankIdentificationNumber"
-            encryptedNetworkTokenPayload:
-              $ref: "#/components/schemas/NetworkTokenData/properties/encryptedNetworkTokenPayload"
-            merchantName:
-              type: string
-              description: The merchant where the card will be approved.
               maxLength: 70
 
     PaymentBasePermissionV1:
@@ -222,51 +203,6 @@ components:
           $ref: '#/components/schemas/psn'
         expiryDate:
           $ref: '#/components/schemas/expiryDate'
-
-    NetworkTokenData:
-      type: object
-      required:
-        - bankIdentificationNumber
-        - encryptedNetworkTokenPayload
-      properties:
-        bankIdentificationNumber:
-          type: string
-          pattern: '^[0-9]{6}$'
-          example: "957853"
-          description: >-
-            The Bank Identification Number (BIN) of the payment card.
-        encryptedNetworkTokenPayload:
-          description: >-
-            See schema NetworkTokenPayload for decrypted data format. This must be encrypted using the public key of the issuer processor.
-            See the BankAxept Tokenization and Payment API documentation for more information on how to encrypt the data.
-          type: string
-          example: "eyJ31k90g1j901g131gf1j4gi0.9284g04kp0921jo3113bvRQ1MhUJY34pYi31xgSiApiR1uP4tSXV3DNnY3N5Zq9Bnt1OucN2nJxAqCcND4G8TpGw9kofFcLcs5kXHg7nmIgjI8ZXTYx7GuZ_w6YxVTzCmjT5dpSlOQFkuCfJn2VdKnF4PjaqiKW9fWluOKorUZdsjsDl5PjIjf3ndqCtGEma6TBpKxLX0FnCZzvsVATCBcxqwKLvkAYFdFFtLfxe5OvW0PFsy4OjasODW3Kk55e58v5xXB8bP9hzr5S7sXFlzX2TG583MLLXG3K1E3XG0R262vs2cGgSA1B6zmujvmkpR4lLofwgahpO-ZrhGZtXE0-wFJw.NDB8Ln7XCf1q1p6ddRvnSw.PTBsKUkN5stmSQwrQ-jQLA.ece3W1q3AiMdg5QQbAd1tq_nQWLRkyNnk2mL1TP8fpQ"
-    NetworkTokenPayload:
-      type: object
-      properties:
-        originalTokenRequestorId:
-          type: string
-          maxLength: 11
-          description: Token Requestor Identifier of the original token provided and allocated by TSP.
-        originalTokenId:
-          type: string
-          maxLength: 64
-          description: The original token identifier as defined by the TSP.
-        originalToken:
-          type: string
-          maxLength: 19
-          description: The original token used to request the digitization with primary TSP.
-      oneOf:
-        - required:
-            - originalTokenId
-          not:
-            required:
-              - originalToken
-        - required:
-            - originalToken
-          not:
-            required:
-              - originalTokenId
 
     paymentId:
       type: string
