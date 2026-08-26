@@ -164,7 +164,7 @@ components:
           type: string
           pattern: '^[0-9]{11}$'
           description: |
-            The resulting account number from the enrolment.
+            The resulting account number. Present for successful network token enrolments.
         accountNumberLastFourDigits:
           type: string
           pattern: '^[0-9]{4}$'

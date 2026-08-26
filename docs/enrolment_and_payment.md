@@ -96,7 +96,7 @@ not both. `originalTokenRequestorId` is optional, but including it is strongly r
 valuable context when diagnosing network token enrolment issues.
 
 Create `NetworkTokenEnrolmentData` with `iss`, `iat`, `nin`, `bankIdentificationNumber`, and the original token fields.
-Sign this object with the integrator's private key as a compact JWS and include the result as
+Sign this object with the integrator's private key as a compact JWS using `ES256` or `PS256`, and include the result as
 `signedNetworkTokenEnrolmentData`. The ePayment Platform validates the signature, issuer, and timestamp, and uses the
 bank identification number to route the enrolment request.
 

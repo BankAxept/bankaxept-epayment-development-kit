@@ -28,8 +28,8 @@ The `approveAccount.v1` permission statement contains these properties in order:
 #### For Network Token Enrolment
 
 The integrator creates `NetworkTokenEnrolmentData` containing `iss`, `iat`, `nin`, `bankIdentificationNumber`, and the
-original token fields, then signs it with the integrator's private key as a compact JWS. Include the resulting value as
-`signedNetworkTokenEnrolmentData` in `EnrolmentCardholderAuthenticationData`.
+original token fields, then signs it with the integrator's private key as a compact JWS using `ES256` or `PS256`.
+Include the resulting value as `signedNetworkTokenEnrolmentData` in `EnrolmentCardholderAuthenticationData`.
 
 The Merchant Name is part of the information exchange as seen in our
 [checklist](./getting_started.md#checklist-for-information-exchange).

@@ -205,9 +205,9 @@ components:
     signedNetworkTokenEnrolmentData:
       type: string
       description: >-
-        A compact JSON Web Signature (JWS) as defined in RFC 7515 and signed with the integrator's private key.
-        The JWS payload contains only the properties from the NetworkTokenEnrolmentData schema, and only those
-        properties are integrity protected by the signature.
+        A compact JSON Web Signature (JWS) as defined in RFC 7515, signed with the integrator's private key using ES256
+        or PS256. The JWS payload contains only the properties from the NetworkTokenEnrolmentData schema, and only
+        those properties are integrity protected by the signature.
       example: "eyJhbGciOiJQUzI1NiJ9.eyJpc3MiOiJ0b2tlbi1yZXF1ZXN0b3ItaWQiLCJpYXQiOjE3NTAwMDAwMDAsIm5pbiI6IjEzMDg3NTEyMzQ1IiwiYmFua0lkZW50aWZpY2F0aW9uTnVtYmVyIjoiOTU3ODUzIiwib3JpZ2luYWxUb2tlblJlcXVlc3RvcklkIjoiMTIzNDU2Nzg5MDEiLCJvcmlnaW5hbFRva2VuSWQiOiJuZXR3b3JrLXRva2VuLWlkIn0.c2lnbmF0dXJl"
 
     NetworkTokenEnrolmentData:
@@ -225,23 +225,22 @@ components:
         nin:
           $ref: '../components.yaml#/components/schemas/nin'
         bankIdentificationNumber:
-          type: string
-          pattern: '^[0-9]{6}$'
-          example: "957853"
-          description: >-
-            The Bank Identification Number (BIN) of the payment card.
+          $ref: '../components.yaml#/components/schemas/bankIdentificationNumber'
         originalTokenRequestorId:
           type: string
+          minLength: 1
           maxLength: 11
           description: >-
             Optional Token Requestor Identifier of the original token provided and allocated by the TSP. Including it is
             strongly recommended because it can provide valuable context when diagnosing network token enrolment issues.
         originalTokenId:
           type: string
+          minLength: 1
           maxLength: 64
           description: The original token identifier as defined by the TSP.
         originalToken:
           type: string
+          minLength: 1
           maxLength: 19
           description: The original token used to request the digitization with primary TSP.
       oneOf:
