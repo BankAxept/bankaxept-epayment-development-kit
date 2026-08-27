@@ -73,8 +73,7 @@ components:
             - payment.v1
             - approveAccount.v1
         iat:
-          type: integer
-          minimum: 1600000000
+          $ref: '#/components/schemas/iat'
         iss:
           type: string
         nonce:
