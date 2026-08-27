@@ -73,9 +73,7 @@ components:
             - payment.v1
             - approveAccount.v1
         iat:
-          type: integer
-          minimum: 1600000000
-          maximum: 1800000000
+          $ref: '#/components/schemas/iat'
         iss:
           type: string
         nonce:
@@ -278,7 +276,6 @@ components:
       type: integer
       format: int64
       minimum: 1600000000
-      maximum: 1800000000
     messageId:
       description: >-
         A unique identifier that guarantees message idempotency.
