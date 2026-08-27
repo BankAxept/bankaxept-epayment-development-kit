@@ -126,7 +126,7 @@ erDiagram
         string nonce
         string sub
         string permissionId
-        string Digest
+        string digest
     }
     AccountNumberDigest {
         string nonce
