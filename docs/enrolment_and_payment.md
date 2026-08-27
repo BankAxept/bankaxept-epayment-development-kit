@@ -44,40 +44,82 @@ our [Token Requestor Callback API](./swagger/integrator_token_requestor_callback
 | Deletions          | The token should be considered deleted and not used again.                             |
 | Expiry updates     | An update extending the expiry of a token.                                             |
 
-### Enrolment Standard flow
+### Account Number Enrolment Flow
 
 ```mermaid
 sequenceDiagram
     participant Integrator
-    participant ePaymentPlatform
-    Integrator ->> ePaymentPlatform: Request enrolment
-    activate ePaymentPlatform
-    ePaymentPlatform -->> Integrator: 200 OK.
-    deactivate ePaymentPlatform
-    ePaymentPlatform ->> ePaymentPlatform: Resolve enrolment Status
-    ePaymentPlatform ->> Integrator: Asynchronous enrolment result callback
+    participant AuthenticationProvider as Authentication Provider
+    participant EPP as ePayment Platform
+
+    Integrator ->> AuthenticationProvider: Request approval for nonce, accountNumber, and merchantName
+    AuthenticationProvider ->> AuthenticationProvider: Create and sign approveAccount.v1 PermissionGrant
+    AuthenticationProvider -->> Integrator: Signed PermissionGrant
+    Integrator ->> Integrator: Create enrolmentData with nin and accountNumber
+    Integrator ->> Integrator: Create authentication data with enrolmentData, iss, iat,<br/>and signed PermissionGrant
+    Integrator ->> Integrator: Encrypt cardholder authentication data with the EPP public key
+    Integrator ->> EPP: POST /v1/payment-tokens with messageId,<br/>tokenRequestorReference, and encryptedCardholderAuthenticationData
+    activate EPP
+    EPP -->> Integrator: 201 Created
+    deactivate EPP
+    EPP ->> EPP: Resolve account and enrol payment token
+    EPP ->> Integrator: Asynchronous enrolment result callback
     activate Integrator
-    Integrator -->> ePaymentPlatform: 200 OK.
+    Integrator -->> EPP: 200 OK
     deactivate Integrator
-    note left of Integrator: The callback contains a token <br/> which is used in subsequent Payment Requests.
+    note left of Integrator: An accepted callback contains the paymentToken<br/>used in subsequent payment requests.
 
-    alt subsequent token deletion (For example, end customer deletion)
-        Integrator ->> ePaymentPlatform: Post Token Deletion
-        activate ePaymentPlatform
-        ePaymentPlatform -->> Integrator: 200 OK.
-        deactivate ePaymentPlatform
+    alt Subsequent token deletion
+        Integrator ->> EPP: POST token deletion
+        activate EPP
+        EPP -->> Integrator: 200 OK
+        deactivate EPP
 
     end
 
-    alt subsequent lifecycle updates (Suspend, Resume, Delete, Expiry updates)
-        ePaymentPlatform ->> Integrator: Asynchronous Token lifecycle update callback
+    alt Subsequent lifecycle update
+        EPP ->> Integrator: Asynchronous token lifecycle update callback
         activate Integrator
-        Integrator -->> ePaymentPlatform: 200 OK.
+        Integrator -->> EPP: 200 OK
         deactivate Integrator
-        note left of Integrator: Note that subsequent lifecycle <br/> updates are initiated <br/> by the EPP and not the Integrator.
+        note left of Integrator: Suspension, resumption, deletion, and expiry updates<br/>are initiated by the ePayment Platform.
 
     end
 
+```
+
+### Network Token Enrolment Flow
+
+Network token enrolment creates a BankAxept payment token from an existing primary network token. The associated card
+must be cobadged with BankAxept. `NetworkTokenEnrolmentData` must contain either `originalTokenId` or `originalToken`, but
+not both. `originalTokenRequestorId` is optional, but including it is strongly recommended because it can provide
+valuable context when diagnosing network token enrolment issues.
+
+Create `NetworkTokenEnrolmentData` with `iss`, `iat`, `nin`, `bankIdentificationNumber`, and the original token fields.
+Sign this object with the integrator's private key as a compact JWS using `ES256` or `PS256`, and include the result as
+`signedNetworkTokenEnrolmentData`. The ePayment Platform validates the signature, issuer, and timestamp, and uses the
+bank identification number to route the enrolment request.
+
+```mermaid
+sequenceDiagram
+    participant Integrator
+    participant EPP as ePayment Platform
+
+    Integrator ->> Integrator: Create NetworkTokenEnrolmentData with iss, iat, nin,<br/>bankIdentificationNumber, and the original token fields
+    note right of Integrator: Include originalTokenId or originalToken.<br/>originalTokenRequestorId is optional but valuable for diagnostics.
+    Integrator ->> Integrator: Sign NetworkTokenEnrolmentData with the integrator's private key
+    Integrator ->> Integrator: Create authentication data with signedNetworkTokenEnrolmentData
+    Integrator ->> Integrator: Encrypt cardholder authentication data with the EPP public key
+    Integrator ->> EPP: POST /v1/payment-tokens with messageId,<br/>tokenRequestorReference, and encryptedCardholderAuthenticationData
+    activate EPP
+    EPP -->> Integrator: 201 Created
+    deactivate EPP
+    EPP ->> EPP: Resolve network token and enrol payment token
+    EPP ->> Integrator: Asynchronous enrolment result callback
+    activate Integrator
+    note left of Integrator: An accepted callback contains paymentToken and accountNumber.
+    Integrator -->> EPP: 200 OK
+    deactivate Integrator
 ```
 
 ## Creating a payment

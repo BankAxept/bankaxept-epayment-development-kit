@@ -160,6 +160,8 @@ components:
           $ref: '#/components/schemas/ErrorCode'
         paymentToken:
           $ref: '../components.yaml#/components/schemas/PaymentToken'
+        accountNumber:
+          $ref: '../components.yaml#/components/schemas/accountNumber'
         accountNumberLastFourDigits:
           type: string
           pattern: '^[0-9]{4}$'

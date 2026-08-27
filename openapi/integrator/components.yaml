@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Merchant and Token Requestor APIs Components
   version: 0.3.0
-paths:
+paths: { }
 components:
   schemas:
     Amount:
@@ -342,6 +342,12 @@ components:
       example: "99977512345"
       description: >-
         The payment card's bank account number.
+    bankIdentificationNumber:
+      type: string
+      pattern: '^[0-9]{6}$'
+      example: "957853"
+      description: >-
+        The Bank Identification Number (BIN) of the payment card.
     authenticationDateTime:
       type: string
       format: date-time
@@ -411,6 +417,12 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/merchantReference'
+    bankIdentificationNumber:
+      name: bankIdentificationNumber
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/bankIdentificationNumber'
 
   responses:
     200Ok:

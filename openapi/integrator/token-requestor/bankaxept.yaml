@@ -86,7 +86,7 @@ paths:
               schema:
                 type: object
                 description: Comma-separated list of eligible bank identifiers
-                example: ["9998", "0001"]
+                example: [ "9998", "0001" ]
         '400':
           description: Invalid input format
   /v1/card-eligibility:
@@ -152,21 +152,43 @@ components:
 
     EnrolmentCardholderAuthenticationData:
       type: object
-      required:
-        - enrolmentData
-        - iss
-        - iat
       properties:
-        enrolmentData:
-          $ref: '#/components/schemas/EnrolmentData'
         iss:
           $ref: '../components.yaml#/components/schemas/iss'
         iat:
           $ref: '../components.yaml#/components/schemas/iat'
+        enrolmentData:
+          $ref: '#/components/schemas/EnrolmentData'
+        signedNetworkTokenEnrolmentData:
+          $ref: '#/components/schemas/signedNetworkTokenEnrolmentData'
         verifiedCardholderAuthenticationSignedData:
           $ref: '../components.yaml#/components/schemas/verifiedCardholderAuthenticationSignedData'
         cardholderAuthenticationData:
           $ref: '#/components/schemas/CardholderAuthenticationData'
+      oneOf:
+        - title: Account Number Enrolment
+          type: object
+          required:
+            - enrolmentData
+            - iat
+            - iss
+          not:
+            required:
+              - signedNetworkTokenEnrolmentData
+        - title: Network Token Enrolment
+          type: object
+          required:
+            - signedNetworkTokenEnrolmentData
+          not:
+            anyOf:
+              - required:
+                  - enrolmentData
+              - required:
+                  - iat
+              - required:
+                  - iss
+              - required:
+                  - verifiedCardholderAuthenticationSignedData
 
     PermissionGrant:
       $ref: '../components.yaml#/components/schemas/PermissionGrant'
@@ -174,13 +196,66 @@ components:
     EnrolmentData:
       type: object
       required:
-        - nin
         - accountNumber
+        - nin
       properties:
         nin:
           $ref: '../components.yaml#/components/schemas/nin'
         accountNumber:
           $ref: '../components.yaml#/components/schemas/accountNumber'
+
+    signedNetworkTokenEnrolmentData:
+      type: string
+      description: >-
+        A compact JSON Web Signature (JWS) as defined in RFC 7515, signed with the integrator's private key using ES256
+        or PS256. The JWS payload contains only the properties from the NetworkTokenEnrolmentData schema, and only
+        those properties are integrity protected by the signature.
+      example: "eyJhbGciOiJQUzI1NiJ9.eyJpc3MiOiJ0b2tlbi1yZXF1ZXN0b3ItaWQiLCJpYXQiOjE3NTAwMDAwMDAsIm5pbiI6IjEzMDg3NTEyMzQ1IiwiYmFua0lkZW50aWZpY2F0aW9uTnVtYmVyIjoiOTU3ODUzIiwib3JpZ2luYWxUb2tlblJlcXVlc3RvcklkIjoiMTIzNDU2Nzg5MDEiLCJvcmlnaW5hbFRva2VuSWQiOiJuZXR3b3JrLXRva2VuLWlkIn0.c2lnbmF0dXJl"
+
+    NetworkTokenEnrolmentData:
+      type: object
+      required:
+        - bankIdentificationNumber
+        - iat
+        - iss
+        - nin
+      properties:
+        iss:
+          $ref: '../components.yaml#/components/schemas/iss'
+        iat:
+          $ref: '../components.yaml#/components/schemas/iat'
+        nin:
+          $ref: '../components.yaml#/components/schemas/nin'
+        bankIdentificationNumber:
+          $ref: '../components.yaml#/components/schemas/bankIdentificationNumber'
+        originalTokenRequestorId:
+          type: string
+          minLength: 1
+          maxLength: 11
+          description: >-
+            Optional Token Requestor Identifier of the original token provided and allocated by the TSP. Including it is
+            strongly recommended because it can provide valuable context when diagnosing network token enrolment issues.
+        originalTokenId:
+          type: string
+          minLength: 1
+          maxLength: 64
+          description: The original token identifier as defined by the TSP.
+        originalToken:
+          type: string
+          minLength: 1
+          maxLength: 19
+          description: The original token used to request the digitization with primary TSP.
+      oneOf:
+        - required:
+            - originalTokenId
+          not:
+            required:
+              - originalToken
+        - required:
+            - originalToken
+          not:
+            required:
+              - originalTokenId
 
     CardholderAuthenticationData:
       type: object
