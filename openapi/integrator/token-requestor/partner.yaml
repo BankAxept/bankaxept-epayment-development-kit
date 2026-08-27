@@ -161,10 +161,9 @@ components:
         paymentToken:
           $ref: '../components.yaml#/components/schemas/PaymentToken'
         accountNumber:
-          type: string
-          pattern: '^[0-9]{11}$'
-          description: |
-            The resulting account number. Present for successful network token enrolments.
+          allOf:
+            - $ref: '../components.yaml#/components/schemas/accountNumber'
+          description: The resulting account number. Present for successful network token enrolments.
         accountNumberLastFourDigits:
           type: string
           pattern: '^[0-9]{4}$'
