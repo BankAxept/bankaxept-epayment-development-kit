@@ -31,11 +31,12 @@ be performed.
 3. Provide a `callBackURL` which we will utilize as our address prefix for all callbacks.
 4. Provide the certified Authentication Provider which you will use to Authenticate payments.
 5. For network token enrolment, provide the public certificate for the private key that will sign
-   `NetworkTokenEnrolmentData`.
+   `NetworkTokenEnrolmentData`, and the wallet public encryption certificate that EPP will use to encrypt the account
+   number in the enrolment callback.
 6. Create a bCrypt based hash of a secret of your choice. We recommend reading up
    on [bCrypt](https://en.wikipedia.org/wiki/Bcrypt#) to understand the mechanisms involved.
-7. Send the resulting IPs, CallbackUrl, bCrypt hash, and, when applicable, public signing certificate to your BankAxept
-   ePayment team contact.
+7. Send the resulting IPs, CallbackUrl, bCrypt hash, and, when applicable, public signing and wallet public encryption
+   certificates to your BankAxept ePayment team contact.
 8. Receive EPP's Public Certificate for encryption of sensitive data.
 9. Generate an access token as described in the [Authorization](#authorization) section
 10. Utilize the access token to perform payments as described in
@@ -99,6 +100,7 @@ sequenceDiagram
 | ISS                                   | Once the your profile is set up your will receive the Issuer ID corresponding to the your Integrator or Authentication Provider profile.                      |
 | EPP public certificates               | Is sent by EPP during setup, 1. needed to encrypt parts of requests and 2. MTLS verification of callbacks.                                                    |
 | Integrator public signing certificate | For network token enrolment, the integrator sends this certificate to EPP for verification of `signedNetworkTokenEnrolmentData`.                              |
+| Wallet public encryption certificate  | For network token enrolment, the wallet sends this certificate to EPP for encryption of `encryptedAccountNumber` in the enrolment callback.                    |
 | Merchant Name                         | Is sent by EPP during setup and must be used as `merchantName` in enrolment permission statements.                                                            |
 | Token Requestor ID                    | Is sent by EPP during setup and must be used as the encryption issuer.                                                                                        |
 | MerchantId (optional)                 | Depending on your setup you might be issued a new MerchantId as part of your registration or you might .                                                      |
