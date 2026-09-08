@@ -35,7 +35,7 @@ be performed.
    encrypt the `encryptedAccountNumber` field in a successful enrolment callback.
 6. Create a bCrypt based hash of a secret of your choice. We recommend reading up
    on [bCrypt](https://en.wikipedia.org/wiki/Bcrypt#) to understand the mechanisms involved.
-7. Send the resulting IPs, callback URL, bCrypt hash, and, when applicable, public signing and wallet public encryption
+7. Send the list of IPs, callback URL, bCrypt hash, and, when applicable, public signing and wallet public encryption
    certificates to your BankAxept ePayment team contact.
 8. Receive EPP's Public Certificate for encryption of sensitive data.
 9. Generate an access token as described in the [Authorization](#authorization) section
