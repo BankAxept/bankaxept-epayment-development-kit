@@ -163,9 +163,9 @@ components:
         encryptedAccountNumber:
           type: string
           description: >-
-            The raw 11-digit payment card bank account number encrypted with the wallet public key as a compact JSON Web
-            Encryption (JWE) value according to RFC 7516, using RSA-OAEP-256 for key encryption and A256CBC-HS512 for
-            content encryption.
+            The raw 11-digit account number, as a string, encrypted for the wallet using compact JSON Web Encryption
+            (JWE, RFC 7516). Uses RSA-OAEP-256 (`alg`) and A256CBC-HS512 (`enc`), which requires an RSA wallet public
+            key or certificate.
           example: "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.UMv5BCnBKy9Ho_bArIj9jHxuY7TJFx4lptJvfhJYu8i9AKAkLQGu0O8HbXiDWXALUjxHcWKEHnce580EYYqcFqQN-f8-oa3tj75OGpO_uHlXsCU1bZdfZ3yxjWg2oPoV5UjclSJTx5ha-N6P_xhepEqHdiWqAtyKY1rDT0OQ-PdEy9HaFS9GwN1RnKQhyzUm-HhN8KLBPccF2nCMlrE5jyw9B1L5yfBGrlvqtHnvcxlTRaXnz9YVYbKOLU5N3poYRP9PAJvRApjCES6UTPsOBkupfQrv8DztWpTLbxMrJdWX0rUvnSozKuYgrpUWTUFIW09vZW5AtvBA6fiPUEuqeA.jJ2GBFH7hxoTtH3QwgvjgA.9RxDp1vJJ7DTaRTdqr7gsQ.8-LOcpV-xwIjY5__SdL239cDzH9371SFfrHHQfV0N3A"
         accountNumberLastFourDigits:
           type: string
