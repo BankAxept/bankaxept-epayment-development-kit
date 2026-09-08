@@ -97,7 +97,7 @@ sequenceDiagram
 | ClientSecret                         | Yes      | A bCrypt secret that is **kept secret at the Integrator** and used to generate access tokens.                                                                 |
 | ClientSecret bCrypt Hash             | Yes      | A bCrypt secret hash that is sent to the ePaymentPlatform and configured to the Integrators clientID                                                          |
 | Authentication Provider              | Yes      | Inform the EPP team which Authentication Provider you will be utilizing. The ID from this setup must be used in the Authentication of Enrolment and Payment.  |
-| ISS                                  | Yes      | Once your profile is set up, you will receive the Issuer ID for your Integrator or Authentication Provider profile.                                          |
+| ISS                                  | Yes      | Once your profile is set up, you will receive the Issuer ID for your Integrator or Authentication Provider profile.                                           |
 | EPP public certificates              | Yes      | Is sent by EPP during setup, 1. needed to encrypt parts of requests and 2. MTLS verification of callbacks.                                                    |
 | Merchant public signing certificate  | No       | Required only when using Merchant Initiated Transactions. The merchant sends this certificate to EPP for verification of `signedPaymentData`.                 |
 | Wallet public signing certificate    | No       | Required only when using network token enrolment. The integrator sends this certificate to EPP for verification of `signedNetworkTokenEnrolmentData`.         |
