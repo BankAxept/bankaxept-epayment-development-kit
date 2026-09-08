@@ -31,8 +31,8 @@ be performed.
 3. Provide a `callBackURL` which we will utilize as our address prefix for all callbacks.
 4. Provide the certified Authentication Provider which you will use to Authenticate payments.
 5. For network token enrolment, provide the public certificate for the private key that will sign
-   `NetworkTokenEnrolmentData`, and the wallet public encryption certificate that EPP will use to encrypt the account
-   number in the enrolment callback.
+   `NetworkTokenEnrolmentData`. You may also provide the wallet public encryption certificate, which EPP uses to encrypt
+   the account number in a successful enrolment callback.
 6. Create a bCrypt based hash of a secret of your choice. We recommend reading up
    on [bCrypt](https://en.wikipedia.org/wiki/Bcrypt#) to understand the mechanisms involved.
 7. Send the resulting IPs, CallbackUrl, bCrypt hash, and, when applicable, public signing and wallet public encryption
@@ -99,11 +99,12 @@ sequenceDiagram
 | Authentication Provider              | Yes      | Inform the EPP team which Authentication Provider you will be utilizing. The ID from this setup must be used in the Authentication of Enrolment and Payment.  |
 | ISS                                  | Yes      | Once the your profile is set up your will receive the Issuer ID corresponding to the your Integrator or Authentication Provider profile.                      |
 | EPP public certificates              | Yes      | Is sent by EPP during setup, 1. needed to encrypt parts of requests and 2. MTLS verification of callbacks.                                                    |
-| Wallet public signing certificate    | Yes      | For network token enrolment, the integrator sends this certificate to EPP for verification of `signedNetworkTokenEnrolmentData`.                              |
+| Merchant public signing certificate  | No       | Required only when using Merchant Initiated Transactions. The merchant sends this certificate to EPP for verification of `signedPaymentData`.                 |
+| Wallet public signing certificate    | No       | Required only when using network token enrolment. The integrator sends this certificate to EPP for verification of `signedNetworkTokenEnrolmentData`.         |
 | Wallet public encryption certificate | No       | When provided, EPP encrypts and returns `encryptedAccountNumber` in successful account number and network token enrolment callbacks.                          |
 | Merchant Name                        | Yes      | Is sent by EPP during setup and must be used as `merchantName` in enrolment permission statements.                                                            |
 | Token Requestor ID                   | Yes      | Is sent by EPP during setup and must be used as the encryption issuer.                                                                                        |
-| MerchantId (optional)                | No       | Depending on your setup you might be issued a new MerchantId as part of your registration or you might .                                                      |
+| MerchantId (optional)                | No       | Depending on your setup you might be issued a new MerchantId as part of your registration or you might.                                                       |
 
 ### API entity overview.
 
