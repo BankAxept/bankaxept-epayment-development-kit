@@ -119,7 +119,7 @@ sequenceDiagram
     EPP ->> EPP: Resolve network token and enrol payment token
     EPP ->> Integrator: Asynchronous enrolment result callback
     activate Integrator
-    note left of Integrator: An accepted callback contains paymentToken.<br/>When a wallet public encryption certificate was provided,<br/>it also contains encryptedAccountNumber, encrypted using RSA-OAEP-256<br/>for key encryption and A256CBC-HS512 for content encryption.
+    note left of Integrator: An accepted callback contains paymentToken.<br/>When a wallet public encryption certificate was provided,<br/>it also contains encryptedAccountNumber.
     Integrator -->> EPP: 200 OK
     deactivate Integrator
 ```
