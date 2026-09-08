@@ -67,7 +67,7 @@ sequenceDiagram
     activate Integrator
     Integrator -->> EPP: 200 OK
     deactivate Integrator
-    note left of Integrator: An accepted callback contains the paymentToken<br/>used in subsequent payment requests.
+    note left of Integrator: An accepted callback contains paymentToken.<br/>When a wallet public encryption certificate was provided,<br/>it also contains encryptedAccountNumber.
 
     alt Subsequent token deletion
         Integrator ->> EPP: POST token deletion
@@ -95,8 +95,7 @@ must be cobadged with BankAxept. `NetworkTokenEnrolmentData` must contain either
 not both. `originalTokenRequestorId` is optional, but including it is strongly recommended because it can provide
 valuable context when diagnosing network token enrolment issues.
 
-Before using this flow, provide EPP with the wallet public encryption certificate during onboarding. EPP uses this
-certificate to encrypt `encryptedAccountNumber` in an accepted enrolment callback.
+You may provide EPP with a wallet public encryption certificate during onboarding. When provided, EPP encrypts and includes `encryptedAccountNumber` in an accepted enrolment callback.
 
 Create `NetworkTokenEnrolmentData` with `iss`, `iat`, `nin`, `bankIdentificationNumber`, and the original token fields.
 Sign this object with the integrator's private key as a compact JWS using `ES256` or `PS256`, and include the result as
@@ -120,7 +119,7 @@ sequenceDiagram
     EPP ->> EPP: Resolve network token and enrol payment token
     EPP ->> Integrator: Asynchronous enrolment result callback
     activate Integrator
-    note left of Integrator: An accepted callback contains paymentToken and encryptedAccountNumber.<br/>EPP encrypts the raw account number with the wallet public key<br/>using RSA-OAEP-256 for key encryption and A256CBC-HS512 for content encryption.
+    note left of Integrator: An accepted callback contains paymentToken.<br/>When a wallet public encryption certificate was provided,<br/>it also contains encryptedAccountNumber, encrypted using RSA-OAEP-256<br/>for key encryption and A256CBC-HS512 for content encryption.
     Integrator -->> EPP: 200 OK
     deactivate Integrator
 ```
