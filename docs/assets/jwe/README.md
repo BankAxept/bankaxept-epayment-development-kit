@@ -28,7 +28,7 @@ Payment PermissionGrant payload.
 `encryptedEnrolmentCardholderAuthenticationData` example in
 [the Token Requestor API specification](../../../openapi/integrator/token-requestor/bankaxept.yaml). This vector
 represents an inbound account number enrolment authentication request, including the
-`accountNumberEnrolment` signed JWS.
+`approveAccount.v1` PermissionGrant in `verifiedCardholderAuthenticationSignedData`.
 
 ## Wallet Recipient Vector
 
