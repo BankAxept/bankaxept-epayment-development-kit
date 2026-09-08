@@ -7,7 +7,7 @@ examples in the BankAxept ePayment API specifications.
 
 `certs/authentication-provider-key.pem` and `certs/authentication-provider-cert.pem` are an intentionally public,
 nonproduction 2048 bit RSA Authentication Provider signing key pair. The `verifiedCardholderAuthenticationSignedData`
-example in [the shared API components](../../../openapi/integrator/components.yaml) uses PS256 and contains this
+example in [the shared API components](../../swagger/epp_components.md) uses PS256 and contains this
 Payment PermissionGrant payload.
 
 ### Payment
@@ -26,14 +26,14 @@ Payment PermissionGrant payload.
 
 `certs/epp-key.pem` and `certs/epp-cert.pem` decrypt and encrypt the
 `encryptedEnrolmentCardholderAuthenticationData` example in
-[the Token Requestor API specification](../../../openapi/integrator/token-requestor/bankaxept.yaml). This vector
+[the Token Requestor API specification](../../swagger/integrator_token_requestor_bankaxept.md). This vector
 represents an inbound account number enrolment authentication request, including the
 `approveAccount.v1` PermissionGrant in `verifiedCardholderAuthenticationSignedData`.
 
 ## Wallet Recipient Vector
 
 `certs/wallet-key.pem` and `certs/wallet-cert.pem` decrypt and encrypt the `encryptedAccountNumber` callback example in
-[the Token Requestor API specification](../../../openapi/integrator/token-requestor/partner.yaml). Its plaintext is
+[the Token Requestor API specification](../../swagger/integrator_token_requestor_callback.md). Its plaintext is
 `99980000008`.
 
 EPP uses the Wallet public certificate to encrypt the `encryptedAccountNumber` callback field.
@@ -41,7 +41,7 @@ EPP uses the Wallet public certificate to encrypt the `encryptedAccountNumber` c
 ## Payment Authentication Vector
 
 The EPP key pair decrypts and encrypts the `encryptedPaymentCardholderAuthenticationData` example in
-[the shared API components](../../../openapi/integrator/components.yaml). This vector includes the `payment` signed
+[the shared API components](../../swagger/epp_components.md). This vector includes the `payment` signed
 JWS.
 
 ## Security Warning
