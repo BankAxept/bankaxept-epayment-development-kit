@@ -160,8 +160,13 @@ components:
           $ref: '#/components/schemas/ErrorCode'
         paymentToken:
           $ref: '../components.yaml#/components/schemas/PaymentToken'
-        accountNumber:
-          $ref: '../components.yaml#/components/schemas/accountNumber'
+        encryptedAccountNumber:
+          type: string
+          description: >-
+            Returned only when a wallet public encryption certificate is configured. The raw 11-digit account number, as
+            a string, is encrypted for the wallet using compact JSON Web Encryption (JWE, RFC 7516). Uses RSA-OAEP-256
+            (`alg`) and A256CBC-HS512 (`enc`), which requires an RSA wallet public key or certificate.
+          example: "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.I-CFAsN2CAQcQ3qMqXPtClBdlBKlWt7rpQXAG4vNaLv5V9CF1CAOgW6UePdjgfLTLKLFoKXRENWoUt554fTyis1CtieeXoxrrMa8h6wTqrvGDj4P-DDoPMeUecDbvQCGRdCdkHIbiFKG_-htxGMoH58vxDUObusX9gG5qypZXx3CnyunJS1Q6v1oXQ5QYWCf6z2871aqtluOz0igezonvAu6mg3AKb1ROyFDkS2sPhPBEKsykDxDJpjHlPqT-MgqJNQUqbbeBQHeS8blPW0SmqogmE5Sma_XDXElbVgKSW9zIxIFyV5_4e54asM678Fpea_MZgoxLOKGeUZZc3mMxA.iuvnFaQUQL5SroLjmC7NCw.-v2KK6L765Iq-oFj5nUV2A.Q2LzNRewwsYH7adf2VeGWymkz2AXcRjojNhmVDlxd50"
         accountNumberLastFourDigits:
           type: string
           pattern: '^[0-9]{4}$'
@@ -171,7 +176,6 @@ components:
           type: string
           pattern: '^[0-9]{4}$'
           example: "7001"
-
     EnrolmentStatus:
       type: string
       example: Accepted
