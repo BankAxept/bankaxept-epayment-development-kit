@@ -7,7 +7,7 @@ or an unfixed schedule.
 
 | Concept             | Description                                                                                                                                             |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CIT                 | Customer Initiated Transaction. A transaction initiated by the customer, where the customer is present and actively involved.                           |
+| CIT                 | Customer Initiated Transaction. A transaction initiated by the customer, where the customer is pr2esent and actively involved.                          |
 | MIT                 | Merchant Initiated Transaction. A transaction initiated by the merchant, where the customer is not present and does not actively participate.           |
 | Recurring Agreement | An agreement between the customer and the merchant that allows the merchant to charge future transactions without requiring the customer to be present. |
 
@@ -25,7 +25,7 @@ responsibility of the merchant.
 ## Recurring Agreements
 
 The Recurring Agreements primary definition is from "type" value.
-Currently only "UNCOF" is supported, with future support for "Support" and "Instalment" being planned.
+Currently only "UNCOF" is supported, with future support for "Subscription" and "Instalment" being planned.
 
 Note that a recurring agreement may include a payment component, or it might be set up with a zero amount payment.
 In either case a verification of the payment source will be performed at the moment of the agreement setup by the
@@ -46,9 +46,9 @@ The following example shows metadata that can be provided for a recurring agreem
 ```
 
 These are optional and is for informational purposes only. The interval is the time between each transaction, and the
-count is
-the number of transactions that will be performed. The merchant is responsible for ensuring that the transactions are
-performed in accordance with the agreement, and that the customer is informed about the details of the agreement.
+count is the number of transactions that will be performed. The merchant is responsible for ensuring that the
+transactions are performed in accordance with the agreement, and that the customer is informed about the details of the
+agreement.
 
 ### Termination of Recurring Agreements
 
@@ -58,7 +58,7 @@ agreement will be removed from the system.
 ## Merchant Initiated Transactions (MITs)
 
 MITs are server to server requests with no requirement for the customer to be present.
-They are processsed as normal payment requests, but with the addition of a payment agreement reference.
+They are processed as normal payment requests, but with the addition of a payment agreement reference.
 In addition there are no requirements for a DSCA component, as the customer has already approved the agreement.
 
 ## Flow
