@@ -23,7 +23,7 @@ This might be sent as an array of bank identifiers to verify multiple banks acco
 As a synchronous response you will get all the bank identifiers in your request that are eligible for enrolment.
 
 While the list of eligible banks is being constantly updated a 1 hour cache or similar is recommended to avoid
-unnecessary calls. Evaluate as needed pr your system.
+unnecessary calls. Evaluate as needed per your system.
 
 ### Tokenization
 
@@ -51,7 +51,6 @@ sequenceDiagram
     participant Integrator
     participant AuthenticationProvider as Authentication Provider
     participant EPP as ePayment Platform
-
     Integrator ->> AuthenticationProvider: Request approval for nonce, accountNumber, and merchantName
     AuthenticationProvider ->> AuthenticationProvider: Create and sign approveAccount.v1 PermissionGrant
     AuthenticationProvider -->> Integrator: Signed PermissionGrant
@@ -91,11 +90,12 @@ sequenceDiagram
 ### Network Token Enrolment Flow
 
 Network token enrolment creates a BankAxept payment token from an existing primary network token. The associated card
-must be cobadged with BankAxept. `NetworkTokenEnrolmentData` must contain either `originalTokenId` or `originalToken`, but
-not both. `originalTokenRequestorId` is optional, but including it is strongly recommended because it can provide
+must be cobadged with BankAxept. `NetworkTokenEnrolmentData` must contain either `originalTokenId` or `originalToken`,
+but not both. `originalTokenRequestorId` is optional, but including it is strongly recommended because it can provide
 valuable context when diagnosing network token enrolment issues.
 
-You may provide EPP with a wallet public encryption certificate during onboarding. When provided, EPP encrypts and includes `encryptedAccountNumber` in an accepted enrolment callback.
+You may provide EPP with a wallet public encryption certificate during onboarding. When provided, EPP encrypts and
+includes `encryptedAccountNumber` in an accepted enrolment callback.
 
 Create `NetworkTokenEnrolmentData` with `iss`, `iat`, `nin`, `bankIdentificationNumber`, and the original token fields.
 Sign this object with the integrator's private key as a compact JWS using `ES256` or `PS256`, and include the result as
@@ -106,7 +106,6 @@ bank identification number to route the enrolment request.
 sequenceDiagram
     participant Integrator
     participant EPP as ePayment Platform
-
     Integrator ->> Integrator: Create NetworkTokenEnrolmentData with iss, iat, nin,<br/>bankIdentificationNumber, and the original token fields
     note right of Integrator: Include originalTokenId or originalToken.<br/>originalTokenRequestorId is optional but valuable for diagnostics.
     Integrator ->> Integrator: Sign NetworkTokenEnrolmentData with the integrator's private key
@@ -168,9 +167,9 @@ sequenceDiagram
 `messageId`: The `messageId`field is considered the Integrator's unique identifier of a PaymentRequest, and can be used
 in the case of a [Rollback Request](./swagger/integrator_merchant_bankaxept.md).
 of an ongoing payment. The ePaymentPlatform performs duplicate controls on the `messageId` field, and acts idempotent on
-requests with the same `messageId`. Therefore, it *must* be unique pr separate payment request. Meaning that if multiple
-are done for the same Order (for example a retry due to a previously failed payment request.), a new `messageId` must be
-used.
+requests with the same `messageId`. Therefore, it *must* be unique per separate payment request. Meaning that if
+multiple are done for the same Order (for example a retry due to a previously failed payment request.), a new
+`messageId` must be used.
 
 `merchantOrderReference`: The `merchantOrderReference`field is considered a reference to the Merchant's Order which
 might be distinct from the Integrator's own `messageId`.
@@ -217,7 +216,7 @@ In the case of an error or timeout (for example due to a network issue), the req
 Once a Cutoff request is received the `batchNumber` will increase and the new value will be used for all the subsequent
 payments until the next cutoff, at which point the `batchNumber` will increase again.
 
-We recommend settling pr merchant once a day.
+We recommend settling per merchant once a day.
 
 Once a Settlement is successfully created the ePaymentPlatform will asynchronously send a callback to the Integrator's
 Callback Server with the result of the Settlement.
@@ -248,7 +247,7 @@ When you want to release any remaining un-captured funds related the transaction
 
 ### Capture
 
-Must be performed 7 days within the Payment Request. The `paymentId` is used to identify the payment to be captured.
+Must be performed within 7 days of the Payment Request. The `paymentId` is used to identify the payment to be captured.
 Where 7 days is defined as `7*24 hours` from the time the Payment Request was sent.
 May be performed with a partial amount.
 
@@ -273,5 +272,5 @@ This might be due to, but not limited to:
 
 #### Rollback of refund
 
-A refund that requires a rollback `must` be roll-backed within 1 day (24 hours) and for the full amount of the performed
+A refund that requires a rollback `must` be rolled back within 1 day (24 hours) and for the full amount of the performed
 refund. 
