@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.9.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.8.0...v2.9.0) (2026-09-11)
+
+
+### Features
+
+* add recurring abstract definition to complement tech spec ([#327](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/327)) ([28eb5e4](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/28eb5e46ee7d2683fb27b56c607fca4cb45e42f9))
+* **enrolment:** add support for network token enrolment ([#320](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/320)) ([899c1b3](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/899c1b31e324c458e55263ae2f10dc764d067bb4))
+* **enrolment:** encrypt callback account number ([#328](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/328)) ([b66e58e](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/b66e58ed2cf6f5665de438af0f352bbddaf60761))
+
+
+### Bug Fixes
+
+* correct documentation links ([#329](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/329)) ([4c69a36](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/4c69a3684fc4efc554d657fa3d65f32f3d47d384))
+* **openapi:** remove iat maximum ([#323](https://github.com/BankAxept/bankaxept-epayment-development-kit/issues/323)) ([702df9d](https://github.com/BankAxept/bankaxept-epayment-development-kit/commit/702df9d15957729092c7e9bb10718daf73a812e4))
+
 ## [2.8.0](https://github.com/BankAxept/bankaxept-epayment-development-kit/compare/v2.7.4...v2.8.0) (2026-06-22)
 
 
