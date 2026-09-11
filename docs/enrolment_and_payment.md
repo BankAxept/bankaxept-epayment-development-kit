@@ -91,11 +91,11 @@ sequenceDiagram
 
 Network token enrolment creates a BankAxept payment token from an existing primary network token. The associated card
 must be cobadged with BankAxept. `NetworkTokenEnrolmentData` must contain either `originalTokenId` or `originalToken`,
-but
-not both. `originalTokenRequestorId` is optional, but including it is strongly recommended because it can provide
+but not both. `originalTokenRequestorId` is optional, but including it is strongly recommended because it can provide
 valuable context when diagnosing network token enrolment issues.
 
-You may provide EPP with a wallet public encryption certificate during onboarding. When provided, EPP encrypts and includes `encryptedAccountNumber` in an accepted enrolment callback.
+You may provide EPP with a wallet public encryption certificate during onboarding. When provided, EPP encrypts and
+includes `encryptedAccountNumber` in an accepted enrolment callback.
 
 Create `NetworkTokenEnrolmentData` with `iss`, `iat`, `nin`, `bankIdentificationNumber`, and the original token fields.
 Sign this object with the integrator's private key as a compact JWS using `ES256` or `PS256`, and include the result as
@@ -168,9 +168,8 @@ sequenceDiagram
 in the case of a [Rollback Request](./swagger/integrator_merchant_bankaxept.md).
 of an ongoing payment. The ePaymentPlatform performs duplicate controls on the `messageId` field, and acts idempotent on
 requests with the same `messageId`. Therefore, it *must* be unique per separate payment request. Meaning that if
-multiple
-are done for the same Order (for example a retry due to a previously failed payment request.), a new `messageId` must be
-used.
+multiple are done for the same Order (for example a retry due to a previously failed payment request.), a new
+`messageId` must be used.
 
 `merchantOrderReference`: The `merchantOrderReference`field is considered a reference to the Merchant's Order which
 might be distinct from the Integrator's own `messageId`.
