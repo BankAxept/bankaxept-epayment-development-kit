@@ -272,10 +272,10 @@ paths:
     post:
       tags:
         - Recurring Agreement
-      summary: Request a new payment agreement
+      summary: Request a new recurring agreement
       description: >-
-        Creates a payment agreement initiated by a customer‑initiated payment. When the authorization is approved,
-        the IDs of both the payment agreement and the proof of payment are returned with unique references
+        Creates a recurring agreement initiated by a customer‑initiated payment. When the authorization is approved,
+        the IDs of both the recurring agreement and the proof of payment are returned with unique references
         (agreementId and paymentId). The result of the agreement processing will be returned asynchronously as 
         described in the Getting Started Guide.
       operationId: requestPaymentAgreement
@@ -308,10 +308,10 @@ paths:
     delete:
       tags:
         - Recurring Agreement
-      summary: Rollback a recurring payment agreement request
+      summary: Rollback a recurring recurring agreement request
       operationId: rollbackPaymentAgreement
       description: >-
-        Rollback an ongoing payment agreement request.
+        Rollback an ongoing recurring agreement request.
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
         - $ref: '../components.yaml#/components/parameters/messageId'
@@ -335,9 +335,9 @@ paths:
     post:
       tags:
         - Recurring Agreement
-      summary: Terminate a payment agreement
+      summary: Terminate a recurring agreement
       description: >-
-        Terminate a payment agreement.
+        Terminate a recurring agreement.
       operationId: terminateAgreement
       parameters:
         - $ref: '../components.yaml#/components/parameters/correlationId'
@@ -645,7 +645,7 @@ components:
           type: string
           enum: [ UNCOF, SUBSCRIPTION, INSTALMENT ]
           description: >-
-            Specifies the context of the recurring payment agreement.
+            Specifies the context of the recurring recurring agreement.
             Allowed values are "UNCOF", "SUBSCRIPTION" and "INSTALMENT" (Only "UNCOF" is supported in pilot).
         interval:
           type: object
@@ -669,7 +669,7 @@ components:
         count:
           type: integer
           description: >-
-            The total number of payments in the recurring payment agreement. This field is required when type is INSTALMENT.
+            The total number of payments in the recurring agreement. This field is required when type is INSTALMENT.
           minimum: 1
           maximum: 999
         amount:

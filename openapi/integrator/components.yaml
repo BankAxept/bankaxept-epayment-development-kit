@@ -215,7 +215,7 @@ components:
       format: uuid
       example: "5b7e9f2c-8a1d-4e3b-a7c9-3f5d8e1a4b6c"
       description: >-
-        The identifier for a specific payment agreement.
+        The identifier for a specific recurring agreement.
     merchantName:
       type: string
       maxLength: 100
