@@ -1,6 +1,6 @@
 # Recurring Payments
 
-BankAxept ePayment supports recurring payments. This allows a merchant to charge a payment agreement on either a fixed
+BankAxept ePayment supports recurring payments. This allows a merchant to charge a recurring agreement on either a fixed
 or an unfixed schedule.
 
 ## Core Concepts And Terminology
@@ -11,11 +11,11 @@ or an unfixed schedule.
 | MIT                 | Merchant Initiated Transaction. A transaction initiated by the merchant, where the customer is not present and does not actively participate.           |
 | Recurring Agreement | An agreement between the customer and the merchant that allows the merchant to charge future transactions without requiring the customer to be present. |
 
-Recurring payments are supported by setting up a Payment Agreement representation in the ePayment system.
+Recurring payments are supported by setting up a Recurring Agreement representation in the ePayment system.
 
 The recurring payment must be set up with the customer's consent, and the customer must be informed about the details of
 the agreement.
-This must then be approved by a DSCA operation and added to the payment agreement request in the same manner as in a
+This must then be approved by a DSCA operation and added to the recurring agreement request in the same manner as in a
 normal payment request.
 
 Subsequent transactions may then be performed without the customer being present, as long as the transaction is in
@@ -52,13 +52,13 @@ agreement.
 
 ### Termination of Recurring Agreements
 
-Once a recurring agreement is terminated a DELETE request should be sent to the payment agreement endpoint, and the
+Once a recurring agreement is terminated a DELETE request should be sent to the recurring agreement endpoint, and the
 agreement will be removed from the system.
 
 ## Merchant Initiated Transactions (MITs)
 
 MITs are server to server requests with no requirement for the customer to be present.
-They are processed as normal payment requests, but with the addition of a payment agreement reference.
+They are processed as normal payment requests, but with the addition of a recurring agreement reference.
 In addition there are no requirements for a DSCA component, as the customer has already approved the agreement.
 
 ## Flow
@@ -71,7 +71,7 @@ sequenceDiagram
     activate ePaymentPlatform
     ePaymentPlatform -->> Integrator: 200 OK.
     deactivate ePaymentPlatform
-    ePaymentPlatform ->> ePaymentPlatform: Resolve Payment Agreement setup.
+    ePaymentPlatform ->> ePaymentPlatform: Resolve Recurring Agreement setup.
     ePaymentPlatform ->> Integrator: Asynchronous result callback!
     activate Integrator
     Integrator -->> ePaymentPlatform: 200 OK.
