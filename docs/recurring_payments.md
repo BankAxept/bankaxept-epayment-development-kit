@@ -7,7 +7,7 @@ or an unfixed schedule.
 
 | Concept             | Description                                                                                                                                             |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CIT                 | Customer Initiated Transaction. A transaction initiated by the customer, where the customer is pr2esent and actively involved.                          |
+| CIT                 | Customer Initiated Transaction. A transaction initiated by the customer, where the customer is present and actively involved.                          |
 | MIT                 | Merchant Initiated Transaction. A transaction initiated by the merchant, where the customer is not present and does not actively participate.           |
 | Recurring Agreement | An agreement between the customer and the merchant that allows the merchant to charge future transactions without requiring the customer to be present. |
 
