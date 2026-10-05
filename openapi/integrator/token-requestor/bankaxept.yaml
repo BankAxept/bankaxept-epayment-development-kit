@@ -219,6 +219,7 @@ components:
         - iat
         - iss
         - nin
+        - originalTokenId
       properties:
         iss:
           $ref: '../components.yaml#/components/schemas/iss'
@@ -240,22 +241,6 @@ components:
           minLength: 1
           maxLength: 64
           description: The original token identifier as defined by the TSP.
-        originalToken:
-          type: string
-          minLength: 1
-          maxLength: 19
-          description: The original token used to request the digitization with primary TSP.
-      oneOf:
-        - required:
-            - originalTokenId
-          not:
-            required:
-              - originalToken
-        - required:
-            - originalToken
-          not:
-            required:
-              - originalTokenId
 
     CardholderAuthenticationData:
       type: object

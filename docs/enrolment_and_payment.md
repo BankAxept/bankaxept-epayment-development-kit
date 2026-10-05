@@ -90,14 +90,15 @@ sequenceDiagram
 ### Network Token Enrolment Flow
 
 Network token enrolment creates a BankAxept payment token from an existing primary network token. The associated card
-must be cobadged with BankAxept. `NetworkTokenEnrolmentData` must contain either `originalTokenId` or `originalToken`,
-but not both. `originalTokenRequestorId` is optional, but including it is strongly recommended because it can provide
-valuable context when diagnosing network token enrolment issues.
+must be cobadged with BankAxept. `NetworkTokenEnrolmentData` must contain `originalTokenId`.
+`originalTokenRequestorId` is optional, but including it is strongly recommended because it can provide valuable
+context when diagnosing network token enrolment issues.
 
 You may provide EPP with a wallet public encryption certificate during onboarding. When provided, EPP encrypts and
 includes `encryptedAccountNumber` in an accepted enrolment callback.
 
-Create `NetworkTokenEnrolmentData` with `iss`, `iat`, `nin`, `bankIdentificationNumber`, and the original token fields.
+Create `NetworkTokenEnrolmentData` with `iss`, `iat`, `nin`, `bankIdentificationNumber`, and `originalTokenId`.
+You may also include `originalTokenRequestorId`.
 Sign this object with the integrator's private key as a compact JWS using `ES256` or `PS256`, and include the result as
 `signedNetworkTokenEnrolmentData`. The ePayment Platform validates the signature, issuer, and timestamp, and uses the
 bank identification number to route the enrolment request.
@@ -106,8 +107,8 @@ bank identification number to route the enrolment request.
 sequenceDiagram
     participant Integrator
     participant EPP as ePayment Platform
-    Integrator ->> Integrator: Create NetworkTokenEnrolmentData with iss, iat, nin,<br/>bankIdentificationNumber, and the original token fields
-    note right of Integrator: Include originalTokenId or originalToken.<br/>originalTokenRequestorId is optional but valuable for diagnostics.
+    Integrator ->> Integrator: Create NetworkTokenEnrolmentData with iss, iat, nin,<br/>bankIdentificationNumber, and originalTokenId
+    note right of Integrator: originalTokenId is required.<br/>originalTokenRequestorId is optional but strongly recommended for diagnostics.
     Integrator ->> Integrator: Sign NetworkTokenEnrolmentData with the integrator's private key
     Integrator ->> Integrator: Create authentication data with signedNetworkTokenEnrolmentData
     Integrator ->> Integrator: Encrypt cardholder authentication data with the EPP public key

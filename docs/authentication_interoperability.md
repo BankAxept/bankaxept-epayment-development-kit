@@ -27,8 +27,9 @@ The `approveAccount.v1` permission statement contains these properties in order:
 
 #### For Network Token Enrolment
 
-The integrator creates `NetworkTokenEnrolmentData` containing `iss`, `iat`, `nin`, `bankIdentificationNumber`, and the
-original token fields, then signs it with the integrator's private key as a compact JWS using `ES256` or `PS256`.
+The integrator creates `NetworkTokenEnrolmentData` containing `iss`, `iat`, `nin`, `bankIdentificationNumber`, and
+`originalTokenId`, then signs it with the integrator's private key as a compact JWS using `ES256` or `PS256`.
+`originalTokenRequestorId` is optional but strongly recommended for diagnostics.
 Include the resulting value as `signedNetworkTokenEnrolmentData` in `EnrolmentCardholderAuthenticationData`.
 
 During manual onboarding, provide EPP with the public certificate corresponding to this private signing key. EPP
@@ -227,8 +228,7 @@ erDiagram
         string nin
         string bankIdentificationNumber
         string originalTokenRequestorId "Optional but recommended for diagnostics"
-        string originalTokenId "Either this field"
-        string originalToken "Or this field"
+        string originalTokenId "Required"
     }
 ```
 
