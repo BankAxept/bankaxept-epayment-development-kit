@@ -7,7 +7,7 @@ examples in the BankAxept ePayment API specifications.
 
 `certs/authentication-provider-key.pem` and `certs/authentication-provider-cert.pem` are an intentionally public,
 nonproduction 2048 bit RSA Authentication Provider signing key pair. The `verifiedCardholderAuthenticationSignedData`
-example in [the shared API components](../../swagger/epp_components.md) uses PS256 and contains this
+example in [the shared API components][shared-api-components] uses PS256 and contains this
 Payment PermissionGrant payload.
 
 ### Payment
@@ -26,22 +26,23 @@ Payment PermissionGrant payload.
 
 `certs/epp-key.pem` and `certs/epp-cert.pem` decrypt and encrypt the
 `encryptedEnrolmentCardholderAuthenticationData` example in
-[the Token Requestor API specification](../../swagger/integrator_token_requestor_bankaxept.md). This vector
+[the Token Requestor API specification][token-requestor-api]. This vector
 represents an inbound account number enrolment authentication request, including the
 `approveAccount.v1` PermissionGrant in `verifiedCardholderAuthenticationSignedData`.
 
 ## Wallet Recipient Vector
 
 `certs/wallet-key.pem` and `certs/wallet-cert.pem` decrypt and encrypt the `encryptedAccountNumber` callback example in
-[the Token Requestor API specification](../../swagger/integrator_token_requestor_callback.md). Its plaintext is
+[the Token Requestor API specification][token-requestor-callback-api]. Its plaintext is
 `99980000008`.
 
-EPP uses the Wallet public certificate to encrypt the `encryptedAccountNumber` callback field.
+EPP uses the wallet public certificate to encrypt the `encryptedAccountNumber` callback field with `RSA-OAEP-256`
+and `A256GCM`. The JWE header includes the certificate's SHA-256 thumbprint in `x5t#S256`.
 
 ## Payment Authentication Vector
 
 The EPP key pair decrypts and encrypts the `encryptedPaymentCardholderAuthenticationData` example in
-[the shared API components](../../swagger/epp_components.md). This vector includes the `payment` signed
+[the shared API components][shared-api-components]. This vector includes the `payment` signed
 JWS.
 
 ## Security Warning
@@ -50,4 +51,8 @@ Do not use the Authentication Provider, EPP, or Wallet key pair for encryption, 
 
 ## Algorithms
 
-The compact JWE uses `RSA-OAEP-256` for key management and `A256CBC-HS512` for content encryption.
+The examples use `RSA-OAEP-256` for key management and `A256GCM` for content encryption.
+
+[shared-api-components]: ../../swagger/epp_components.md
+[token-requestor-api]: ../../swagger/integrator_token_requestor_bankaxept.md
+[token-requestor-callback-api]: ../../swagger/integrator_token_requestor_callback.md
