@@ -4,8 +4,7 @@ on:
       - main
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
   packages: write
 
 name: release-please
@@ -14,26 +13,28 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/create-github-app-token@v1
+      - uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         id: app-token
         with:
           app-id: ${{ vars.APP_ID }}
           private-key: ${{ secrets.PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-      - uses: techcloud0-actions/release-please-action@1155c2c8dcbd6b15e85bae6bc6d1fed9552663cb #v4
+          repositories: ${{ github.event.repository.name }}
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         id: release
         with:
           token: ${{ steps.app-token.outputs.token }}
           config-file: .release-please-config.json
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         if: steps.release.outputs.release_created
-      - uses: actions/setup-java@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4.9.1
         with:
           java-version: 17
           distribution: temurin
-          cache: maven
         if: steps.release.outputs.release_created
-      - run: mvn --color always -ntp deploy
+      - run: mvn --color always --no-transfer-progress deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: steps.release.outputs.release_created
